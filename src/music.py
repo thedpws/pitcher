@@ -2,7 +2,7 @@ from collections.abc import Collection
 from enum import Enum
 
 global _time_signature, _key_signature
-_time_signature = None
+_time_signature = '4/4'
 _key_signature = None
 
 def key(key_signature):
