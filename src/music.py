@@ -195,13 +195,15 @@ class Chord(_Music):
         return iter(self._notes)
 
 
-
 # TODO: Add effects
 class Note(_Music):
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
-    def __init__(self, pitch, duration):
+    def __init__(self, pitch, duration, accidental, dynamic, articulation):
         self._pitch = pitch
         self._duration = duration
+        self._accidental = accidental  # sharp or flat
+        self._dynamic = dynamic  # piano, forte, crescendo, etc
+        self._articulation = articulation  # staccato, accent, fermata, etc
 
     @property
     def pitch(self):
@@ -211,8 +213,39 @@ class Note(_Music):
     def duration(self):
         return self._duration
 
+    @duration.setter
+    def duration(self, duration):
+        self._duration = duration
+
+    @property
+    def accidental(self):
+        return self._accidental
+
+    @accidental.setter
+    def accidental(self, accidental):
+        self._accidental = accidental
+
+    @property
+    def dynamic(self):
+        return self._dynamic
+
+    @dynamic.setter
+    def dynamic(self, dynamic):
+        self._dynamic = dynamic
+
+    @property
+    def articulation(self):
+        return self._articulation
+
+    @articulation.setter
+    def articulation(self, articulation):
+        self._articulation = articulation
+
+    """You can change everything about the note except the pitch itself"""
+
     def __eq__(self, other):
         return self.duration == other.duration and self.pitch == other.pitch
+
 
 class Rest(Note):
     '''Has no pitch. Only duration.'''
