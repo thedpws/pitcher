@@ -1,7 +1,7 @@
 
 
 
-from midi2 import *
+from midi import *
 from music import *
 
 key(Key.C_MAJOR)
@@ -42,3 +42,6 @@ n[2] = Chord([
 midi_file = measure_to_midi(n)
 
 midi_file.save('g7toc.mid')
+
+
+play(midi_file)
