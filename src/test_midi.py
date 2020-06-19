@@ -7,7 +7,6 @@ from music import *
 key(Key.C_MAJOR)
 time(Time.COMMON_TIME)
 
-
 m = Measure()
 
 
@@ -21,6 +20,7 @@ midi_file = measure_to_midi(m)
 
 
 midi_file.save('doremi.mid')
+play(midi_file)
 
 n = Measure()
 
