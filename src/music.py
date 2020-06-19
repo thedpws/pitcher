@@ -1,5 +1,8 @@
 from collections.abc import Collection
 import mingus.core.notes as notes
+import mingus.core.intervals as intervals
+import mingus.core.chords as chords
+import mingus.core.scales as scales
 from mingus.containers import Note
 from mingus.containers import NoteContainer
 from mingus.containers import Composition
@@ -230,16 +233,17 @@ class Chord(_Music):
         return iter(self._notes)
 
 
+
 # TODO: Add effects
 class NNote(_Music):
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
-    def __init__(self, pitch, duration, accidental, dynamic, articulation, note):
+    def __init__(self, pitch, duration, accidental, dynamic, articulation):
         self._pitch = pitch
         self._duration = duration
         self._accidental = accidental  # sharp or flat
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
-        self._note = Note(note)
+        self._note = Note(pitch, duration)
 
     @property
     def pitch(self):
@@ -284,7 +288,8 @@ class NNote(_Music):
 
     # Mingus interface
 
-    def is_valid_note(self, note): 
+    @staticmethod
+    def is_valid_note(note):
         return notes.is_valid_note(note)
 
     def int_to_note(self, this_int):
@@ -303,18 +308,68 @@ class NNote(_Music):
         self._note = notes.diminish(str(self._note))
         return True
 
+    """ mingus documentation shows these are functions but are nowhere to be found in the actual code
     def to_minor(self):
         self._note = notes.to_minor(self._note)
+        #self._note.to_minor()
         return True
     
     def to_major(self):
-        self._note = notes.to_major(self._note)
+        #self._note = notes.to_major(self._note)
+        self._note = notes.to_major(str(self._note))
+        #self._note.to_major()
         return True
-    
-    def transpose(self, transpose_t):
-        self._note.transpose(int(transpose_t))
+    """
+
+    # Doesn't work right now for unknown reasons. Note can be transposed if created outside of the class but
+    # self._note can't be transposed
+    def transpose(self, transpose_t, up=True):
+        self._note.transpose(transpose_t)
+
+    def octave_up(self):
+        self._note.octave_up()
         return True
 
+    def octave_down(self):
+        self._note.octave_down()
+        return True
+
+    # get hertz value of the note. May be useful for machine learning (associate frequencies with notes)
+    def get_hertz(self):
+        return self._note.to_hertz()
+
+    """
+    # determines interval of self._note and note2
+    def determine_interval(self, note2):
+        intervals.determine(self._note, note2)
+        return True
+        
+    # gets major diatonic scale of self._note
+    def get_diatonic(self):
+        #scales.diatonic(self._note)
+        scales.Major.ascending(str(self._note))
+        return True
+
+    # gets natural minor scale of self._note
+    def get_natural_minor(self):
+        scales.natural_minor(self._note)
+        return True
+
+    # gets harmonic minor scale of self._note
+    def get_harmonic_minor(self):
+        scales.harmonic_minor(self._note)
+        return True
+
+    # gets melodic minor scale of self._note
+    def get_melodic_minor(self):
+        scales.melodic_minor(self._note)
+        return True
+
+    # gets chromatic scale of scale._note
+    def get_chromatic(self):
+        scales.chromatic(self._note)
+        return True
+    """
 
 class Rest(Note):
     '''Has no pitch. Only duration.'''
