@@ -1,4 +1,9 @@
 from collections.abc import Collection
+import mingus.core.notes as notes
+from mingus.containers import Note
+from mingus.containers import NoteContainer
+from mingus.containers import Composition
+from mingus.containers.instrument import Instrument, Piano, Guitar
 from enum import Enum
 
 global _time_signature, _key_signature
@@ -24,6 +29,10 @@ class Clef(Enum):
     TREBLE = 0
 
 class Voice(Enum):
+    #def __init__(self):
+    #    self._piano = Piano()
+    #    self._guitar = Guitar()
+    #    self._instrument = Instrument()
     PIANO = 0
 
 class _Music:
@@ -42,8 +51,17 @@ class _Music:
 
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
-    def __init__(self, title=None, subtitle=None, key_signature=None, time_signature=None):
-        raise NotImplementedError
+    def __init__(self, title=None, subtitle=None, key_signature=None, time_signature=None, author=None, author_email=None):
+        self._composition = Composition()
+        self._composition.set_author(author, author_email)
+        self._composition.set_title(title)
+        #raise NotImplementedError
+
+    def get_author(self):
+        return self._composition.author
+
+    def get_title(self):
+        return self._composition.title
 
 
 class Part(_Music):
@@ -128,15 +146,17 @@ class Measure(_Music, Collection):
     '''Collection of notes'''
 
     def __init__(self, notes=None):
-        self._notes = notes if notes else dict()
+        #self._notes = notes if notes else dict()
+        self._notes = NoteContainer(notes)
 
-        global _time_signature
-        if not _time_signature: raise Exception('Time signature undefined')
-        self._time_signature = _time_signature
 
-        global _key_signature
-        if not _key_signature: raise Exception('Key signature undefined')
-        self._key_signature = _key_signature
+        #global _time_signature
+        #if not _time_signature: raise Exception('Time signature undefined')
+        #self._time_signature = _time_signature
+
+        #global _key_signature
+        #if not _key_signature: raise Exception('Key signature undefined')
+        #self._key_signature = _key_signature
 
     @property
     def key_signature(self):
@@ -188,6 +208,21 @@ class Measure(_Music, Collection):
     def extend(self, notes):
         raise NotImplementedError('TODO.')
 
+    def add_note(self, note):
+        self._notes += note
+
+    def delete_note(self, note):
+        self._notes.remove_note(note)
+
+    def clear_measure(self):
+        self._notes.empty()
+
+    def determine(self):
+        return self._notes.determine()
+    
+    def get_measure(self):
+        return self._notes
+
 class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes if notes else []
@@ -196,14 +231,15 @@ class Chord(_Music):
 
 
 # TODO: Add effects
-class Note(_Music):
+class NNote(_Music):
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
-    def __init__(self, pitch, duration, accidental, dynamic, articulation):
+    def __init__(self, pitch, duration, accidental, dynamic, articulation, note):
         self._pitch = pitch
         self._duration = duration
         self._accidental = accidental  # sharp or flat
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
+        self._note = Note(note)
 
     @property
     def pitch(self):
@@ -245,6 +281,39 @@ class Note(_Music):
 
     def __eq__(self, other):
         return self.duration == other.duration and self.pitch == other.pitch
+
+    # Mingus interface
+
+    def is_valid_note(self, note): 
+        return notes.is_valid_note(note)
+
+    def int_to_note(self, this_int):
+        # C -> 0
+        # C# -> 1
+        # D -> 2
+        # D# -> 3
+        # E -> 4
+        return notes.int_to_note(this_int)
+
+    def augment_note(self):
+        self._note = notes.augment(str(self._note))
+        return True
+
+    def diminish_note(self):
+        self._note = notes.diminish(str(self._note))
+        return True
+
+    def to_minor(self):
+        self._note = notes.to_minor(self._note)
+        return True
+    
+    def to_major(self):
+        self._note = notes.to_major(self._note)
+        return True
+    
+    def transpose(self, transpose_t):
+        self._note.transpose(int(transpose_t))
+        return True
 
 
 class Rest(Note):
