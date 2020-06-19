@@ -157,7 +157,7 @@ class Measure(_Music, Collection):
     def __setitem__(self, start, item):
         '''To add a quarter note at beat 2: m[2] = Note('C#', 1)'''
         self._notes[start] = item
-        self._verify_duration()
+        #self._verify_duration()
 
     def _verify_duration(self):
         raise NotImplementedError('TODO. Verify recently-added note does not invalidate measure length wrt Time signature')
@@ -193,6 +193,10 @@ class Chord(_Music):
         self._notes = notes if notes else []
     def __iter__(self):
         return iter(self._notes)
+
+    @property
+    def notes(self):
+        return self._notes
 
 
 
