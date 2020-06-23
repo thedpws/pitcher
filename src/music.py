@@ -1,7 +1,7 @@
+from abc import ABC
 from collections.abc import Collection
 import mingus.core.notes as notes
-import mingus.core.intervals as intervals
-import mingus.core.chords as chords
+import mingus.core.chords as Chord
 import mingus.core.scales as scales
 from mingus.containers import Note
 from mingus.containers import NoteContainer
@@ -226,11 +226,42 @@ class Measure(_Music, Collection):
     def get_measure(self):
         return self._notes
 
-class Chord(_Music):
-    def __init__(self, notes=None):
-        self._notes = notes if notes else []
+class CChord(_Music):
+    # note=pitch. Automatically creates the most likely chords the user might use for the note
+    def __init__(self, note, key):
+        self._natural_triad = Chord.triad(note, key)
+        self._major_triad = Chord.major_triad(note)
+        self._minor_triad = Chord.minor_triad(note)
+        self._diminished_triad = Chord.diminished_triad(note)
+        self._augmented_triad = Chord.augmented_triad(note)
+        self._suspended_triad = Chord.suspended_triad(note)
+
     def __iter__(self):
         return iter(self._notes)
+
+    # note is a string. This function returns the corresponding chord of notes
+    # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
+    """ These are recognized abbreviations:
+        Triads: ‘m’, ‘M’ or ‘’, ‘dim’.
+        Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’
+        Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’
+        Suspended chords: ‘sus4’, ‘sus2’, ‘sus47’, ‘sus’, ‘11’, ‘sus4b9’ or ‘susb9’
+        Sixths: ‘6’, ‘m6’, ‘M6’, ‘6/7’ or ‘67’, 6/9 or 69
+        Ninths: ‘9’, ‘M9’, ‘m9’, ‘7b9’, ‘7#9’
+        Elevenths: ‘11’, ‘7#11’, ‘m11’
+        Thirteenths: ‘13’, ‘M13’, ‘m13’
+        Altered chords: ‘7b5’, ‘7b9’, ‘7#9’, ‘67’ or ‘6/7’
+        Special: ‘5’, ‘NC’, ‘hendrix’
+    """
+    @staticmethod
+    def get_chord(note):
+        return Chord.from_shorthand(note)
+
+    # Returns all triads in a given key. Key is a string
+    @staticmethod
+    def get_triads(key):
+        return Chord.triads(key)
+
 
 
 
@@ -339,11 +370,6 @@ class NNote(_Music):
         return self._note.to_hertz()
 
     """
-    # determines interval of self._note and note2
-    def determine_interval(self, note2):
-        intervals.determine(self._note, note2)
-        return True
-        
     # gets major diatonic scale of self._note
     def get_diatonic(self):
         #scales.diatonic(self._note)
