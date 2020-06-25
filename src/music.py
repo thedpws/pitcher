@@ -1,6 +1,8 @@
+from abc import ABC
 from collections.abc import Collection
 import mingus.core.notes as mingus_notes
 from mingus.containers import Note as MingusNote
+import mingus.core.chords as MingusChord
 from mingus.containers import NoteContainer as MingusNoteContainer
 from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
@@ -231,7 +233,26 @@ class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
+       
 
+    @staticmethod
+    def major_triad(note: Note):
+      raise NotImplementedError('TODO')
+      
+    @staticmethod
+    def minor_triad(note: Note):
+      raise NotImplementedError('TODO')
+      
+    raise NotImplementedError('Implement important chord factory functions here')
+    """
+        self._major_triad = Chord.major_triad(note)
+        self._minor_triad = Chord.minor_triad(note)
+        self._diminished_triad = Chord.diminished_triad(note)
+        self._augmented_triad = Chord.augmented_triad(note)
+        self._suspended_triad = Chord.suspended_triad(note)
+    """
+      
+   
     @property
     def duration(self):
         return max(map(lambda n: n.duration, self._notes))
@@ -253,11 +274,35 @@ class Chord(_Music):
 
     def determine(self):
         return self._mingus_notes.determine()
+      
+    # note is a string. This function returns the corresponding chord of notes
+    # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
+    """ These are recognized abbreviations:
+        Triads: ‘m’, ‘M’ or ‘’, ‘dim’.
+        Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’
+        Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’
+        Suspended chords: ‘sus4’, ‘sus2’, ‘sus47’, ‘sus’, ‘11’, ‘sus4b9’ or ‘susb9’
+        Sixths: ‘6’, ‘m6’, ‘M6’, ‘6/7’ or ‘67’, 6/9 or 69
+        Ninths: ‘9’, ‘M9’, ‘m9’, ‘7b9’, ‘7#9’
+        Elevenths: ‘11’, ‘7#11’, ‘m11’
+        Thirteenths: ‘13’, ‘M13’, ‘m13’
+        Altered chords: ‘7b5’, ‘7b9’, ‘7#9’, ‘67’ or ‘6/7’
+        Special: ‘5’, ‘NC’, ‘hendrix’
+    """
+    """
+    @staticmethod
+    def get_chord(note):
+        return Chord.from_shorthand(note)
 
+    # Returns all triads in a given key. Key is a string
+    @staticmethod
+    def get_triads(key):
+        return Chord.triads(key)
+    """
 
 class Note(_Music):
 
-
+    #TODO: rename pitch to pitch_string
     @classmethod
     def pitch_to_int(cls, pitch):
         if pitch == None: return None
@@ -342,7 +387,7 @@ class Note(_Music):
     def augment(self):
         """Raises the note by a half step"""
         self._mingus_note = mingus_notes.augment(str(self._mingus_note))
-
+        
         if 'b' in self._accidentals:
             self._accidentals.remove('b')
         elif '#' in self._accidentals:
@@ -354,7 +399,6 @@ class Note(_Music):
     def diminish(self):
         """Lowers the note by a half step"""
         self._mingus_note = mingus_notes.diminish(str(self.mingus()))
-
         if 'X' in self._accidentals:
             self._accidentals.replace('X', '#')
         elif '#' in self._accidentals:
@@ -372,6 +416,14 @@ class Note(_Music):
             for _ in range(abs(half_steps)):
                 self.augment()
 
+    def octave_up(self):
+        self._mingus_note.octave_up()
+        self._pitch_number += 12
+        return True
+
+    def octave_down(self):
+        self._mingus_note.octave_down()
+        self._pitch_number -= 12
         return True
 
 
@@ -428,3 +480,4 @@ class Rest(Note):
 
     def transpose(self, half_steps):
         raise PitcherException('Rests cannot be assigned a pitch')
+        
