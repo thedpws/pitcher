@@ -183,7 +183,6 @@ class Measure(_Music, Collection):
         raise NotImplementedError('TODO. Verify recently-added note does not invalidate measure length wrt Time signature')
 
 
-
     def __getitem__(self, start):
         return self._notes[start]
 
