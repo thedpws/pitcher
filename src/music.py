@@ -234,58 +234,38 @@ class Chord(_Music):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
 
-    # need to find a way to get the octave of the note so we can accurately make the chords
-    # right now, we have the right pitch but not necessarily the right octave
-    # only use these methods if notes is exactly 1 Note.
+    @staticmethod
+    def mingusChord_to_chord(mingus_chord, note):
+        my_triad = []
+        for n in mingus_chord:
+            temp = Note.mingusNote_to_note(n, note)
+            my_triad.append(temp)
+        return Chord(my_triad)
+
     @staticmethod
     def major_triad(note):
-        mingus_triad = MingusChord.major_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.major_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
       
     @staticmethod
     def minor_triad(note):
-        mingus_triad = MingusChord.minor_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.minor_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def diminished_triad(note):
-        mingus_triad = MingusChord.diminished_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.diminished_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def augmented_triad(note):
-        mingus_triad = MingusChord.augmented_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.augmented_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def suspended_triad(note):
-        mingus_triad = MingusChord.suspended_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.suspended_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
    
     @property
     def duration(self):
@@ -336,14 +316,42 @@ class Chord(_Music):
 
 class Note(_Music):
 
+    #converts mingus_note to note
+    @staticmethod
+    def mingusNote_to_note(mingus_note, note):
+        result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
+        return result
+
+    @staticmethod
+    def get_accidentals(pitch_string):
+        accidentals = ""
+        if len(pitch_string) == 1:
+            return accidentals
+        elif len(pitch_string) > 1:
+            for temp in pitch_string:
+                if temp == "#" or temp == "b":
+                    accidentals += temp
+            return accidentals
+
+    @staticmethod
+    def get_octave(pitch_string):
+        octave = 4
+        try:
+            float(pitch_string[-1])
+        except ValueError:
+            return 4
+        else:
+            octave = int(pitch_string[-1])
+        return octave
+
+
     @classmethod
     def pitch_to_int(cls, pitch_string):
         if pitch_string == None: return None
         letter = re.findall('[A-G]', pitch_string)[0]
         accidentals = re.findall('[#Xb]+', pitch_string)
         accidentals = accidentals[0] if accidentals else ''
-        octave = re.findall('\\d', pitch_string)[0]         #this line was throwing list index out of bounds
-        octave = int(octave[0]) if octave else 4
+        octave = Note.get_octave(pitch_string)
 
         MIDDLE_C_OFFSET = 12*4
 
@@ -356,21 +364,32 @@ class Note(_Music):
         raise NotImplementedError('TODO')
 
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
-    def __init__(self, pitch, duration, accidentals=None, dynamic=None, articulation=None):
-        self._pitch = pitch
+    # pitch has 3 characters max: note,#/b,octave
+    def __init__(self, pitch, duration, dynamic=None, articulation=None):
+        self._pitch = pitch[0]
+        self._octave = Note.get_octave(pitch)
         self._pitch_number = Note.pitch_to_int(pitch)
         self._duration = duration
-        self._accidentals = accidentals or ''  # sharp or flat
+        self._accidentals = Note.get_accidentals(pitch)  # sharp or flat
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
         if self._pitch_number != None:
-            print(self._pitch_number)
+            #print(pitch+":",self._pitch_number)
             self._mingus_note = MingusNote(self._pitch_number)
 
     @property
     def pitch(self):
-        pitch = self.int_to_pitch(self._pitch_number)
-        return pitch + self._accidentals
+        #pitch = self.int_to_pitch(self._pitch_number)
+        #return pitch + self._accidentals
+        return self._pitch
+
+    @property
+    def octave(self):
+        return self._octave
+
+    @octave.setter
+    def octave(self, octave):
+        self._octave = octave
 
     @property
     def pitch_number(self):
