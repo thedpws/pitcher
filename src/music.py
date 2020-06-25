@@ -233,25 +233,59 @@ class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
-       
+
+    # need to find a way to get the octave of the note so we can accurately make the chords
+    # right now, we have the right pitch but not necessarily the right octave
+    # only use these methods if notes is exactly 1 Note.
+    @staticmethod
+    def major_triad(note):
+        mingus_triad = MingusChord.major_triad(note._pitch)
+        my_triad = []
+        for n in mingus_triad:
+            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
+            my_triad.append(temp)
+        result = Chord(my_triad)
+        return result
+      
+    @staticmethod
+    def minor_triad(note):
+        mingus_triad = MingusChord.minor_triad(note._pitch)
+        my_triad = []
+        for n in mingus_triad:
+            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
+            my_triad.append(temp)
+        result = Chord(my_triad)
+        return result
 
     @staticmethod
-    def major_triad(note: Note):
-      raise NotImplementedError('TODO')
-      
+    def diminished_triad(note):
+        mingus_triad = MingusChord.diminished_triad(note._pitch)
+        my_triad = []
+        for n in mingus_triad:
+            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
+            my_triad.append(temp)
+        result = Chord(my_triad)
+        return result
+
     @staticmethod
-    def minor_triad(note: Note):
-      raise NotImplementedError('TODO')
-      
-    raise NotImplementedError('Implement important chord factory functions here')
-    """
-        self._major_triad = Chord.major_triad(note)
-        self._minor_triad = Chord.minor_triad(note)
-        self._diminished_triad = Chord.diminished_triad(note)
-        self._augmented_triad = Chord.augmented_triad(note)
-        self._suspended_triad = Chord.suspended_triad(note)
-    """
-      
+    def augmented_triad(note):
+        mingus_triad = MingusChord.augmented_triad(note._pitch)
+        my_triad = []
+        for n in mingus_triad:
+            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
+            my_triad.append(temp)
+        result = Chord(my_triad)
+        return result
+
+    @staticmethod
+    def suspended_triad(note):
+        mingus_triad = MingusChord.suspended_triad(note._pitch)
+        my_triad = []
+        for n in mingus_triad:
+            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
+            my_triad.append(temp)
+        result = Chord(my_triad)
+        return result
    
     @property
     def duration(self):
@@ -302,14 +336,13 @@ class Chord(_Music):
 
 class Note(_Music):
 
-    #TODO: rename pitch to pitch_string
     @classmethod
-    def pitch_to_int(cls, pitch):
-        if pitch == None: return None
-        letter = re.findall('[A-G]', pitch)[0]
-        accidentals = re.findall('[#Xb]+', pitch)
+    def pitch_to_int(cls, pitch_string):
+        if pitch_string == None: return None
+        letter = re.findall('[A-G]', pitch_string)[0]
+        accidentals = re.findall('[#Xb]+', pitch_string)
         accidentals = accidentals[0] if accidentals else ''
-        octave = re.findall('\\d', pitch)[0]
+        octave = re.findall('\\d', pitch_string)[0]         #this line was throwing list index out of bounds
         octave = int(octave[0]) if octave else 4
 
         MIDDLE_C_OFFSET = 12*4
@@ -324,6 +357,7 @@ class Note(_Music):
 
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
     def __init__(self, pitch, duration, accidentals=None, dynamic=None, articulation=None):
+        self._pitch = pitch
         self._pitch_number = Note.pitch_to_int(pitch)
         self._duration = duration
         self._accidentals = accidentals or ''  # sharp or flat
@@ -335,7 +369,7 @@ class Note(_Music):
 
     @property
     def pitch(self):
-        pitch = int_to_pitch(self._pitch_number)
+        pitch = self.int_to_pitch(self._pitch_number)
         return pitch + self._accidentals
 
     @property
