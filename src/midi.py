@@ -55,7 +55,7 @@ def measure_to_midi(measure):
     track.append(Message('program_change', program=12, time=0))
 
 
-    note_pitches = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+    note_pitches = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']
     note_pitch_nums = [60, 62, 64, 65, 67, 70, 72]
 
 
