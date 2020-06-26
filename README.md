@@ -8,7 +8,7 @@ A python library and framework for composing music.
 
 ### Setting up dependencies
 * To create the virtual environment, `cd` into the project directory and `python3 -m venv env`
-* To install dependencies, `pip3 install -r requirements.txt`
+* To install dependencies to the virtual environment, `source env/bin/activate && pip3 install -r requirements.txt`
 
 ### Working on the project
 * Before working, activate the environment by `source env/bin/activate`
