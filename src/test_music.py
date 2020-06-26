@@ -4,6 +4,26 @@ import music as ptr
 
 class TestNotes(TestCase):
 
+    def test_C4_maps_to_0(self):
+        # Arrange
+        n = ptr.Note('C4', 1.0)
+
+        # Act
+        pitch_number = n.pitch_number
+
+        # Assert
+        self.assertEqual(pitch_number, 0)
+
+    def test_C4_maps_to_0(self):
+        # Arrange
+        n = ptr.Note('C4', 1.0)
+
+        # Act
+        pitch_number = n.pitch_number
+
+        # Assert
+        self.assertEqual(pitch_number, 0)
+
     def test_init_sets_pitch_and_duration(self):
         # Arrange
         n = ptr.Note('C', 1.0)
@@ -13,7 +33,7 @@ class TestNotes(TestCase):
         duration = n.duration
 
         # Assert
-        self.assertEqual(pitch, 'C')
+        self.assertEqual(pitch, 'C4')
         self.assertEqual(duration, 1.0)
 
     def test_eq(self):
@@ -40,70 +60,3 @@ class TestRests(TestCase):
         # Assert
         self.assertEqual(pitch, None)
         self.assertEqual(duration, 1.0)
-
-class TestMeasures(TestCase):
-
-    def setUp(self):
-        ptr.key(ptr.Key.C_MAJOR)
-        ptr.time(ptr.Time.COMMON_TIME)
-
-    def test_init_without_key_or_time_raises_exception(self):
-
-        # Arrange
-        ptr.key(None)
-        ptr.time(None)
-
-        # Act
-        action = ptr.Measure
-
-        # Assert
-        self.assertRaises(Exception, action)
-    
-    def test_init_uses_global_key_and_time_signature(self):
-
-        # Act
-        m = ptr.Measure()
-
-        # Assert
-        self.assertEqual(m.key_signature, ptr.Key.C_MAJOR)
-        self.assertEqual(m.time_signature, ptr.Time.COMMON_TIME)
-
-    def test_extend_appends_all(self):
-
-        # Arrange
-        do = ptr.Note('C', 3/2)
-        re = ptr.Note('D', 1/2)
-        mi = ptr.Note('E', 3/2)
-
-        notes = [do, re, mi]
-
-        m = ptr.Measure()
-
-        # Act
-        m.extend(notes)
-
-        # Assert
-        self.assertEqual(m[0], do)
-        self.assertEqual(m[1.5], re)
-        self.assertEqual(m[2], mi)
-
-    def test_append_appends(self):
-        # Arrange
-        ptr.key(ptr.Key.C_MAJOR)
-        ptr.time(ptr.Time.COMMON_TIME)
-
-        do = ptr.Note('C', 3/2)
-        re = ptr.Note('D', 1/2)
-        mi = ptr.Note('E', 3/2)
-
-        m = ptr.Measure()
-
-        # Act
-        m.append(do)
-        m.append(re)
-        m.append(mi)
-
-        # Assert
-        self.assertEqual(m[0], do)
-        self.assertEqual(m[1.5], re)
-        self.assertEqual(m[2], mi)
