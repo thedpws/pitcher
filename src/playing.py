@@ -1,6 +1,6 @@
 
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
-from music import Note, Chord
+#from music import Note, Chord
 from timidity import Parser, play_notes
 from tempfile import TemporaryDirectory
 from threading import get_ident
@@ -42,8 +42,66 @@ class Event:
 
 
 def play_score(score):
-    raise NotImplemented('TODO: score_to_midi')
+    events = []
 
+    tempo = 600
+    mid = MidiFile()
+    track = MidiTrack()
+    mid.tracks.append(track)
+
+    track.append(Message('program_change', program=12, time=0))
+
+    events = []
+
+    for part in score:
+        for staff in part:
+            for i_measure, measure in enumerate(staff):
+
+                measure_beat_offset = score.time_signature.beats_per_measure * i_measure
+
+                for start, item in measure._notes.items():
+
+                    try:
+                        iter(item)
+                        notes = item.notes
+                    except Exception:
+                        notes = [item]
+
+
+                    for note in notes:
+                        midi_pitch = note.pitch_number + 60
+
+                        beat_keyon = measure_beat_offset + start
+                        beat_keyoff = beat_keyon + note.duration
+
+                        time_keyon = beat_keyon * tempo
+                        time_keyoff = beat_keyoff * tempo
+
+                        events.extend([
+                           Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
+                           Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
+                        ])
+
+    curr_time = 0
+    for e in sorted(events):
+        delta_time = e.time - curr_time
+        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity, time=int(round(delta_time))))
+        curr_time += delta_time
+
+
+    with TemporaryDirectory() as tmpdirname:
+        midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
+        mid.save(midi_filepath)
+        ps = Parser(midi_filepath)
+        play_notes(*ps.parse(), np.sin)
+
+    return True
+
+
+    
+
+
+"""
 def measure_to_midi(measure):
 
     tempo = 600
@@ -100,9 +158,5 @@ def measure_to_midi(measure):
 
 
 def play(midi_file):
-    with TemporaryDirectory() as tmpdirname:
-        midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
-        midi_file.save(midi_filepath)
-        ps = Parser(midi_filepath)
-        play_notes(*ps.parse(), np.sin)
     print('AZ DONE')
+"""
