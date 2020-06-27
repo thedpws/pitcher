@@ -195,9 +195,11 @@ class Measure(_Music, Collection):
         self._next_count = max(self._next_count, start + item.duration)
 
     def append(self, item):
-        self._notes[self._next_count] = item
-
-        self._next_count += item.duration
+        if self._next_count + item.duration > _time_signature:
+            print("Item exceeds measure's time signature")
+        else:
+            self._notes[self._next_count] = item
+            self._next_count += item.duration
 
     def __getitem__(self, start):
         return self._notes[start]
