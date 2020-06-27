@@ -8,13 +8,14 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
+import playing
 
 
 class PitcherException(Exception):
     pass
 
 global _time_signature, _key_signature
-_time_signature = None
+_time_signature = '4/4'
 _key_signature = None
 
 def key(key_signature):
@@ -60,6 +61,14 @@ class Time:
             raise PitcherException(f'{time} is an invalid time signature')
         self._time = time
 
+    @property
+    def beats_per_measure(self):
+        return int(self._time.partition('/')[0])
+
+    @property
+    def beat_definition(self):
+        return int(self._time.partition('/')[2])
+
 Time.COMMON_TIME = Time('4/4')
 Time.CUT_TIME = Time('2/4')
 
@@ -74,7 +83,7 @@ class Voice(Enum):
 
 class _Music:
 
-    def listen(self, **kwargs):
+    def play(self, **kwargs):
         '''Plays music'''
         raise NotImplementedError
 
@@ -88,7 +97,7 @@ class _Music:
 
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
-    def __init__(self, title=None, subtitle=None, author=None, author_email=None):
+    def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
         self._title = title or ''
 
 
@@ -96,7 +105,7 @@ class Score(_Music):
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
 
-        self._parts = []
+        self._parts = parts or []
 
     def get_author(self):
         return self._composition.author
@@ -108,10 +117,15 @@ class Score(_Music):
     def add_part(self, part):
         self._parts.append(part)
 
+    def play(self):
+        playing.play_score(self)
+
+    def __iter__(self):
+        return iter(self._parts)
+
 
 class Part(_Music):
     '''A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.'''
-
 
     @property
     def key_signature(self):
@@ -134,17 +148,31 @@ class Part(_Music):
     def __init__(
             self,
             staffs=None,
-            tempo=None,
+            tempo=40,
             time_signature=None,
             key_signature=None,
     ):
         self._staffs = staffs or [Staff()]
+        if not time_signature:
+            global _time_signature
+            time_signature = _time_signature
+
+        if not key_signature:
+            global _key_signature
+            key_signature = _key_signature
+
         self._time_signature = time_signature
         self._key_signature = key_signature
         self.tempo = tempo
 
     def add_staff(self, staff):
         self._staffs.append(staff)
+
+    def play(self):
+        return Score(parts=[self]).play()
+
+    def __iter__(self):
+        return iter(self._staffs)
 
 class Staff(_Music):
 
@@ -181,6 +209,12 @@ class Staff(_Music):
 
         return self._measures[i]
 
+    def play(self):
+        return Part(staffs=[self]).play()
+
+    def __iter__(self):
+        return iter(self._measures)
+
 
 # TODO: Bind measure length by global time signature
 class Measure(_Music, Collection):
@@ -198,6 +232,10 @@ class Measure(_Music, Collection):
         self._notes[self._next_count] = item
 
         self._next_count += item.duration
+
+    def extend(self, items):
+        for item in items:
+            self.append(item)
 
     def __getitem__(self, start):
         return self._notes[start]
@@ -228,64 +266,52 @@ class Measure(_Music, Collection):
         for note in notes:
             self.append(note)
 
+    def play(self):
+        return Staff(measures=[self]).play()
+
+    def __iter__(self):
+        return iter(self._notes)
+
+
+
 
 class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
 
-    # need to find a way to get the octave of the note so we can accurately make the chords
-    # right now, we have the right pitch but not necessarily the right octave
-    # only use these methods if notes is exactly 1 Note.
+    @staticmethod
+    def mingusChord_to_chord(mingus_chord, note):
+        my_triad = []
+        for n in mingus_chord:
+            temp = Note.mingusNote_to_note(n, note)
+            my_triad.append(temp)
+        return Chord(my_triad)
+
     @staticmethod
     def major_triad(note):
-        mingus_triad = MingusChord.major_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.major_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
       
     @staticmethod
     def minor_triad(note):
-        mingus_triad = MingusChord.minor_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.minor_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def diminished_triad(note):
-        mingus_triad = MingusChord.diminished_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.diminished_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def augmented_triad(note):
-        mingus_triad = MingusChord.augmented_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.augmented_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def suspended_triad(note):
-        mingus_triad = MingusChord.suspended_triad(note._pitch)
-        my_triad = []
-        for n in mingus_triad:
-            temp = Note(n, note.duration, note.accidentals, note.dynamic, note.articulation)
-            my_triad.append(temp)
-        result = Chord(my_triad)
-        return result
+        mingus_chord = MingusChord.suspended_triad(note.pitch)
+        return Chord.mingusChord_to_chord(mingus_chord, note)
    
     @property
     def duration(self):
@@ -293,6 +319,10 @@ class Chord(_Music):
 
     def __iter__(self):
         return iter(self._notes)
+
+    @property
+    def notes(self):
+        return self._notes
 
     def append(self, note):
         self._notes += note
@@ -334,52 +364,49 @@ class Chord(_Music):
         return Chord.triads(key)
     """
 
+    def play(self):
+        return Measure(notes=[self]).play()
+
 class Note(_Music):
 
-    @classmethod
-    def pitch_to_int(cls, pitch_string):
-        if pitch_string == None: return None
-        letter = re.findall('[A-G]', pitch_string)[0]
-        accidentals = re.findall('[#Xb]+', pitch_string)
-        accidentals = accidentals[0] if accidentals else ''
-        octave = re.findall('\\d', pitch_string)[0]         #this line was throwing list index out of bounds
-        octave = int(octave[0]) if octave else 4
-
-        MIDDLE_C_OFFSET = 12*4
-
-        pitch_number = (ord(letter) - ord('C')) + 12*octave - MIDDLE_C_OFFSET + 1*len(list(map(lambda c: c == '#', accidentals))) + 2*len(list(map(lambda c: c == 'X', accidentals))) - 1*len(list(map(lambda c: c == 'b', accidentals)))
-        return pitch_number
-
-    @classmethod
-    def int_to_pitch(cls, pitch_number):
-        if pitch_number == None: return None
-        raise NotImplementedError('TODO')
+    #converts mingus_note to note
+    @staticmethod
+    def mingusNote_to_note(mingus_note, note):
+        result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
+        return result
 
     '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
-    def __init__(self, pitch, duration, accidentals=None, dynamic=None, articulation=None):
-        self._pitch = pitch
-        self._pitch_number = Note.pitch_to_int(pitch)
+    # pitch has 3 characters max: note,#/b,octave
+    def __init__(self, pitch, duration, dynamic=None, articulation=None):
+
+        self._pitch = _Pitch.from_string(pitch)
         self._duration = duration
-        self._accidentals = accidentals or ''  # sharp or flat
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
-        if self._pitch_number != None:
-            print(self._pitch_number)
-            self._mingus_note = MingusNote(self._pitch_number)
+
+        if self.pitch_number != None:
+            self._mingus_note = MingusNote(self.pitch_number)
 
     @property
     def pitch(self):
-        pitch = self.int_to_pitch(self._pitch_number)
-        return pitch + self._accidentals
-
-    @property
-    def pitch_number(self):
-        self._pitch_number + 1*len(list(map(lambda c: c == '#', self._accidentals))) + 2*len(list(map(lambda c: c == 'X', self._accidentals))) - 1*len(list(map(lambda c: c == 'b', self._accidentals)))
-        return pitch + self._accidentals
+        """Returns a string of letter-note, accidentals, and octave"""
+        return str(self._pitch)
 
     @pitch.setter
     def pitch(self, pitch):
-        self._pitch_number = Note.pitch_to_int(pitch)
+        self._pitch = _Pitch.from_string(pitch)
+
+    @property
+    def octave(self):
+        return self._pitch.octave
+
+    @octave.setter
+    def octave(self, octave):
+        self._pitch.octave = octave
+
+    @property
+    def pitch_number(self):
+        return int(self._pitch)
 
     @property
     def duration(self):
@@ -391,11 +418,11 @@ class Note(_Music):
 
     @property
     def accidentals(self):
-        return self._accidentals
+        return self._pitch.accidentals
 
     @accidentals.setter
     def accidentals(self, accidentals):
-        self._accidentals = accidentals
+        self._pitch.accidentals = accidentals
 
     @property
     def dynamic(self):
@@ -421,44 +448,33 @@ class Note(_Music):
     def augment(self):
         """Raises the note by a half step"""
         self._mingus_note = mingus_notes.augment(str(self._mingus_note))
-        
-        if 'b' in self._accidentals:
-            self._accidentals.remove('b')
-        elif '#' in self._accidentals:
-            self._accidentals.replace('#', 'X')
-        else:
-            self._accidentals += '#'
+        self._pitch.accidentals += 1
         return True
 
     def diminish(self):
         """Lowers the note by a half step"""
         self._mingus_note = mingus_notes.diminish(str(self.mingus()))
-        if 'X' in self._accidentals:
-            self._accidentals.replace('X', '#')
-        elif '#' in self._accidentals:
-            self._accidentals.remove('#')
-        else:
-            self._accidentals += 'b'
+        self._pitch.accidentals -= 1
         return True
 
     def transpose(self, half_steps):
         """Raises/Lowers the note"""
-        if half_steps < 0:
-            for _ in range(abs(half_steps)):
-                self.diminish()
-        elif half_steps > 0:
-            for _ in range(abs(half_steps)):
-                self.augment()
+        self._pitch.accidentals += half_steps
 
     def octave_up(self):
+        """Raises the pitch an octave"""
         self._mingus_note.octave_up()
-        self._pitch_number += 12
+        self._pitch.octave += 1
         return True
 
     def octave_down(self):
+        """Lowers the pitch an octave"""
         self._mingus_note.octave_down()
-        self._pitch_number -= 12
+        self._pitch.octave -= 1
         return True
+    
+    def play(self):
+        return Measure(notes=[self]).play()
 
 
 class Rest(Note):
@@ -466,21 +482,29 @@ class Rest(Note):
     def __init__(self, duration):
         super(Rest, self).__init__(pitch=None, duration=duration)
 
+
+    def _throw_exception(self):
+        raise PitcherException('Rests cannot be assigned a pitch')
+
     @property
     def pitch(self):
         return None
 
     @pitch.setter
     def pitch(self, pitch):
-        raise PitcherException('Rests cannot be assigned a pitch')
+        self._throw_exception()
 
     @property
-    def duration(self):
-        return self._duration
+    def pitch_number(self):
+        return None
 
-    @duration.setter
-    def duration(self, duration):
-        self._duration = duration
+    @property
+    def octave(self):
+        return None
+
+    @octave.setter
+    def octave(self, octave):
+        self._throw_exception()
 
     @property
     def accidentals(self):
@@ -488,30 +512,123 @@ class Rest(Note):
 
     @accidentals.setter
     def accidentals(self, accidentals):
-        raise PitcherException('Rests cannot be assigned a pitch')
-
-    @property
-    def dynamic(self):
-        return self._dynamic
-
-    @dynamic.setter
-    def dynamic(self, dynamic):
-        self._dynamic = dynamic
-
-    @property
-    def articulation(self):
-        return self._articulation
-
-    @articulation.setter
-    def articulation(self, articulation):
-        self._articulation = articulation
+        self._throw_exception()
 
     def augment(self):
-        raise PitcherException('Rests cannot be assigned a pitch')
+        self._throw_exception()
 
     def diminish(self):
-        raise PitcherException('Rests cannot be assigned a pitch')
+        self._throw_exception()
 
     def transpose(self, half_steps):
-        raise PitcherException('Rests cannot be assigned a pitch')
+        self._throw_exception()
+
+    def octave_up(self, _):
+        self._throw_exception()
+
+    def octave_down(self, _):
+        self._throw_exception()
+
         
+class _Pitch:
+    def __init__(self, letter, accidentals=None, octave=4):
+        self._letter = letter
+        self._accidental_offset = sum([offset*(sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in {'b':-1, '#':+1, 'X':+2}.items()])
+        self._octave = octave
+
+    @staticmethod
+    def from_string(pitch):
+        if pitch == None: return None
+
+        def get_accidentals(pitch_string):
+            accidentals = ""
+            if len(pitch_string) == 1:
+                return accidentals
+            else:
+                for temp in pitch_string:
+                    if temp == "#" or temp == "b":
+                        accidentals += temp
+                return accidentals
+
+        def get_octave(pitch_string):
+            octave = 4
+            try:
+                float(pitch_string[-1])
+            except ValueError:
+                return 4
+            else:
+                octave = int(pitch_string[-1])
+            return octave
+
+        letter = pitch[0]
+        octave = get_octave(pitch)
+        accidentals = get_accidentals(pitch)
+
+        return _Pitch(letter, accidentals, octave)
+
+    @property
+    def letter(self):
+        return self._letter
+
+    @property
+    def accidentals(self):
+        if self._accidental_offset == 0:
+            return ''
+        elif self._accidental_offset < 0:
+            return 'b' * abs(self._accidental_offset)
+        else:
+            return 'X' * (self._accidental_offset // 2) + '#' * (self._accidental_offset % 2)
+
+    @accidentals.setter
+    def accidentals(self, accidentals):
+        self._accidental_offset = sum([offset*(sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in {'b':-1, '#':+1, 'X':+2}.items()])
+        if self._accidental_offset == 0:
+            return ''
+        elif self._accidental_offset < 0:
+            return 'b' * abs(self._accidental_offset)
+        else:
+            return 'X' * (self._accidental_offset // 2) + '#' * (self._accidental_offset % 2)
+
+    @property
+    def octave(self):
+        return self._octave
+
+    @octave.setter
+    def octave(self, octave):
+        self._octave = octave
+        return True
+
+
+    def __int__(self):
+        letter_offset = {
+            'A':-3,
+            'B':-1,
+            'C': 0,
+            'D': 2,
+            'E': 4,
+            'F': 5,
+            'G': 7,
+        }[self._letter]
+
+
+        accidental_offset = self._accidental_offset
+
+        octave_offset = self.octave * 12
+
+        middle_c_offset = -12*4
+
+        return sum([middle_c_offset, letter_offset, accidental_offset, octave_offset])
+
+    def __str__(self):
+        return ''.join(map(str, [self.letter, self.accidentals, self.octave]))
+
+    def __eq__(self, other):
+        return self.pitch_number == other.pitch_number
+
+
+    @classmethod
+    def int_to_pitch(cls, pitch_number):
+        if pitch_number == None: return None
+        raise NotImplementedError('TODO')
+
+
