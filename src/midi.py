@@ -41,6 +41,9 @@ class Event:
 
 
 
+def play_score(score):
+    raise NotImplemented('TODO: score_to_midi')
+
 def measure_to_midi(measure):
 
     tempo = 600
@@ -55,7 +58,7 @@ def measure_to_midi(measure):
     track.append(Message('program_change', program=12, time=0))
 
 
-    note_pitches = ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4']
+    note_pitches = ['C4', 'D4', 'E4', 'F4', 'G4', 'A5', 'B5']
     note_pitch_nums = [60, 62, 64, 65, 67, 70, 72]
 
 

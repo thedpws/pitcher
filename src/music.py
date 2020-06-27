@@ -8,6 +8,7 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
+import listening
 
 
 class PitcherException(Exception):
@@ -88,7 +89,7 @@ class _Music:
 
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
-    def __init__(self, title=None, subtitle=None, author=None, author_email=None):
+    def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
         self._title = title or ''
 
 
@@ -96,7 +97,7 @@ class Score(_Music):
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
 
-        self._parts = []
+        self._parts = parts or []
 
     def get_author(self):
         return self._composition.author
@@ -108,6 +109,8 @@ class Score(_Music):
     def add_part(self, part):
         self._parts.append(part)
 
+    def play(self):
+        listening.play_score(self)
 
 class Part(_Music):
     '''A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.'''
@@ -146,6 +149,9 @@ class Part(_Music):
     def add_staff(self, staff):
         self._staffs.append(staff)
 
+    def play(self):
+        return Score(parts=[self]).play()
+
 class Staff(_Music):
 
     '''Collection of measures'''
@@ -180,6 +186,9 @@ class Staff(_Music):
 
 
         return self._measures[i]
+
+    def play(self):
+        return Part(staffs=[self]).play()
 
 
 # TODO: Bind measure length by global time signature
@@ -227,6 +236,11 @@ class Measure(_Music, Collection):
     def extend(self, notes):
         for note in notes:
             self.append(note)
+
+    def play(self):
+        return Staff(measures=[self]).play()
+
+
 
 
 class Chord(_Music):
@@ -317,6 +331,9 @@ class Chord(_Music):
     def get_triads(key):
         return Chord.triads(key)
     """
+
+    def play(self):
+        return Measure(notes=[self]).play()
 
 class Note(_Music):
 
@@ -423,6 +440,9 @@ class Note(_Music):
         self._mingus_note.octave_down()
         self._pitch.octave -= 1
         return True
+    
+    def play(self):
+        return Measure(notes=[self]).play()
 
 
 class Rest(Note):
