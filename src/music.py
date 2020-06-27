@@ -8,7 +8,7 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
-import listening
+import playing
 
 
 class PitcherException(Exception):
@@ -61,6 +61,14 @@ class Time:
             raise PitcherException(f'{time} is an invalid time signature')
         self._time = time
 
+    @property
+    def beats_per_measure(self):
+        return int(self._time.partition('/')[0])
+
+    @property
+    def beat_definition(self):
+        return int(self._time.partition('/')[2])
+
 Time.COMMON_TIME = Time('4/4')
 Time.CUT_TIME = Time('2/4')
 
@@ -75,7 +83,7 @@ class Voice(Enum):
 
 class _Music:
 
-    def listen(self, **kwargs):
+    def play(self, **kwargs):
         '''Plays music'''
         raise NotImplementedError
 
@@ -110,11 +118,14 @@ class Score(_Music):
         self._parts.append(part)
 
     def play(self):
-        listening.play_score(self)
+        playing.play_score(self)
+
+    def __iter__(self):
+        return iter(self._parts)
+
 
 class Part(_Music):
     '''A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.'''
-
 
     @property
     def key_signature(self):
@@ -137,11 +148,19 @@ class Part(_Music):
     def __init__(
             self,
             staffs=None,
-            tempo=None,
+            tempo=40,
             time_signature=None,
             key_signature=None,
     ):
         self._staffs = staffs or [Staff()]
+        if not time_signature:
+            global _time_signature
+            time_signature = _time_signature
+
+        if not key_signature:
+            global _key_signature
+            key_signature = _key_signature
+
         self._time_signature = time_signature
         self._key_signature = key_signature
         self.tempo = tempo
@@ -151,6 +170,9 @@ class Part(_Music):
 
     def play(self):
         return Score(parts=[self]).play()
+
+    def __iter__(self):
+        return iter(self._staffs)
 
 class Staff(_Music):
 
@@ -190,6 +212,9 @@ class Staff(_Music):
     def play(self):
         return Part(staffs=[self]).play()
 
+    def __iter__(self):
+        return iter(self._measures)
+
 
 # TODO: Bind measure length by global time signature
 class Measure(_Music, Collection):
@@ -207,6 +232,10 @@ class Measure(_Music, Collection):
         self._notes[self._next_count] = item
 
         self._next_count += item.duration
+
+    def extend(self, items):
+        for item in items:
+            self.append(item)
 
     def __getitem__(self, start):
         return self._notes[start]
@@ -239,6 +268,9 @@ class Measure(_Music, Collection):
 
     def play(self):
         return Staff(measures=[self]).play()
+
+    def __iter__(self):
+        return iter(self._notes)
 
 
 

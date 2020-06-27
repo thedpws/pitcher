@@ -44,8 +44,8 @@ class Event:
 def play_score(score):
     events = []
 
-    tempo = 600
     mid = MidiFile()
+
     track = MidiTrack()
     mid.tracks.append(track)
 
@@ -54,10 +54,15 @@ def play_score(score):
     events = []
 
     for part in score:
-        for staff in part:
+        tempo = 700
+
+
+        for i_staff, staff in enumerate(part):
+
+
             for i_measure, measure in enumerate(staff):
 
-                measure_beat_offset = score.time_signature.beats_per_measure * i_measure
+                measure_beat_offset = part.time_signature.beats_per_measure * i_measure
 
                 for start, item in measure._notes.items():
 
@@ -69,6 +74,8 @@ def play_score(score):
 
 
                     for note in notes:
+                        if note.pitch_number == None:
+                            continue
                         midi_pitch = note.pitch_number + 60
 
                         beat_keyon = measure_beat_offset + start
