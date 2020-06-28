@@ -1,0 +1,35 @@
+--- env/lib/python3.8/site-packages/timidity/parser.py	2020-06-27 18:13:25.317418748 -0400
++++ env/lib/python3.8/site-packages/timidity/parser_new.py	2020-06-27 18:12:54.627029888 -0400
+@@ -13,7 +13,7 @@
+         self.notes = []
+         self.open_notes = [{}] * 16
+         self.bpm = 120
+-        print("Created MIDI parser on file %s" % filename)
++        #print("Created MIDI parser on file %s" % filename)
+ 
+     def __del__(self):
+         self.file.close()
+@@ -100,12 +100,12 @@
+         elif evt_type == 0x51:
+             micro_per_quarter = self.read_int(3)
+             self.bpm = round(6.e7 / (float)(micro_per_quarter))
+-            print("BPM: %d" % self.bpm)
++            #print("BPM: %d" % self.bpm)
+         elif evt_type == 0x58:
+             self.time_sig = (self.read_int(1), 2 ** self.read_int(1))
+             self.clocks_per_tick = self.read_int(1)  # no clue what this means
+             assert(self.read_int(1) == 8)  # 8 32nd's per quarter
+-            print("Time Signature: %d / %d" % self.time_sig)
++            #print("Time Signature: %d / %d" % self.time_sig)
+         else:
+             raise Exception("Unhandled meta event %x" % evt_type)
+ 
+@@ -162,7 +162,7 @@
+ 
+ 
+ def parse_midi(filename: str):
+-    print("Playing MIDI file %s" % filename.split('/')[-1])  # jank
++    #print("Playing MIDI file %s" % filename.split('/')[-1])  # jank
+     ps = Parser(filename)
+     notes, tpq, bpm = ps.parse()
+     del ps
