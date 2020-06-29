@@ -2,6 +2,7 @@
 from mingus.extra.lilypond import to_png
 from tempfile import TemporaryDirectory
 from threading import get_ident
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
@@ -185,6 +186,8 @@ def show_score(score):
         img = mpimg.imread(png_filepath)
         imgplot = plt.imshow(img)
 
+        plt.rcParams['figure.figsize'] = [10,5]
+        plt.rcParams['figure.dpi'] = 200
         plt.show()
 
 
