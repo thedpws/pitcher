@@ -4,17 +4,7 @@ A python library and framework for composing music.
 
 # Writing music documentation
 
-```mermaid
-graph LR
-A[Note] --> B[Chord]
-A --> C(Rest)
-B --> D[Measure]
-C --> D
-D --> E[Staff]
-E --> F[Part]
-F --> G[Score]
-G --> H[Music]
-```
+![flow](./demo/flow.png)
 
 ## Note() class
 
