@@ -496,7 +496,7 @@ class Note(_Music):
     # half_steps is a 2 character string of +/- and a number of half-steps
     def transpose(self, half_steps):
         """Raises/Lowers the note"""
-        num_half_steps = int(half_steps[1])
+        num_half_steps = int(half_steps[1:])
         if half_steps[0] == '+':
             for num in range(num_half_steps):
                 self._pitch.accidentals += '#'

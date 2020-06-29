@@ -98,10 +98,10 @@ d_chord = rh[0][1.0]
 print(d_chord, d_chord.accidentals)
 d_chord.transpose('+3')
 print(d_chord, d_chord.accidentals)
-d_chord.transpose('+1')
+d_chord.transpose('+99')
 print(d_chord, d_chord.accidentals)
-
-
+d_chord.transpose('-99')
+print(d_chord, d_chord.accidentals)
 """
 pc.show()
 pc.listen()
