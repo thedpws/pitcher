@@ -8,7 +8,7 @@ import matplotlib.image as mpimg
 
 
 
-def show_score(score):
+def to_ly(score):
 
     ly_parts = []
     for part in score:
@@ -172,17 +172,19 @@ def show_score(score):
 
     ly = ly_book_format % ly_score
 
+
+    return ly
+
+def show_score(score):
+
     with TemporaryDirectory() as tmpdirname:
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
 
-        to_png(ly, png_filepath)
+        to_png(to_ly(score), png_filepath)
 
         img = mpimg.imread(png_filepath)
         imgplot = plt.imshow(img)
 
         plt.show()
-
-
-    return ly
 
 
