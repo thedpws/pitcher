@@ -90,8 +90,6 @@ class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
     def __init__(self, title=None, subtitle=None, author=None, author_email=None):
         self._title = title or ''
-
-
         self._composition = MingusComposition()
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
@@ -517,4 +515,41 @@ class Rest(Note):
 
     def transpose(self, half_steps):
         raise PitcherException('Rests cannot be assigned a pitch')
-    
+
+# class Song(Note, Score, _Music, Chord, Part):
+#     def __init__(self, title, subtitle, author, author_email):
+#         self._chord = []
+#         self._part = []
+#         self._measure = []
+#         self._notes = []
+#         self._score = Score(title, subtitle, author, author_email)
+
+#     @score.setter
+#     def add_score(self, score): self._score = score
+
+#     @chord.setter
+#     def add_chord(self, chord): self._chord.append(chord)
+
+#     @part.setter
+#     def add_part(self, part): self._part.append(part)
+
+#     @measure.setter
+#     def add_measure(self, measure): self._measure.append(measure)
+
+#     @note.setter
+#     def add_note(self, note): self._notes.append(note)
+
+#     @property
+#     def score(self): return self._score
+
+#     @property
+#     def measure(self): return self._measure
+
+#     @property
+#     def part(self): return self._part
+
+#     @property
+#     def chord(self): return self._chord
+
+#     @property
+#     def notes(self): return self._notes
