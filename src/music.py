@@ -240,8 +240,11 @@ class Measure(_Music, Collection):
     '''Collection of notes'''
 
     def __init__(self, notes=None):
-        self._notes = notes or dict()
+        self._notes = dict()
         self._next_count = 0.0
+
+        if notes:
+            self.extend(notes)
 
     def __setitem__(self, start, item):
         self._notes[start] = item
