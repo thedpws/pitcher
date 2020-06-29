@@ -425,7 +425,7 @@ class Note(_Music):
 
     @property
     def accidentals(self):
-        return self_pitch.accidentals
+        return self._pitch.accidentals
 
     @property
     def pitch(self):
@@ -497,9 +497,16 @@ class Note(_Music):
         self._pitch.accidentals -= 1
         return True
 
+    # half_steps is a 2 character string of +/- and a number of half-steps
     def transpose(self, half_steps):
         """Raises/Lowers the note"""
-        self._pitch.accidentals += half_steps
+        num_half_steps = int(half_steps[1:])
+        if half_steps[0] == '+':
+            for num in range(num_half_steps):
+                self._pitch.accidentals += '#'
+        elif half_steps[0] == '-':
+            for num in range(num_half_steps):
+                self._pitch.accidentals += 'b'
 
     def note(self):
         return self._mingus_note
