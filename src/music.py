@@ -645,13 +645,13 @@ class _Pitch:
 
     def __int__(self):
         letter_offset = {
-            'A':-3,
-            'B':-1,
             'C': 0,
             'D': 2,
             'E': 4,
             'F': 5,
             'G': 7,
+            'A': 9,
+            'B': 11,
         }[self._letter]
 
 
