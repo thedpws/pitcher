@@ -1,4 +1,12 @@
 
+from mingus.extra.lilypond import to_png
+from tempfile import TemporaryDirectory
+from threading import get_ident
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+
+
 
 def show_score(score):
 
@@ -164,7 +172,17 @@ def show_score(score):
 
     ly = ly_book_format % ly_score
 
-    print(ly)
+    with TemporaryDirectory() as tmpdirname:
+        png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
+
+        to_png(ly, png_filepath)
+
+        img = mpimg.imread(png_filepath)
+        imgplot = plt.imshow(img)
+
+        plt.show()
+
+
     return ly
 
 
