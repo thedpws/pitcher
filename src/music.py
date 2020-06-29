@@ -13,18 +13,6 @@ import re
 class PitcherException(Exception):
     pass
 
-global _time_signature, _key_signature
-_time_signature = None
-_key_signature = None
-
-def key(key_signature):
-    global _key_signature
-    _key_signature = key_signature
-
-def time(time_signature):
-    global _time_signature
-    _time_signature = time_signature
-
 class Key:
     def __init__(self, flats=0, sharps=0):
 
@@ -62,6 +50,19 @@ class Time:
 
 Time.COMMON_TIME = Time('4/4')
 Time.CUT_TIME = Time('2/4')
+
+global _time_signature, _key_signature
+_time_signature = Time('4/4')
+_key_signature = Key.C_MAJOR
+
+def key(key_signature):
+    global _key_signature
+    _key_signature = key_signature
+
+def time(time_signature):
+    global _time_signature
+    _time_signature = time_signature
+
 
 
 
@@ -187,8 +188,12 @@ class Measure(_Music, Collection):
     '''Collection of notes'''
 
     def __init__(self, notes=None):
-        self._notes = notes or dict()
-        self._next_count = 0.0
+        if notes:
+            self.extend(notes)
+        else:
+            self._notes = dict()
+            self._next_count = 0.0
+
 
     def __setitem__(self, start, item):
         self._notes[start] = item
