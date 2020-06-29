@@ -1,5 +1,5 @@
 
-from mingus.extra.lilypond import to_png
+from mingus.extra.lilypond import to_png, to_pdf
 from tempfile import TemporaryDirectory
 from threading import get_ident
 import matplotlib.pyplot as plt
@@ -175,12 +175,25 @@ def to_ly(score):
 
     return ly
 
-def show_score(score):
+
+def write_to_pdf(score, output_file):
+
+    lilypond_string = to_ly(score)
+    to_pdf(lilypond_string, output_file)
+
+def write_to_png(score, output_file):
+
+    lilypond_string = to_ly(score)
+    to_png(lilypond_string, output_file)
+
+
+def show_score_png(score):
 
     with TemporaryDirectory() as tmpdirname:
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
 
-        to_png(to_ly(score), png_filepath)
+        lilypond_string = to_ly(score)
+        to_png(lilypond_string, png_filepath)
 
         img = mpimg.imread(png_filepath)
         imgplot = plt.imshow(img)

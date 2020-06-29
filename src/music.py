@@ -131,7 +131,7 @@ class Score(_Music):
         playing.play_score(self)
 
     def show(self):
-        showing.show_score(self)
+        showing.show_score_png(self)
 
     def __iter__(self):
         return iter(self._parts)
