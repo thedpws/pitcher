@@ -80,8 +80,7 @@ bass[2].append(Note('Bb2', 2.0))
 bass[2].append(Note('Bb2', 0.5))
 bass[2].append(Rest(1.5))
 bass[3].append(Note('Bb2', 4))
-bass[4].append(Note('Eb3', 2.0))
-bass[4].append(Note('Eb3', 1/2))
+bass[4].append(Chord(notes=[Note('Eb3', 1/2), Note('F', 1), Note('G', 2)]))
 
 
 
