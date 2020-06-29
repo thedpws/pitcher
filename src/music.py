@@ -9,6 +9,7 @@ from mingus.containers.instrument import Instrument as MingusInstrument, Piano a
 from enum import Enum
 import re
 import playing
+import lyexport as showing
 
 
 class PitcherException(Exception):
@@ -34,6 +35,8 @@ class Key:
 
         self._flats = flats
         self._sharps = sharps
+    def __str__(self):
+        return 'c \\major'
 
 
 Key.Cb_MAJOR = Key(flats=7)
@@ -60,6 +63,9 @@ class Time:
         if not re.match(r'\d/\d', time):
             raise PitcherException(f'{time} is an invalid time signature')
         self._time = time
+
+    def __str__(self):
+        return self._time
 
     @property
     def beats_per_measure(self):
@@ -98,8 +104,6 @@ class _Music:
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
     def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
-        self._title = title or ''
-
 
         self._composition = MingusComposition()
         self._composition.set_author(author, author_email)
@@ -107,10 +111,16 @@ class Score(_Music):
 
         self._parts = parts or []
 
-    def get_author(self):
+    @property
+    def composer(self):
         return self._composition.author
 
-    def get_title(self):
+    @property
+    def author(self):
+        return self._composition.author
+
+    @property
+    def title(self):
         return self._composition.title
 
     # A little more explicit than "append" or "extend". This is for readability since these are not conventional terms.
@@ -119,6 +129,9 @@ class Score(_Music):
 
     def play(self):
         playing.play_score(self)
+
+    def show(self):
+        showing.show_score(self)
 
     def __iter__(self):
         return iter(self._parts)
@@ -171,6 +184,9 @@ class Part(_Music):
     def play(self):
         return Score(parts=[self]).play()
 
+    def show(self):
+        return Score(parts=[self]).show()
+
     def __iter__(self):
         return iter(self._staffs)
 
@@ -212,6 +228,9 @@ class Staff(_Music):
     def play(self):
         return Part(staffs=[self]).play()
 
+    def show(self):
+        return Part(staffs=[self]).show()
+
     def __iter__(self):
         return iter(self._measures)
 
@@ -243,8 +262,8 @@ class Measure(_Music, Collection):
     def __delitem__(self, start):
         del self._notes[start]
 
-    def __iter__(self, start):
-        return iter(self._notes)
+    def __iter__(self):
+        return iter(self._notes.values())
 
     def __len__(self):
         '''Returns the total duration of the measure'''
@@ -269,9 +288,8 @@ class Measure(_Music, Collection):
     def play(self):
         return Staff(measures=[self]).play()
 
-    def __iter__(self):
-        return iter(self._notes)
-
+    def show(self):
+        return Staff(measures=[self]).show()
 
 
 
@@ -279,6 +297,9 @@ class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
+
+    def __str__(self):
+        return f'{[str(n) for n in self.notes]}'
 
     @staticmethod
     def mingusChord_to_chord(mingus_chord, note):
@@ -367,7 +388,13 @@ class Chord(_Music):
     def play(self):
         return Measure(notes=[self]).play()
 
+    def show(self):
+        return Measure(notes=[self]).show()
+
 class Note(_Music):
+
+    def __str__(self):
+        return f'{self.letter} {self.duration}'
 
     #converts mingus_note to note
     @staticmethod
@@ -386,6 +413,14 @@ class Note(_Music):
 
         if self.pitch_number != None:
             self._mingus_note = MingusNote(self.pitch_number)
+
+    @property
+    def letter(self):
+        return self._pitch.letter
+
+    @property
+    def accidentals(self):
+        return self_pitch.accidentals
 
     @property
     def pitch(self):
@@ -476,15 +511,24 @@ class Note(_Music):
     def play(self):
         return Measure(notes=[self]).play()
 
+    def show(self):
+        return Measure(notes=[self]).show()
+
 
 class Rest(Note):
     '''Has no pitch. Only duration.'''
     def __init__(self, duration):
         super(Rest, self).__init__(pitch=None, duration=duration)
 
+    def __str__(self):
+        return f'Rest {self.duration}'
 
     def _throw_exception(self):
         raise PitcherException('Rests cannot be assigned a pitch')
+
+    @property
+    def letter(self):
+        self._throw_exception()
 
     @property
     def pitch(self):
