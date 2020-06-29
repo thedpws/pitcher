@@ -44,9 +44,9 @@ A python library and framework for composing music.
 ### Staff(), a collection of measures
 
 **Init**:
-- clef
-- voice
-- measures
+- `clef`
+- `voice`
+- `measures`
 
 
 `staff1 = music.Staff(Clef.TREBLE, Voice.PIANO, measure1)`
