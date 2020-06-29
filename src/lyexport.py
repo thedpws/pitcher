@@ -4,6 +4,7 @@ from tempfile import TemporaryDirectory
 from threading import get_ident
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from PIL import Image
 
 
 
@@ -195,9 +196,8 @@ def show_score_png(score):
         lilypond_string = to_ly(score)
         to_png(lilypond_string, png_filepath)
 
-        img = mpimg.imread(png_filepath)
-        imgplot = plt.imshow(img)
+        im = Image.open(png_filepath)
 
-        plt.show()
+        im.show()
 
 
