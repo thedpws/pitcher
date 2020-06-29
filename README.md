@@ -12,4 +12,4 @@ A python library and framework for composing music.
 
 ### Working on the project
 * Before working, activate the environment by `source env/bin/activate`
-* Dactivate by `deactivate`
+* Deactivate by `deactivate`
