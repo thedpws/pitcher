@@ -2,6 +2,7 @@
 from mingus.extra.lilypond import to_png, to_pdf
 from tempfile import TemporaryDirectory
 from threading import get_ident
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image

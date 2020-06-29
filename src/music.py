@@ -104,7 +104,6 @@ class _Music:
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
     def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
-
         self._composition = MingusComposition()
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
@@ -240,17 +239,23 @@ class Measure(_Music, Collection):
     '''Collection of notes'''
 
     def __init__(self, notes=None):
-        self._notes = notes or dict()
+        self._notes = dict()
         self._next_count = 0.0
+
+        if notes:
+            self.extend(notes)
 
     def __setitem__(self, start, item):
         self._notes[start] = item
         self._next_count = max(self._next_count, start + item.duration)
 
     def append(self, item):
-        self._notes[self._next_count] = item
-
-        self._next_count += item.duration
+        # TODO: FIX
+        if False and self._next_count + item.duration > _time_signature:
+            print("Item exceeds measure's time signature")
+        else:
+            self._notes[self._next_count] = item
+            self._next_count += item.duration
 
     def extend(self, items):
         for item in items:
@@ -496,6 +501,9 @@ class Note(_Music):
         """Raises/Lowers the note"""
         self._pitch.accidentals += half_steps
 
+    def note(self):
+        return self._mingus_note
+
     def octave_up(self):
         """Raises the pitch an octave"""
         self._mingus_note.octave_up()
@@ -676,3 +684,43 @@ class _Pitch:
         raise NotImplementedError('TODO')
 
 
+    def transpose(self, half_steps):
+        raise PitcherException('Rests cannot be assigned a pitch')
+
+# class Song(Note, Score, _Music, Chord, Part):
+#     def __init__(self, title, subtitle, author, author_email):
+#         self._chord = []
+#         self._part = []
+#         self._measure = []
+#         self._notes = []
+#         self._score = Score(title, subtitle, author, author_email)
+
+#     @score.setter
+#     def add_score(self, score): self._score = score
+
+#     @chord.setter
+#     def add_chord(self, chord): self._chord.append(chord)
+
+#     @part.setter
+#     def add_part(self, part): self._part.append(part)
+
+#     @measure.setter
+#     def add_measure(self, measure): self._measure.append(measure)
+
+#     @note.setter
+#     def add_note(self, note): self._notes.append(note)
+
+#     @property
+#     def score(self): return self._score
+
+#     @property
+#     def measure(self): return self._measure
+
+#     @property
+#     def part(self): return self._part
+
+#     @property
+#     def chord(self): return self._chord
+
+#     @property
+#     def notes(self): return self._notes
