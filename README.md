@@ -6,6 +6,7 @@ A python library and framework for composing music.
 
 ![flow](./demo/flow.png)
 
+
 ## Note() class
 
 
@@ -64,3 +65,15 @@ A python library and framework for composing music.
     score1.get_author() # "Author Me"
     score1.get_title() # "My Song"
     score1.add_part(part1)
+
+# Contributing
+### Setting up dependencies
+* To create the virtual environment, `cd` into the project directory and `python3 -m venv env`
+* To install dependencies to the virtual environment, `source env/bin/activate && pip3 install -r requirements.txt`
+* Install these dependencies using your local package manager (ex. `sudo apt install python3-dev`):
+  * `python3-dev`
+  * `libasound2`
+
+### Working on the project
+* Before working, activate the environment by `source env/bin/activate`
+* Deactivate by `deactivate`

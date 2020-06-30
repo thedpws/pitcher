@@ -8,6 +8,8 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
+import playing
+import lyexport as showing
 
 """
 .. module:: Pitcher
@@ -19,6 +21,18 @@ import re
 class PitcherException(Exception):
     pass
 
+global _time_signature, _key_signature
+_time_signature = '4/4'
+_key_signature = None
+
+def key(key_signature):
+    global _key_signature
+    _key_signature = key_signature
+
+def time(time_signature):
+    global _time_signature
+    _time_signature = time_signature
+
 class Key:
     def __init__(self, flats=0, sharps=0):
 
@@ -27,6 +41,8 @@ class Key:
 
         self._flats = flats
         self._sharps = sharps
+    def __str__(self):
+        return 'c \\major'
 
 
 Key.Cb_MAJOR = Key(flats=7)
@@ -53,6 +69,17 @@ class Time:
         if not re.match(r'\d/\d', time):
             raise PitcherException(f'{time} is an invalid time signature')
         self._time = time
+
+    def __str__(self):
+        return self._time
+
+    @property
+    def beats_per_measure(self):
+        return int(self._time.partition('/')[0])
+
+    @property
+    def beat_definition(self):
+        return int(self._time.partition('/')[2])
 
 Time.COMMON_TIME = Time('4/4')
 Time.CUT_TIME = Time('2/4')
@@ -81,7 +108,7 @@ class Voice(Enum):
 
 class _Music:
 
-    def listen(self, **kwargs):
+    def play(self, **kwargs):
         '''Plays music'''
         raise NotImplementedError
 
@@ -98,31 +125,46 @@ class Score(_Music):
 
     """Class representing a collection of parts.
 
+       :param parts: [Part]
        :param title: str
        :param subtitle: str
        :param author: str
        :param author_email: str
     """
-    def __init__(self, title=None, subtitle=None, author=None, author_email=None):
-        self._title = title or ''
+    def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
         self._composition = MingusComposition()
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
 
-        self._parts = []
+        self._parts = parts or []
 
-    def get_author(self):
-        """Returns author from current score"""
+    @property
+    def composer(self):
         return self._composition.author
 
-    def get_title(self):
-        """Returns title from current score"""
+    @property
+    """Author from current score"""
+    def author(self):
+        return self._composition.author
+
+    @property
+    def title(self):
+        """Title from current score"""
         return self._composition.title
 
     # A little more explicit than "append" or "extend". This is for readability since these are not conventional terms.
     def add_part(self, part):
         """Adds a new part to current score"""
         self._parts.append(part)
+
+    def play(self):
+        playing.play_score(self)
+
+    def show(self):
+        showing.show_score_png(self)
+
+    def __iter__(self):
+        return iter(self._parts)
 
 
 class Part(_Music):
@@ -134,7 +176,6 @@ class Part(_Music):
        :param time_signature: e.g. 3/4
        :param key_signature: int
     """
-
 
     @property
     def key_signature(self):
@@ -157,17 +198,34 @@ class Part(_Music):
     def __init__(
             self,
             staffs=None,
-            tempo=None,
+            tempo=40,
             time_signature=None,
             key_signature=None,
     ):
         self._staffs = staffs or [Staff()]
+        if not time_signature:
+            global _time_signature
+            time_signature = _time_signature
+
+        if not key_signature:
+            global _key_signature
+            key_signature = _key_signature
+
         self._time_signature = time_signature
         self._key_signature = key_signature
         self.tempo = tempo
 
     def add_staff(self, staff):
         self._staffs.append(staff)
+
+    def play(self):
+        return Score(parts=[self]).play()
+
+    def show(self):
+        return Score(parts=[self]).show()
+
+    def __iter__(self):
+        return iter(self._staffs)
 
 class Staff(_Music):
 
@@ -214,6 +272,15 @@ class Staff(_Music):
 
         return self._measures[i]
 
+    def play(self):
+        return Part(staffs=[self]).play()
+
+    def show(self):
+        return Part(staffs=[self]).show()
+
+    def __iter__(self):
+        return iter(self._measures)
+
 
 # TODO: Bind measure length by global time signature
 class Measure(_Music, Collection):
@@ -223,12 +290,11 @@ class Measure(_Music, Collection):
     """
 
     def __init__(self, notes=None):
+        self._notes = dict()
+        self._next_count = 0.0
+
         if notes:
             self.extend(notes)
-        else:
-            self._notes = dict()
-            self._next_count = 0.0
-
 
     def __setitem__(self, start, item):
         self._notes[start] = item
@@ -236,11 +302,16 @@ class Measure(_Music, Collection):
 
     def append(self, item):
         """Adds new note to current measure"""
-        if self._next_count + item.duration > _time_signature:
+        # TODO: FIX
+        if False and self._next_count + item.duration > _time_signature:
             print("Item exceeds measure's time signature")
         else:
             self._notes[self._next_count] = item
             self._next_count += item.duration
+
+    def extend(self, items):
+        for item in items:
+            self.append(item)
 
     def __getitem__(self, start):
         return self._notes[start]
@@ -248,8 +319,8 @@ class Measure(_Music, Collection):
     def __delitem__(self, start):
         del self._notes[start]
 
-    def __iter__(self, start):
-        return iter(self._notes)
+    def __iter__(self):
+        return iter(self._notes.values())
 
     def __len__(self):
         """Returns the total duration of the measure"""
@@ -272,6 +343,13 @@ class Measure(_Music, Collection):
         for note in notes:
             self.append(note)
 
+    def play(self):
+        return Staff(measures=[self]).play()
+
+    def show(self):
+        return Staff(measures=[self]).show()
+
+
 
 class Chord(_Music):
 
@@ -283,6 +361,9 @@ class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
+
+    def __str__(self):
+        return f'{[str(n) for n in self.notes]}'
 
     @staticmethod
     def mingusChord_to_chord(mingus_chord, note):
@@ -323,6 +404,10 @@ class Chord(_Music):
 
     def __iter__(self):
         return iter(self._notes)
+
+    @property
+    def notes(self):
+        return self._notes
 
     def append(self, note):
         self._notes += note
@@ -365,14 +450,23 @@ class Chord(_Music):
         return Chord.triads(key)
     """
 
+    def play(self):
+        return Measure(notes=[self]).play()
+
+    def show(self):
+        return Measure(notes=[self]).show()
+
 class Note(_Music):
     """Class representing the smallest unit for the Pitcher.
 
-       :param pitch: Pitch() class
+       :param pitch: string with letter name, accidentals, and octave, such as 'A#4'
        :param duration: note duration
        :param dynamic: dynamic, such as piano, forte, crescendo, etc
        :param articulation: articulation, such as staccato, accent, fermata, etc
     """
+
+    def __str__(self):
+        return f'{self.letter} {self.duration}'
 
     #converts mingus_note to note
     @staticmethod
@@ -391,6 +485,14 @@ class Note(_Music):
 
         if self.pitch_number != None:
             self._mingus_note = MingusNote(self.pitch_number)
+
+    @property
+    def letter(self):
+        return self._pitch.letter
+
+    @property
+    def accidentals(self):
+        return self._pitch.accidentals
 
     @property
     def pitch(self):
@@ -472,9 +574,16 @@ class Note(_Music):
         self._pitch.accidentals -= 1
         return True
 
+    # half_steps is a 2 character string of +/- and a number of half-steps
     def transpose(self, half_steps):
         """Raises/Lowers the note"""
-        self._pitch.accidentals += half_steps
+        num_half_steps = int(half_steps[1:])
+        if half_steps[0] == '+':
+            for num in range(num_half_steps):
+                self._pitch.accidentals += '#'
+        elif half_steps[0] == '-':
+            for num in range(num_half_steps):
+                self._pitch.accidentals += 'b'
 
     def note(self):
         """Returns letter note"""
@@ -491,6 +600,12 @@ class Note(_Music):
         self._mingus_note.octave_down()
         self._pitch.octave -= 1
         return True
+    
+    def play(self):
+        return Measure(notes=[self]).play()
+
+    def show(self):
+        return Measure(notes=[self]).show()
 
 
 class Rest(Note):
@@ -498,9 +613,15 @@ class Rest(Note):
     def __init__(self, duration):
         super(Rest, self).__init__(pitch=None, duration=duration)
 
+    def __str__(self):
+        return f'Rest {self.duration}'
 
     def _throw_exception(self):
         raise PitcherException('Rests cannot be assigned a pitch')
+
+    @property
+    def letter(self):
+        self._throw_exception()
 
     @property
     def pitch(self):
@@ -617,13 +738,13 @@ class _Pitch:
 
     def __int__(self):
         letter_offset = {
-            'A':-3,
-            'B':-1,
             'C': 0,
             'D': 2,
             'E': 4,
             'F': 5,
             'G': 7,
+            'A': 9,
+            'B': 11,
         }[self._letter]
 
 

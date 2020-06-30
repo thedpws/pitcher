@@ -2,6 +2,27 @@ from unittest import TestCase, skip, mock
 import music as ptr
 
 
+class TestGlobals(TestCase):
+    def test_key_signature_sets_globally(self):
+        # Arrange
+        ptr.key(ptr.Key.C_MAJOR)
+
+        # Act
+        key = ptr._key_signature
+
+        # Assert
+        self.assertEqual(key, ptr.Key.C_MAJOR)
+
+    def test_time_signature_sets_globally(self):
+        # Arrange
+        ptr.time(ptr.Time.COMMON_TIME)
+
+        # Act
+        time = ptr._time_signature
+
+        # Assert
+        self.assertEqual(time, ptr.Time.COMMON_TIME)
+
 class TestNotes(TestCase):
 
     def test_C4_maps_to_0(self):
