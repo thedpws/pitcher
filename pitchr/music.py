@@ -301,7 +301,7 @@ class Measure(_Music, _Collection):
 class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
-        self.__mingus_notes = _MingusNoteContainer()
+        self._mingus_notes = _MingusNoteContainer()
 
     def __str__(self):
         return f'{[str(n) for n in self.notes]}'
@@ -352,18 +352,18 @@ class Chord(_Music):
 
     def append(self, note):
         self._notes += note
-        self.__mingus_notes += note.mingus()
+        self._mingus_notes += note.mingus()
 
     def remove(self, note):
         self._notes = [n for n in self._notes if n != note]
-        self.__mingus_notes.remove_note(note.mingus())
+        self._mingus_notes.remove_note(note.mingus())
 
     def clear(self):
-        self.__mingus_notes.empty()
+        self._mingus_notes.empty()
         self._notes.clear()
 
     def determine(self):
-        return self.__mingus_notes.determine()
+        return self._mingus_notes.determine()
       
     # note is a string. This function returns the corresponding chord of notes
     # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
