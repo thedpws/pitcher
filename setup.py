@@ -9,9 +9,15 @@ authors_string = ', '.join(sorted(["Caleb Wong", "Aeyzechiah Vasquez", "Vinicius
 
 
 
+with open("requirements.txt", "r") as fh:
+    requirements = fh.read().split('\n')
+
+print(requirements)
+input('Do these requirements look okay?')
+
 setuptools.setup(
     name="pitchr",
-    version="0.0.1",
+    version="0.1.3",
     author=authors_string,
     author_email="azvasquez99@gmail.com",
     description="A small example package",
@@ -19,6 +25,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/thedpws/pitcher",
     packages=setuptools.find_packages(),
+    install_requires=requirements,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License (GPL)",
