@@ -132,6 +132,9 @@ class Score(_Music):
     def show(self):
         _showing.show_score_png(self)
 
+    def save(self, filename):
+        _showing.write_to_pdf(self, filename)
+
     def __iter__(self):
         return iter(self._parts)
 
@@ -186,6 +189,9 @@ class Part(_Music):
     def show(self):
         return Score(parts=[self]).show()
 
+    def save(self, filename):
+        return Score(parts=[self]).save(filename)
+
     def __iter__(self):
         return iter(self._staffs)
 
@@ -229,6 +235,9 @@ class Staff(_Music):
 
     def show(self):
         return Part(staffs=[self]).show()
+
+    def save(self, filename):
+        return Part(staffs=[self]).save(filename)
 
     def __iter__(self):
         return iter(self._measures)
@@ -295,6 +304,9 @@ class Measure(_Music, _Collection):
 
     def show(self):
         return Staff(measures=[self]).show()
+
+    def save(self, filename):
+        return Staff(measures=[self]).save(filename)
 
 
 
@@ -395,6 +407,9 @@ class Chord(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 class Note(_Music):
 
@@ -528,6 +543,9 @@ class Note(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 
 class Rest(Note):
