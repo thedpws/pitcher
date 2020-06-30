@@ -6,6 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
+import numpy as np
 
 
 
@@ -199,6 +200,73 @@ def show_score_png(score):
 
         im = Image.open(png_filepath)
 
+        width, height = im.size
+
+        # account for lilypond default text at bottom
+        height -= 40
+
+        pix = np.array(im)
+
+
+        # Crop
+        text_start_row = None
+        text_end_row = None
+        text_start_col = None
+        text_end_col = None
+
+        found_text = False
+
+        margin = 10
+
+        # This could be a lot more performant
+        for row in range(height):
+            found_text = False
+            for col in range(width):
+                p = pix[row][col]
+                if [p[0], p[1], p[2]] != [255, 255, 255]:
+                    text_start_row = max(row - margin, 0)
+                    found_text = True
+                    break
+            if found_text:
+                break
+
+        for row in reversed(range(height)):
+            found_text = False
+            for col in reversed(range(width)):
+                p = pix[row][col]
+                if [p[0], p[1], p[2]] != [255, 255, 255]:
+                    text_end_row = min(row + margin, height-1)
+                    found_text = True
+                    break
+            if found_text:
+                break
+
+        for col in range(width):
+            found_text = False
+            for row in range(height):
+                p = pix[row][col]
+                if [p[0], p[1], p[2]] != [255, 255, 255]:
+                    text_start_col = max(col - margin, 0)
+                    found_text = True
+                    break
+            if found_text:
+                break
+
+        for col in reversed(range(width)):
+            found_text = False
+            for row in reversed(range(height)):
+                p = pix[row][col]
+                if [p[0], p[1], p[2]] != [255, 255, 255]:
+                    text_end_col = min(col+margin, width)
+                    found_text = True
+                    break
+            if found_text:
+                break
+
+        im = im.crop((text_start_col, text_start_row, text_end_col, text_end_row))
+
         im.show()
+
+
 
 
