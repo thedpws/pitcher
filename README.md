@@ -73,6 +73,7 @@ A python library and framework for composing music.
 * Install these dependencies using your local package manager (ex. `sudo apt install python3-dev`):
   * `python3-dev`
   * `libasound2`
+  * `lilypond`
 
 ### Working on the project
 * Before working, activate the environment by `source env/bin/activate`
