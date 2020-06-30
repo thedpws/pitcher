@@ -1,6 +1,8 @@
 
 
 import unittest
+from unittest.mock import patch
+import os
 from pitchr import *
 
 class TestPart(unittest.TestCase):
@@ -19,6 +21,12 @@ class TestPart(unittest.TestCase):
 
         self.assertEqual(p.key_signature, Key.G_MAJOR)
 
+    def test_part_keysig_is_settable(self):
+        p = Part(key_signature=Key.F_MAJOR)
+
+        p.key_signature = Key(sharps=1)
+        self.assertEqual(p.key_signature, Key(sharps=1))
+
     def test_part_init_timesig_defaults_to_global(self):
 
         time(Time.CUT_TIME)
@@ -31,6 +39,12 @@ class TestPart(unittest.TestCase):
         p = Part(time_signature=Time.CUT_TIME)
         self.assertEqual(p.time_signature, Time.CUT_TIME)
 
+    def test_part_timesig_is_settable(self):
+        p = Part(time_signature=Time.CUT_TIME)
+
+        p.time_signature = Time('5/4')
+        self.assertEqual(p.time_signature, Time('5/4'))
+
     def test_part_init_defaults_tempo_to_40(self):
         p = Part()
         self.assertEqual(p.tempo, 40)
@@ -39,6 +53,45 @@ class TestPart(unittest.TestCase):
         p = Part(tempo=96)
         self.assertEqual(p.tempo, 96)
 
+    def test_part_tempo_is_settable(self):
+        p = Part(tempo=96)
+
+        p.tempo = 90
+
+        self.assertEqual(p.tempo, 90)
+
     def test_part_init_pass_staffs_adds_staffs(self):
         p = Part(staffs=[s := Staff()])
+        self.assertEqual(p[0], s)
+
+    @patch('pitchr.playing.play_score')
+    def test_play_calls_play_score(self, play_score):
+        p = Part()
+
+        p.play()
+
+        self.assertTrue(play_score.called)
+
+    @patch('pitchr.showing.show_score_png')
+    def test_show_calls_show_score(self, show_score):
+        p = Part()
+
+        p.show()
+
+        self.assertTrue(show_score.called)
+
+    def test_save_calls_save_score(self):
+        p = Part()
+
+        with TemporaryDirectory() as tempdirname:
+            filepath = tempdirname + '/export.pdf'
+            p.save(filepath)
+
+            self.assertTrue(os.path.exists(filepath))
+
+    def test_add_staff_adds_staffs(self):
+        p = Part()
+
+        p.add_staff(s := Staff())
+
         self.assertEqual(p[0], s)

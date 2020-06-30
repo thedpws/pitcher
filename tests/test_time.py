@@ -23,3 +23,5 @@ class TestTime(unittest.TestCase):
                 self.fail(f'{act} raised an Exception')
     
 
+    def test_time_equality(self):
+        self.assertEqual(Time('4/4'), Time('4/4'))

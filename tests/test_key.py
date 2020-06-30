@@ -59,3 +59,6 @@ class TestKey(unittest.TestCase):
         k = str(Key.Eb_MAJOR)
 
         self.assertEqual(k, 'e-flat \\major')
+
+    def test_key_equivalence(self):
+        self.assertEqual(Key(sharps=6), Key(sharps=6))
