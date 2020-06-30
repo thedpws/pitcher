@@ -8,8 +8,8 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
-import playing
-import lyexport as showing
+import src.playing as playing
+import src.lyexport as showing
 
 """
 .. module:: Pitcher
@@ -34,8 +34,13 @@ def time(time_signature):
     _time_signature = time_signature
 
 class Key:
-    def __init__(self, flats=0, sharps=0):
+    """
+        Class representing the Key the Score is played in
 
+        :param flats: number of flats in the Key
+        :param sharps: number of sharps in the Key
+    """
+    def __init__(self, flats=0, sharps=0):
         if flats and sharps:
             raise PitcherException(f'Key signature with {flats} flats and {sharps} sharps is invalid')
 
@@ -65,6 +70,11 @@ Key.C_SHARP_MAJOR = Key(sharps=7)
 
 
 class Time:
+    """
+    Class representing the Time signature the Score is played in
+
+    :param time: String representing the time signature
+    """
     def __init__(self, time):
         if not re.match(r'\d/\d', time):
             raise PitcherException(f'{time} is an invalid time signature')
@@ -75,18 +85,24 @@ class Time:
 
     @property
     def beats_per_measure(self):
+        """Get the beats per measure of the Score
+
+        :returns: beats per measure
+        """
         return int(self._time.partition('/')[0])
 
     @property
     def beat_definition(self):
+        """Get the beat defition of the Score
+
+        :returns: beat defition
+        """
         return int(self._time.partition('/')[2])
 
 Time.COMMON_TIME = Time('4/4')
 Time.CUT_TIME = Time('2/4')
 
-global _time_signature, _key_signature
-_time_signature = Time('4/4')
-_key_signature = Key.C_MAJOR
+
 
 def key(key_signature):
     global _key_signature
@@ -121,9 +137,7 @@ class _Music:
         raise NotImplementedError
 
 class Score(_Music):
-    """Contains textual information and optional arguments for the first Part"""
-
-    """Class representing a collection of parts.
+    """Class representing a collection of parts
 
        :param parts: [Part]
        :param title: str
@@ -143,18 +157,27 @@ class Score(_Music):
         return self._composition.author
 
     @property
-    """Author from current score"""
     def author(self):
+        """Get the author of the current Score.
+
+        :returns: Author
+        """
         return self._composition.author
 
     @property
     def title(self):
-        """Title from current score"""
+        """Get the title of the current Score.
+
+        :returns: title
+        """
         return self._composition.title
 
     # A little more explicit than "append" or "extend". This is for readability since these are not conventional terms.
     def add_part(self, part):
-        """Adds a new part to current score"""
+        """Adds a new Part to the current Score
+
+        :param part: Part
+        """
         self._parts.append(part)
 
     def play(self):
@@ -168,10 +191,9 @@ class Score(_Music):
 
 
 class Part(_Music):
-
     """Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.
 
-       :param staff: from Staff()
+       :param staffs: from Staff()
        :param tempo: int
        :param time_signature: e.g. 3/4
        :param key_signature: int
@@ -179,19 +201,35 @@ class Part(_Music):
 
     @property
     def key_signature(self):
+        """Get the key signature of the current Part
+
+        :returns: key signature
+        """
         return self._key_signature
 
     @key_signature.setter
     def key_signature(self, key_signature):
+        """Set the key signature of the current Part
+
+        :param key_signature: Key
+        """
         self._key_signature = key_signature
 
 
     @property
     def time_signature(self):
+        """Get the time signature of the current Part
+
+        :returns: time signature
+        """
         return self._time_signature
 
     @time_signature.setter
     def time_signature(self, time_signature):
+        """Set the time signature of the current Part
+
+        :param time_signature: Time
+        """
         self._time_signature = time_signature
 
 
@@ -216,6 +254,10 @@ class Part(_Music):
         self.tempo = tempo
 
     def add_staff(self, staff):
+        """Adds a staff to the current Part
+
+        :param staff: Staff
+        """
         self._staffs.append(staff)
 
     def play(self):
@@ -243,22 +285,34 @@ class Staff(_Music):
 
     @property
     def clef(self):
-        """Returs set clef"""
+        """Get clef of the Staff
+
+        :returns: clef
+        """
         return self._clef
 
     @clef.setter
     def clef(self, clef):
-        """Sets a new clef to current staff"""
+        """Set clef of the Staff
+
+        :param clef: Clef
+        """
         self._clef = clef
 
     @property
     def voice(self):
-        """Returns current voice"""
+        """Get voice of the Staff
+
+        :returns: voice
+        """
         return self._voice
 
     @voice.setter
     def voice(self, voice):
-        """Sets a new voide to current staff"""
+        """Set voice of the Staff
+
+        :param voice: Voice
+        """
         self._voice = voice
 
     def __getitem__(self, i):
@@ -301,7 +355,10 @@ class Measure(_Music, Collection):
         self._next_count = max(self._next_count, start + item.duration)
 
     def append(self, item):
-        """Adds new note to current measure"""
+        """Adds new note to current measure
+
+        :param item: Note
+        """
         # TODO: FIX
         if False and self._next_count + item.duration > _time_signature:
             print("Item exceeds measure's time signature")
@@ -310,6 +367,10 @@ class Measure(_Music, Collection):
             self._next_count += item.duration
 
     def extend(self, items):
+        """Adds multiple items (chord/notes) to current measure
+
+        :param items: [Note] or [Chord]
+        """
         for item in items:
             self.append(item)
 
@@ -337,12 +398,6 @@ class Measure(_Music, Collection):
 
         return note in all_notes
 
-
-    def extend(self, notes):
-        """Adds new note to current measure"""
-        for note in notes:
-            self.append(note)
-
     def play(self):
         return Staff(measures=[self]).play()
 
@@ -352,10 +407,9 @@ class Measure(_Music, Collection):
 
 
 class Chord(_Music):
-
     """Class representing an organized group of notes.
 
-       :param notes: []
+       :param notes: [Note]
     """
 
     def __init__(self, notes=None):
@@ -375,31 +429,60 @@ class Chord(_Music):
 
     @staticmethod
     def major_triad(note):
-        mingus_chord = MingusChord.major_triad(note.pitch)
+        """Get the major triad of a Note
+
+        :param note: Note
+        :returns: Chord
+        """
+        mingus_chord = MingusChord.major_triad(note.letter)
         return Chord.mingusChord_to_chord(mingus_chord, note)
       
     @staticmethod
     def minor_triad(note):
-        mingus_chord = MingusChord.minor_triad(note.pitch)
+        """Get the minor triad of a Note
+
+        :param note: Note
+        :returns: Chord
+        """
+        mingus_chord = MingusChord.minor_triad(note.letter)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def diminished_triad(note):
-        mingus_chord = MingusChord.diminished_triad(note.pitch)
+        """Get the diminished triad of a Note
+
+        :param note: Note
+        :returns: Chord
+        """
+        mingus_chord = MingusChord.diminished_triad(note.letter)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def augmented_triad(note):
-        mingus_chord = MingusChord.augmented_triad(note.pitch)
+        """Get the augmented triad of a Note
+
+        :param note: Note
+        :returns: Chord
+        """
+        mingus_chord = MingusChord.augmented_triad(note.letter)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def suspended_triad(note):
-        mingus_chord = MingusChord.suspended_triad(note.pitch)
+        """Get the suspended triad of a Note
+
+        :param note: Note
+        :returns: Chord
+        """
+        mingus_chord = MingusChord.suspended_triad(note.letter)
         return Chord.mingusChord_to_chord(mingus_chord, note)
    
     @property
     def duration(self):
+        """Get the duration of a Chord
+
+        :returns: duration
+        """
         return max(map(lambda n: n.duration, self._notes))
 
     def __iter__(self):
@@ -407,17 +490,30 @@ class Chord(_Music):
 
     @property
     def notes(self):
+        """Get the notes of a Chord
+
+        :returns: [Note]
+        """
         return self._notes
 
     def append(self, note):
+        """Append a note to a Chord
+
+        :param note: Note
+        """
         self._notes += note
         self._mingus_notes += note.mingus()
 
     def remove(self, note):
+        """Remove a note from a Chord
+
+        :param note: Note
+        """
         self._notes = [n for n in self._notes if n != note]
         self._mingus_notes.remove_note(note.mingus())
 
     def clear(self):
+        """Clears all notes from a Chord"""
         self._mingus_notes.empty()
         self._notes.clear()
 
@@ -468,16 +564,14 @@ class Note(_Music):
     def __str__(self):
         return f'{self.letter} {self.duration}'
 
-    #converts mingus_note to note
+
     @staticmethod
     def mingusNote_to_note(mingus_note, note):
         result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
         return result
 
-    
-    # pitch has 3 characters max: note,#/b,octave
+
     def __init__(self, pitch, duration, dynamic=None, articulation=None):
-        """Has pitch and duration. Also accidentals and note-effects (tremolo)"""
         self._pitch = _Pitch.from_string(pitch)
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
@@ -488,29 +582,50 @@ class Note(_Music):
 
     @property
     def letter(self):
+        """Get the letter of a Note
+
+        :returns: letter
+        """
         return self._pitch.letter
 
     @property
     def accidentals(self):
+        """Get the accidentals of a Note
+
+        :returns: accidentals (string)
+        """
         return self._pitch.accidentals
 
     @property
     def pitch(self):
-        """Returns a string of letter-note, accidentals, and octave"""
+        """Get the pitch of a Note
+
+        :returns: String of letter-note, accidentals, and octave
+        """
         return str(self._pitch)
 
     @pitch.setter
     def pitch(self, pitch):
+        """Set the pitch of a Note
+
+        :param pitch: String of letter-note, accidentals, and octave
+        """
         self._pitch = _Pitch.from_string(pitch)
 
     @property
     def octave(self):
-        """Returns current note octave"""
+        """Get the octave of a Note
+
+        :returns: octave
+        """
         return self._pitch.octave
 
     @octave.setter
     def octave(self, octave):
-        """Sets new octave to note"""
+        """Set the octave of a Note
+
+        :param octave: int
+        """
         self._pitch.octave = octave
 
     @property
@@ -519,42 +634,59 @@ class Note(_Music):
 
     @property
     def duration(self):
-        """Returns current note duration"""
+        """Get the duration of a Note
+
+        :returns: duration
+        """
         return self._duration
 
     @duration.setter
     def duration(self, duration):
-        """Sets new duration for note"""
+        """Set the duration of a Note
+
+        :param duration: float
+        """
         self._duration = duration
 
-    @property
-    def accidentals(self):
-        """Returns pitch accidentals"""
-        return self._pitch.accidentals
 
     @accidentals.setter
     def accidentals(self, accidentals):
-        """Sets new pitch accidentals"""
+        """Set the accidentals of a Note
+
+         :param accidentals: accidentals
+         """
         self._pitch.accidentals = accidentals
 
     @property
     def dynamic(self):
-        """Returns current dynamic from note"""
+        """Get the dynamic of a Note
+
+        :returns: dynamic
+        """
         return self._dynamic
 
     @dynamic.setter
     def dynamic(self, dynamic):
-        """Sets new dynamic to note"""
+        """Set the dynamic of a Note
+
+        :param dynamic: string
+        """
         self._dynamic = dynamic
 
     @property
     def articulation(self):
-        """Returns current articulation from note"""
+        """Get the articulation of a Note
+
+        :returns: duration
+        """
         return self._articulation
 
     @articulation.setter
     def articulation(self, articulation):
-        """Sets new articulation to note"""
+        """Set the articulation of a Note
+
+        :param articulation: string
+        """
         self._articulation = articulation
 
     def __eq__(self, other):
@@ -563,7 +695,7 @@ class Note(_Music):
     # Mingus interface
 
     def augment(self):
-        """Raises the note by a half step"""
+        """Raise the Note by a half step"""
         self._mingus_note = mingus_notes.augment(str(self._mingus_note))
         self._pitch.accidentals += 1
         return True
@@ -574,9 +706,12 @@ class Note(_Music):
         self._pitch.accidentals -= 1
         return True
 
-    # half_steps is a 2 character string of +/- and a number of half-steps
+
     def transpose(self, half_steps):
-        """Raises/Lowers the note"""
+        """Transpose the Note by half_steps
+
+        :param half_steps: string of +/- and number of half-steps, ex: '+11' or '-4'
+        """
         num_half_steps = int(half_steps[1:])
         if half_steps[0] == '+':
             for num in range(num_half_steps):
@@ -590,13 +725,13 @@ class Note(_Music):
         return self._mingus_note
 
     def octave_up(self):
-        """Raises the pitch an octave"""
+        """Raises the Note an octave"""
         self._mingus_note.octave_up()
         self._pitch.octave += 1
         return True
 
     def octave_down(self):
-        """Lowers the pitch an octave"""
+        """Lowers the Note an octave"""
         self._mingus_note.octave_down()
         self._pitch.octave -= 1
         return True
@@ -609,7 +744,10 @@ class Note(_Music):
 
 
 class Rest(Note):
-    """Has no pitch. Only duration."""
+    """Class representing a Rest Note. Has no pitch. Only duration.
+
+    :param duration: float
+    """
     def __init__(self, duration):
         super(Rest, self).__init__(pitch=None, duration=duration)
 
