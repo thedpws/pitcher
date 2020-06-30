@@ -9,6 +9,12 @@ from mingus.containers.instrument import Instrument as MingusInstrument, Piano a
 from enum import Enum
 import re
 
+"""
+.. module:: Pitcher
+  :synopsis: A python library and framework for composing music.
+.. moduleauthor:: Quarantine Quintet
+"""
+
 
 class PitcherException(Exception):
     pass
@@ -320,7 +326,13 @@ class Chord(_Music):
     """
 
 class Note(_Music):
-
+    """ Class representing the smallest unit for the Pitcher.
+    :param pitch: Pitch() class
+    :param duration: note duration
+    :param dynamic: dynamic, such as piano, forte, crescendo, etc
+    :param articulation: articulation, such as staccato, accent, fermata, etc
+    """
+    
     #converts mingus_note to note
     @staticmethod
     def mingusNote_to_note(mingus_note, note):
