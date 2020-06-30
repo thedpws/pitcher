@@ -6,7 +6,7 @@ A python library and framework for composing music.
 
 # Writing music documentation
 
-![flow](./demo/flow.png)
+![flow](https://raw.githubusercontent.com/thedpws/pitcher/master/demo/flow.png)
 
 
 ## Note() class
