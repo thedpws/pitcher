@@ -94,7 +94,15 @@ class _Music:
         raise NotImplementedError
 
 class Score(_Music):
-    '''Contains textual information and optional arguments for the first Part'''
+    """Contains textual information and optional arguments for the first Part"""
+
+    """Class representing a collection of parts.
+
+       :param title: str
+       :param subtitle: str
+       :param author: str
+       :param author_email: str
+    """
     def __init__(self, title=None, subtitle=None, author=None, author_email=None):
         self._title = title or ''
         self._composition = MingusComposition()
@@ -104,18 +112,28 @@ class Score(_Music):
         self._parts = []
 
     def get_author(self):
+        """Returns author from current score"""
         return self._composition.author
 
     def get_title(self):
+        """Returns title from current score"""
         return self._composition.title
 
     # A little more explicit than "append" or "extend". This is for readability since these are not conventional terms.
     def add_part(self, part):
+        """Adds a new part to current score"""
         self._parts.append(part)
 
 
 class Part(_Music):
-    '''A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.'''
+
+    """Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.
+
+       :param staff: from Staff()
+       :param tempo: int
+       :param time_signature: e.g. 3/4
+       :param key_signature: int
+    """
 
 
     @property
@@ -153,7 +171,13 @@ class Part(_Music):
 
 class Staff(_Music):
 
-    '''Collection of measures'''
+    """Class representing a collection of measures.
+
+       :param clef: from Clef()
+       :param voice: from Voice()
+       :param measures: Measure()
+    """
+    
     def __init__(self, clef=Clef.TREBLE, voice=Voice.PIANO, measures=None):
         self._clef = clef
         self._voice = voice
@@ -161,18 +185,22 @@ class Staff(_Music):
 
     @property
     def clef(self):
+        """Returs set clef"""
         return self._clef
 
     @clef.setter
     def clef(self, clef):
+        """Sets a new clef to current staff"""
         self._clef = clef
 
     @property
     def voice(self):
+        """Returns current voice"""
         return self._voice
 
     @voice.setter
     def voice(self, voice):
+        """Sets a new voide to current staff"""
         self._voice = voice
 
     def __getitem__(self, i):
@@ -189,7 +217,10 @@ class Staff(_Music):
 
 # TODO: Bind measure length by global time signature
 class Measure(_Music, Collection):
-    '''Collection of notes'''
+    """Class representing a collection of notes.
+
+       :param notes: []
+    """
 
     def __init__(self, notes=None):
         if notes:
@@ -204,6 +235,7 @@ class Measure(_Music, Collection):
         self._next_count = max(self._next_count, start + item.duration)
 
     def append(self, item):
+        """Adds new note to current measure"""
         if self._next_count + item.duration > _time_signature:
             print("Item exceeds measure's time signature")
         else:
@@ -220,11 +252,11 @@ class Measure(_Music, Collection):
         return iter(self._notes)
 
     def __len__(self):
-        '''Returns the total duration of the measure'''
+        """Returns the total duration of the measure"""
         return self._next_count
 
     def __contains__(self, note):
-        '''Returns True if note is in this measure'''
+        """Returns True if note is in this measure"""
         all_notes = []
         for item in self._notes:
             if type(item) == Chord:
@@ -236,11 +268,18 @@ class Measure(_Music, Collection):
 
 
     def extend(self, notes):
+        """Adds new note to current measure"""
         for note in notes:
             self.append(note)
 
 
 class Chord(_Music):
+
+    """Class representing an organized group of notes.
+
+       :param notes: []
+    """
+
     def __init__(self, notes=None):
         self._notes = notes or []
         self._mingus_notes = MingusNoteContainer()
@@ -300,9 +339,10 @@ class Chord(_Music):
     def determine(self):
         return self._mingus_notes.determine()
       
-    # note is a string. This function returns the corresponding chord of notes
-    # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
-    """ These are recognized abbreviations:
+    """Note is a string. This function returns the corresponding chord of notes"""
+    """get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']"""
+
+    """These are recognized abbreviations:
         Triads: ‘m’, ‘M’ or ‘’, ‘dim’.
         Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’
         Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’
@@ -326,23 +366,24 @@ class Chord(_Music):
     """
 
 class Note(_Music):
-    """ Class representing the smallest unit for the Pitcher.
-    :param pitch: Pitch() class
-    :param duration: note duration
-    :param dynamic: dynamic, such as piano, forte, crescendo, etc
-    :param articulation: articulation, such as staccato, accent, fermata, etc
+    """Class representing the smallest unit for the Pitcher.
+
+       :param pitch: Pitch() class
+       :param duration: note duration
+       :param dynamic: dynamic, such as piano, forte, crescendo, etc
+       :param articulation: articulation, such as staccato, accent, fermata, etc
     """
-    
+
     #converts mingus_note to note
     @staticmethod
     def mingusNote_to_note(mingus_note, note):
         result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
         return result
 
-    '''Has pitch and duration. Also accidentals and note-effects (tremolo)'''
+    
     # pitch has 3 characters max: note,#/b,octave
     def __init__(self, pitch, duration, dynamic=None, articulation=None):
-
+        """Has pitch and duration. Also accidentals and note-effects (tremolo)"""
         self._pitch = _Pitch.from_string(pitch)
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
@@ -362,10 +403,12 @@ class Note(_Music):
 
     @property
     def octave(self):
+        """Returns current note octave"""
         return self._pitch.octave
 
     @octave.setter
     def octave(self, octave):
+        """Sets new octave to note"""
         self._pitch.octave = octave
 
     @property
@@ -374,34 +417,42 @@ class Note(_Music):
 
     @property
     def duration(self):
+        """Returns current note duration"""
         return self._duration
 
     @duration.setter
     def duration(self, duration):
+        """Sets new duration for note"""
         self._duration = duration
 
     @property
     def accidentals(self):
+        """Returns pitch accidentals"""
         return self._pitch.accidentals
 
     @accidentals.setter
     def accidentals(self, accidentals):
+        """Sets new pitch accidentals"""
         self._pitch.accidentals = accidentals
 
     @property
     def dynamic(self):
+        """Returns current dynamic from note"""
         return self._dynamic
 
     @dynamic.setter
     def dynamic(self, dynamic):
+        """Sets new dynamic to note"""
         self._dynamic = dynamic
 
     @property
     def articulation(self):
+        """Returns current articulation from note"""
         return self._articulation
 
     @articulation.setter
     def articulation(self, articulation):
+        """Sets new articulation to note"""
         self._articulation = articulation
 
     def __eq__(self, other):
@@ -426,6 +477,7 @@ class Note(_Music):
         self._pitch.accidentals += half_steps
 
     def note(self):
+        """Returns letter note"""
         return self._mingus_note
 
     def octave_up(self):
@@ -442,7 +494,7 @@ class Note(_Music):
 
 
 class Rest(Note):
-    '''Has no pitch. Only duration.'''
+    """Has no pitch. Only duration."""
     def __init__(self, duration):
         super(Rest, self).__init__(pitch=None, duration=duration)
 

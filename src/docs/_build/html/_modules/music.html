@@ -128,7 +128,15 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 <div class="viewcode-block" id="Score"><a class="viewcode-back" href="../music.html#music.Score">[docs]</a><span class="k">class</span> <span class="nc">Score</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Contains textual information and optional arguments for the first Part&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;Contains textual information and optional arguments for the first Part&quot;&quot;&quot;</span>
+
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of parts.</span>
+
+<span class="sd">       :param title: str</span>
+<span class="sd">       :param subtitle: str</span>
+<span class="sd">       :param author: str</span>
+<span class="sd">       :param author_email: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_email</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_title</span> <span class="o">=</span> <span class="n">title</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span> <span class="o">=</span> <span class="n">MingusComposition</span><span class="p">()</span>
@@ -138,18 +146,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="Score.get_author"><a class="viewcode-back" href="../music.html#music.Score.get_author">[docs]</a>    <span class="k">def</span> <span class="nf">get_author</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns author from current score&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">author</span></div>
 
 <div class="viewcode-block" id="Score.get_title"><a class="viewcode-back" href="../music.html#music.Score.get_title">[docs]</a>    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns title from current score&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">title</span></div>
 
     <span class="c1"># A little more explicit than &quot;append&quot; or &quot;extend&quot;. This is for readability since these are not conventional terms.</span>
 <div class="viewcode-block" id="Score.add_part"><a class="viewcode-back" href="../music.html#music.Score.add_part">[docs]</a>    <span class="k">def</span> <span class="nf">add_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a new part to current score&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Part"><a class="viewcode-back" href="../music.html#music.Part">[docs]</a><span class="k">class</span> <span class="nc">Part</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.&#39;&#39;&#39;</span>
+
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.</span>
+
+<span class="sd">       :param staff: from Staff()</span>
+<span class="sd">       :param tempo: int</span>
+<span class="sd">       :param time_signature: e.g. 3/4</span>
+<span class="sd">       :param key_signature: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 
     <span class="nd">@property</span>
@@ -187,7 +205,13 @@
 
 <div class="viewcode-block" id="Staff"><a class="viewcode-back" href="../music.html#music.Staff">[docs]</a><span class="k">class</span> <span class="nc">Staff</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
 
-    <span class="sd">&#39;&#39;&#39;Collection of measures&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of measures.</span>
+
+<span class="sd">       :param clef: from Clef()</span>
+<span class="sd">       :param voice: from Voice()</span>
+<span class="sd">       :param measures: Measure()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clef</span><span class="o">=</span><span class="n">Clef</span><span class="o">.</span><span class="n">TREBLE</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">Voice</span><span class="o">.</span><span class="n">PIANO</span><span class="p">,</span> <span class="n">measures</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span> <span class="o">=</span> <span class="n">clef</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span> <span class="o">=</span> <span class="n">voice</span>
@@ -195,18 +219,22 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returs set clef&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span>
 
     <span class="nd">@clef</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">clef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets a new clef to current staff&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span> <span class="o">=</span> <span class="n">clef</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">voice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns current voice&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span>
 
     <span class="nd">@voice</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voice</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets a new voide to current staff&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span> <span class="o">=</span> <span class="n">voice</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
@@ -223,7 +251,10 @@
 
 <span class="c1"># TODO: Bind measure length by global time signature</span>
 <div class="viewcode-block" id="Measure"><a class="viewcode-back" href="../music.html#music.Measure">[docs]</a><span class="k">class</span> <span class="nc">Measure</span><span class="p">(</span><span class="n">_Music</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Collection of notes&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of notes.</span>
+
+<span class="sd">       :param notes: []</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">notes</span><span class="p">:</span>
@@ -238,6 +269,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Measure.append"><a class="viewcode-back" href="../music.html#music.Measure.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds new note to current measure&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="n">_time_signature</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Item exceeds measure&#39;s time signature&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -254,11 +286,11 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Returns the total duration of the measure&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the total duration of the measure&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span>
 
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;Returns True if note is in this measure&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if note is in this measure&quot;&quot;&quot;</span>
         <span class="n">all_notes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="o">==</span> <span class="n">Chord</span><span class="p">:</span>
@@ -270,11 +302,18 @@
 
 
 <div class="viewcode-block" id="Measure.extend"><a class="viewcode-back" href="../music.html#music.Measure.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds new note to current measure&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">note</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Chord"><a class="viewcode-back" href="../music.html#music.Chord">[docs]</a><span class="k">class</span> <span class="nc">Chord</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Class representing an organized group of notes.</span>
+
+<span class="sd">       :param notes: []</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="o">=</span> <span class="n">notes</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_notes</span> <span class="o">=</span> <span class="n">MingusNoteContainer</span><span class="p">()</span>
@@ -334,9 +373,10 @@
 <div class="viewcode-block" id="Chord.determine"><a class="viewcode-back" href="../music.html#music.Chord.determine">[docs]</a>    <span class="k">def</span> <span class="nf">determine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_notes</span><span class="o">.</span><span class="n">determine</span><span class="p">()</span></div>
       
-    <span class="c1"># note is a string. This function returns the corresponding chord of notes</span>
-    <span class="c1"># get_chord(&quot;C&quot;) returns [&#39;C&#39;, &#39;E&#39;, &#39;G&#39;] and get_chord(&quot;Cm&quot;) returns [&#39;C&#39;, &#39;Eb&#39;, &#39;G&#39;]</span>
-    <span class="sd">&quot;&quot;&quot; These are recognized abbreviations:</span>
+    <span class="sd">&quot;&quot;&quot;Note is a string. This function returns the corresponding chord of notes&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;get_chord(&quot;C&quot;) returns [&#39;C&#39;, &#39;E&#39;, &#39;G&#39;] and get_chord(&quot;Cm&quot;) returns [&#39;C&#39;, &#39;Eb&#39;, &#39;G&#39;]&quot;&quot;&quot;</span>
+
+    <span class="sd">&quot;&quot;&quot;These are recognized abbreviations:</span>
 <span class="sd">        Triads: ‘m’, ‘M’ or ‘’, ‘dim’.</span>
 <span class="sd">        Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’</span>
 <span class="sd">        Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’</span>
@@ -360,23 +400,24 @@
 <span class="sd">    &quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="Note"><a class="viewcode-back" href="../music.html#music.Note">[docs]</a><span class="k">class</span> <span class="nc">Note</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Class representing the smallest unit for the Pitcher.</span>
-<span class="sd">    :param pitch: Pitch() class</span>
-<span class="sd">    :param duration: note duration</span>
-<span class="sd">    :param dynamic: dynamic, such as piano, forte, crescendo, etc</span>
-<span class="sd">    :param articulation: articulation, such as staccato, accent, fermata, etc</span>
+    <span class="sd">&quot;&quot;&quot;Class representing the smallest unit for the Pitcher.</span>
+
+<span class="sd">       :param pitch: Pitch() class</span>
+<span class="sd">       :param duration: note duration</span>
+<span class="sd">       :param dynamic: dynamic, such as piano, forte, crescendo, etc</span>
+<span class="sd">       :param articulation: articulation, such as staccato, accent, fermata, etc</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
+
     <span class="c1">#converts mingus_note to note</span>
 <div class="viewcode-block" id="Note.mingusNote_to_note"><a class="viewcode-back" href="../music.html#music.Note.mingusNote_to_note">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">mingusNote_to_note</span><span class="p">(</span><span class="n">mingus_note</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">mingus_note</span> <span class="o">+</span> <span class="n">note</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">octave</span><span class="p">),</span> <span class="n">note</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">note</span><span class="o">.</span><span class="n">dynamic</span><span class="p">,</span> <span class="n">note</span><span class="o">.</span><span class="n">articulation</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="sd">&#39;&#39;&#39;Has pitch and duration. Also accidentals and note-effects (tremolo)&#39;&#39;&#39;</span>
+    
     <span class="c1"># pitch has 3 characters max: note,#/b,octave</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">articulation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-
+        <span class="sd">&quot;&quot;&quot;Has pitch and duration. Also accidentals and note-effects (tremolo)&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span> <span class="o">=</span> <span class="n">dynamic</span>  <span class="c1"># piano, forte, crescendo, etc</span>
@@ -396,10 +437,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns current note octave&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span>
 
     <span class="nd">@octave</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">octave</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets new octave to note&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span> <span class="o">=</span> <span class="n">octave</span>
 
     <span class="nd">@property</span>
@@ -408,34 +451,42 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns current note duration&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span>
 
     <span class="nd">@duration</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets new duration for note&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns pitch accidentals&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span>
 
     <span class="nd">@accidentals</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets new pitch accidentals&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">=</span> <span class="n">accidentals</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns current dynamic from note&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span>
 
     <span class="nd">@dynamic</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dynamic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets new dynamic to note&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span> <span class="o">=</span> <span class="n">dynamic</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">articulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns current articulation from note&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_articulation</span>
 
     <span class="nd">@articulation</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">articulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">articulation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets new articulation to note&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_articulation</span> <span class="o">=</span> <span class="n">articulation</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -460,6 +511,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+=</span> <span class="n">half_steps</span></div>
 
 <div class="viewcode-block" id="Note.note"><a class="viewcode-back" href="../music.html#music.Note.note">[docs]</a>    <span class="k">def</span> <span class="nf">note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns letter note&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span></div>
 
 <div class="viewcode-block" id="Note.octave_up"><a class="viewcode-back" href="../music.html#music.Note.octave_up">[docs]</a>    <span class="k">def</span> <span class="nf">octave_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -476,7 +528,7 @@
 
 
 <div class="viewcode-block" id="Rest"><a class="viewcode-back" href="../music.html#music.Rest">[docs]</a><span class="k">class</span> <span class="nc">Rest</span><span class="p">(</span><span class="n">Note</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;Has no pitch. Only duration.&#39;&#39;&#39;</span>
+    <span class="sd">&quot;&quot;&quot;Has no pitch. Only duration.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Rest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
 

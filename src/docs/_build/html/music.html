@@ -37,6 +37,12 @@
 <dt id="music.Chord">
 <em class="property">class </em><code class="sig-prename descclassname">music.</code><code class="sig-name descname">Chord</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Chord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Chord" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">music._Music</span></code></p>
+<p>Class representing an organized group of notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes</strong> – []</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="music.Chord.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Chord.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Chord.append" title="Permalink to this definition">¶</a></dt>
@@ -256,16 +262,23 @@
 <dt id="music.Measure">
 <em class="property">class </em><code class="sig-prename descclassname">music.</code><code class="sig-name descname">Measure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Measure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Measure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">music._Music</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Collection</span></code></p>
-<p>Collection of notes</p>
+<p>Class representing a collection of notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes</strong> – []</p>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="music.Measure.append">
 <code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Measure.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Measure.append" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds new note to current measure</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Measure.extend">
 <code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Measure.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Measure.extend" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds new note to current measure</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -273,20 +286,28 @@
 <dt id="music.Note">
 <em class="property">class </em><code class="sig-prename descclassname">music.</code><code class="sig-name descname">Note</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitch</span></em>, <em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">dynamic</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">articulation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Note"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Note" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">music._Music</span></code></p>
-<p>Class representing the smallest unit for the Pitcher.
-:param pitch: Pitch() class
-:param duration: note duration
-:param dynamic: dynamic, such as piano, forte, crescendo, etc
-:param articulation: articulation, such as staccato, accent, fermata, etc</p>
+<p>Class representing the smallest unit for the Pitcher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – Pitch() class</p></li>
+<li><p><strong>duration</strong> – note duration</p></li>
+<li><p><strong>dynamic</strong> – dynamic, such as piano, forte, crescendo, etc</p></li>
+<li><p><strong>articulation</strong> – articulation, such as staccato, accent, fermata, etc</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="music.Note.accidentals">
 <em class="property">property </em><code class="sig-name descname">accidentals</code><a class="headerlink" href="#music.Note.accidentals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns pitch accidentals</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.articulation">
 <em class="property">property </em><code class="sig-name descname">articulation</code><a class="headerlink" href="#music.Note.articulation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current articulation from note</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.augment">
@@ -303,12 +324,14 @@
 <dl class="py method">
 <dt id="music.Note.duration">
 <em class="property">property </em><code class="sig-name descname">duration</code><a class="headerlink" href="#music.Note.duration" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current note duration</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.dynamic">
 <em class="property">property </em><code class="sig-name descname">dynamic</code><a class="headerlink" href="#music.Note.dynamic" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current dynamic from note</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.mingusNote_to_note">
@@ -318,12 +341,14 @@
 <dl class="py method">
 <dt id="music.Note.note">
 <code class="sig-name descname">note</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Note.note"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Note.note" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns letter note</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.octave">
 <em class="property">property </em><code class="sig-name descname">octave</code><a class="headerlink" href="#music.Note.octave" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current note octave</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Note.octave_down">
@@ -360,7 +385,17 @@
 <dt id="music.Part">
 <em class="property">class </em><code class="sig-prename descclassname">music.</code><code class="sig-name descname">Part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">staffs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tempo</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time_signature</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">key_signature</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Part" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">music._Music</span></code></p>
-<p>A collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.</p>
+<p>Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>staff</strong> – from Staff()</p></li>
+<li><p><strong>tempo</strong> – int</p></li>
+<li><p><strong>time_signature</strong> – e.g. 3/4</p></li>
+<li><p><strong>key_signature</strong> – int</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="music.Part.add_staff">
 <code class="sig-name descname">add_staff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">staff</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Part.add_staff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Part.add_staff" title="Permalink to this definition">¶</a></dt>
@@ -392,7 +427,8 @@
 <dl class="py method">
 <dt id="music.Rest.accidentals">
 <em class="property">property </em><code class="sig-name descname">accidentals</code><a class="headerlink" href="#music.Rest.accidentals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns pitch accidentals</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Rest.augment">
@@ -409,7 +445,8 @@
 <dl class="py method">
 <dt id="music.Rest.octave">
 <em class="property">property </em><code class="sig-name descname">octave</code><a class="headerlink" href="#music.Rest.octave" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current note octave</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Rest.octave_down">
@@ -450,17 +487,20 @@
 <dl class="py method">
 <dt id="music.Score.add_part">
 <code class="sig-name descname">add_part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Score.add_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Score.add_part" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Adds a new part to current score</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Score.get_author">
 <code class="sig-name descname">get_author</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Score.get_author"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Score.get_author" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns author from current score</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Score.get_title">
 <code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Score.get_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Score.get_title" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns title from current score</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -468,16 +508,27 @@
 <dt id="music.Staff">
 <em class="property">class </em><code class="sig-prename descclassname">music.</code><code class="sig-name descname">Staff</code><span class="sig-paren">(</span><em class="sig-param">clef=&lt;Clef.TREBLE: 0&gt;</em>, <em class="sig-param">voice=&lt;Voice.PIANO: 0&gt;</em>, <em class="sig-param">measures=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/music.html#Staff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#music.Staff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">music._Music</span></code></p>
-<p>Collection of measures</p>
+<p>Class representing a collection of measures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clef</strong> – from Clef()</p></li>
+<li><p><strong>voice</strong> – from Voice()</p></li>
+<li><p><strong>measures</strong> – Measure()</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
 <dt id="music.Staff.clef">
 <em class="property">property </em><code class="sig-name descname">clef</code><a class="headerlink" href="#music.Staff.clef" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returs set clef</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="music.Staff.voice">
 <em class="property">property </em><code class="sig-name descname">voice</code><a class="headerlink" href="#music.Staff.voice" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Returns current voice</p>
+</dd></dl>
 
 </dd></dl>
 
