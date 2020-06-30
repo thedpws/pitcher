@@ -1,6 +1,5 @@
 
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
-#from music import Note, Chord
 from timidity import Parser, play_notes
 from tempfile import TemporaryDirectory
 from threading import get_ident

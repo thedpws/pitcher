@@ -1,15 +1,15 @@
-from abc import ABC
-from collections.abc import Collection
-import mingus.core.notes as mingus_notes
-from mingus.containers import Note as MingusNote
-import mingus.core.chords as MingusChord
-from mingus.containers import NoteContainer as MingusNoteContainer
-from mingus.containers import Composition as MingusComposition
-from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
-from enum import Enum
-import re
-import playing
-import lyexport as showing
+from abc import ABC as _ABC
+from collections.abc import Collection as _Collection
+import mingus.core.notes as _mingus_notes
+from mingus.containers import Note as _MingusNote
+import mingus.core.chords as _MingusChord
+from mingus.containers import NoteContainer as _MingusNoteContainer
+from mingus.containers import Composition as _MingusComposition
+from mingus.containers.instrument import Instrument as _MingusInstrument, Piano as _MingusPiano, Guitar as _MingusGuitar
+from enum import Enum as _Enum
+import re as _re
+from pitchr import playing as _playing
+import pitchr.lyexport as _showing
 
 
 class PitcherException(Exception):
@@ -60,7 +60,7 @@ Key.C_SHARP_MAJOR = Key(sharps=7)
 
 class Time:
     def __init__(self, time):
-        if not re.match(r'\d/\d', time):
+        if not _re.match(r'\d/\d', time):
             raise PitcherException(f'{time} is an invalid time signature')
         self._time = time
 
@@ -80,11 +80,11 @@ Time.CUT_TIME = Time('2/4')
 
 
 
-class Clef(Enum):
+class Clef(_Enum):
     TREBLE = 0
     BASS = 1
 
-class Voice(Enum):
+class Voice(_Enum):
     PIANO = 0
 
 class _Music:
@@ -104,7 +104,7 @@ class _Music:
 class Score(_Music):
     '''Contains textual information and optional arguments for the first Part'''
     def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
-        self._composition = MingusComposition()
+        self._composition = _MingusComposition()
         self._composition.set_author(author, author_email)
         self._composition.set_title(title)
 
@@ -127,10 +127,13 @@ class Score(_Music):
         self._parts.append(part)
 
     def play(self):
-        playing.play_score(self)
+        _playing.play_score(self)
 
     def show(self):
-        showing.show_score_png(self)
+        _showing.show_score_png(self)
+
+    def save(self, filename):
+        _showing.write_to_pdf(self, filename)
 
     def __iter__(self):
         return iter(self._parts)
@@ -186,12 +189,15 @@ class Part(_Music):
     def show(self):
         return Score(parts=[self]).show()
 
+    def save(self, filename):
+        return Score(parts=[self]).save(filename)
+
     def __iter__(self):
         return iter(self._staffs)
 
 class Staff(_Music):
 
-    '''Collection of measures'''
+    '''_Collection of measures'''
     def __init__(self, clef=Clef.TREBLE, voice=Voice.PIANO, measures=None):
         self._clef = clef
         self._voice = voice
@@ -230,13 +236,16 @@ class Staff(_Music):
     def show(self):
         return Part(staffs=[self]).show()
 
+    def save(self, filename):
+        return Part(staffs=[self]).save(filename)
+
     def __iter__(self):
         return iter(self._measures)
 
 
 # TODO: Bind measure length by global time signature
-class Measure(_Music, Collection):
-    '''Collection of notes'''
+class Measure(_Music, _Collection):
+    '''_Collection of notes'''
 
     def __init__(self, notes=None):
         self._notes = dict()
@@ -296,12 +305,15 @@ class Measure(_Music, Collection):
     def show(self):
         return Staff(measures=[self]).show()
 
+    def save(self, filename):
+        return Staff(measures=[self]).save(filename)
+
 
 
 class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
-        self._mingus_notes = MingusNoteContainer()
+        self._mingus_notes = _MingusNoteContainer()
 
     def __str__(self):
         return f'{[str(n) for n in self.notes]}'
@@ -316,27 +328,27 @@ class Chord(_Music):
 
     @staticmethod
     def major_triad(note):
-        mingus_chord = MingusChord.major_triad(note.pitch)
+        mingus_chord = _MingusChord.major_triad(note.pitch)
         return Chord.mingusChord_to_chord(mingus_chord, note)
       
     @staticmethod
     def minor_triad(note):
-        mingus_chord = MingusChord.minor_triad(note.pitch)
+        mingus_chord = _MingusChord.minor_triad(note.pitch)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def diminished_triad(note):
-        mingus_chord = MingusChord.diminished_triad(note.pitch)
+        mingus_chord = _MingusChord.diminished_triad(note.pitch)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def augmented_triad(note):
-        mingus_chord = MingusChord.augmented_triad(note.pitch)
+        mingus_chord = _MingusChord.augmented_triad(note.pitch)
         return Chord.mingusChord_to_chord(mingus_chord, note)
 
     @staticmethod
     def suspended_triad(note):
-        mingus_chord = MingusChord.suspended_triad(note.pitch)
+        mingus_chord = _MingusChord.suspended_triad(note.pitch)
         return Chord.mingusChord_to_chord(mingus_chord, note)
    
     @property
@@ -396,6 +408,9 @@ class Chord(_Music):
     def show(self):
         return Measure(notes=[self]).show()
 
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
+
 class Note(_Music):
 
     def __str__(self):
@@ -417,7 +432,7 @@ class Note(_Music):
         self._articulation = articulation  # staccato, accent, fermata, etc
 
         if self.pitch_number != None:
-            self._mingus_note = MingusNote(self.pitch_number)
+            self._mingus_note = _MingusNote(self.pitch_number)
 
     @property
     def letter(self):
@@ -483,17 +498,17 @@ class Note(_Music):
     def __eq__(self, other):
         return self.duration == other.duration and self.pitch == other.pitch
 
-    # Mingus interface
+    # _Mingus interface
 
     def augment(self):
         """Raises the note by a half step"""
-        self._mingus_note = mingus_notes.augment(str(self._mingus_note))
+        self._mingus_note = _mingus_notes.augment(str(self._mingus_note))
         self._pitch.accidentals += 1
         return True
 
     def diminish(self):
         """Lowers the note by a half step"""
-        self._mingus_note = mingus_notes.diminish(str(self.mingus()))
+        self._mingus_note = _mingus_notes.diminish(str(self.mingus()))
         self._pitch.accidentals -= 1
         return True
 
@@ -528,6 +543,9 @@ class Note(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 
 class Rest(Note):

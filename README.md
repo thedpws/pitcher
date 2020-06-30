@@ -1,10 +1,12 @@
-# Pitcher
+# Pitchr
 A python library and framework for composing music.
 
+# Install
+`pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
 
 # Writing music documentation
 
-![flow](./demo/flow.png)
+![flow](https://raw.githubusercontent.com/thedpws/pitcher/master/demo/flow.png)
 
 
 ## Note() class
