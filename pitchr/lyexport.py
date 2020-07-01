@@ -13,6 +13,7 @@ import numpy as np
 
 def to_ly(score):
 
+    ly_staffs = []
     ly_parts = []
     for part in score:
 
@@ -154,6 +155,7 @@ def to_ly(score):
 
 
 
+    ly_staffs = ly_staffs or []
     ly_score = '''
 \\score {
     <<

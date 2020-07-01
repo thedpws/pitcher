@@ -15,8 +15,31 @@ import pitchr.lyexport as _showing
 class PitcherException(Exception):
     pass
 
+class Time:
+    def __init__(self, time):
+        if not _re.match(r'\d/\d', time):
+            raise PitcherException(f'{time} is an invalid time signature')
+        self._time = time
+
+    def __str__(self):
+        return self._time
+
+    @property
+    def beats_per_measure(self):
+        return int(self._time.partition('/')[0])
+
+    @property
+    def beat_definition(self):
+        return int(self._time.partition('/')[2])
+
+    def __eq__(self, other):
+        return self._time == other._time
+
+Time.COMMON_TIME = Time('4/4')
+Time.CUT_TIME = Time('2/4')
+
 global _time_signature, _key_signature
-_time_signature = '4/4'
+_time_signature = Time('4/4')
 _key_signature = None
 
 def key(key_signature):
@@ -79,28 +102,6 @@ Key.F_SHARP_MAJOR = Key(sharps=6)
 Key.C_SHARP_MAJOR = Key(sharps=7)
 
 
-class Time:
-    def __init__(self, time):
-        if not _re.match(r'\d/\d', time):
-            raise PitcherException(f'{time} is an invalid time signature')
-        self._time = time
-
-    def __str__(self):
-        return self._time
-
-    @property
-    def beats_per_measure(self):
-        return int(self._time.partition('/')[0])
-
-    @property
-    def beat_definition(self):
-        return int(self._time.partition('/')[2])
-
-    def __eq__(self, other):
-        return self._time == other._time
-
-Time.COMMON_TIME = Time('4/4')
-Time.CUT_TIME = Time('2/4')
 
 
 
@@ -234,7 +235,7 @@ class Part(_Music):
 class Staff(_Music):
 
     '''_Collection of measures'''
-    def __init__(self, clef=Clef.TREBLE, voice=Voice.PIANO, measures=None):
+    def __init__(self, measures=None, clef=Clef.TREBLE, voice=Voice.PIANO):
         self._clef = clef
         self._voice = voice
         self._measures = measures if measures else []
@@ -322,8 +323,7 @@ class Measure(_Music):
 
     def __contains__(self, note):
         '''Returns True if note is in this measure'''
-        all_notes = []
-        for item in self._notes:
+        for item in self._notes.values():
             if item == note:
                 return True
         else:
@@ -347,7 +347,7 @@ class Measure(_Music):
 class Chord(_Music):
     def __init__(self, notes=None):
         self._notes = notes or []
-        self._mingus_notes = _MingusNoteContainer()
+        #self._mingus_notes = _MingusNoteContainer()
 
     def __str__(self):
         return f'{[str(n) for n in self._notes]}'
@@ -409,19 +409,19 @@ class Chord(_Music):
         return self._notes
 
     def append(self, note):
-        self._notes += note
-        self._mingus_notes += note.mingus()
+        self._notes.append(note)
+        #self._mingus_notes += note.mingus()
 
     def remove(self, note):
         self._notes = [n for n in self._notes if n != note]
-        self._mingus_notes.remove_note(note.mingus())
+        #self._mingus_notes.remove_note(note.mingus())
 
     def clear(self):
-        self._mingus_notes.empty()
+        #self._mingus_notes.empty()
         self._notes.clear()
 
     def determine(self):
-        mingus_chord = MingusChord([n.letter for n in sorted(self.notes)])
+        mingus_chord = _MingusNoteContainer([n.letter for n in sorted(self.notes)])
         return mingus_chord.determine()
       
     # note is a string. This function returns the corresponding chord of notes
