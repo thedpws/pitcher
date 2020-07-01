@@ -8,8 +8,8 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
-import playing as playing
-import lyexport as showing
+import pitchr.playing as playing
+import pitchr.lyexport as showing
 
 """
 .. module:: Pitcher
@@ -601,7 +601,7 @@ class Note(_Music):
         self._articulation = articulation  # staccato, accent, fermata, etc
 
         if self.pitch_number != None:
-            self._mingus_note = MingusNote(self.pitch_number)
+            self._mingus_note = MingusNote(self.letter, self.octave)
 
     @property
     def letter(self):
@@ -741,8 +741,9 @@ class Note(_Music):
             for num in range(num_half_steps):
                 self._pitch.accidentals += 'b'
 
-    def note(self):
-        """Returns letter note"""
+    @property
+    def mingus_note(self):
+        """Returns mingus note"""
         return self._mingus_note
 
     def octave_up(self):
