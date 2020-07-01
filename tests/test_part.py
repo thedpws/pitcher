@@ -72,7 +72,7 @@ class TestPart(unittest.TestCase):
 
         self.assertTrue(play_score.called)
 
-    @patch('pitchr.showing.show_score_png')
+    @patch('pitchr.lyexport.show_score_png')
     def test_show_calls_show_score(self, show_score):
         p = Part()
 

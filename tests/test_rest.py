@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 from pitchr import *
 
-class TestNote(unittest.TestCase):
+class TestRest(unittest.TestCase):
 
     def test_init_sets_duration(self):
         r = Rest(1.0)
@@ -66,28 +66,7 @@ class TestNote(unittest.TestCase):
 
     def test_accidentals_none(self):
         r = Rest(1.0)
-        self.assertEqual(r.accidentals, '')
-
-    def test_accidentals_sharp(self):
-        r = Rest(1.0)
-        self.assertEqual(r.accidentals, '#')
-
-    def test_accidentals_flats(self):
-        r = Rest(1.0)
-        self.assertEqual(r.accidentals, 'bb')
-
-    def test_accidentals_double_sharps(self):
-        r = Rest(1.0)
-        self.assertEqual(r.accidentals, 'x')
-
-    def test_accidentals_simplify(self):
-        r = Rest(1.0)
-        self.assertEqual(r.accidentals, '')
-
-    def test_pitch_is_settable(self):
-        r = Rest(1.0)
-        r.pitch = 'A5'
-        self.assertEqual(r.pitch, 'A5')
+        self.assertEqual(r.accidentals, None)
 
     def test_duration(self):
         r = Rest(1.5)
@@ -97,39 +76,6 @@ class TestNote(unittest.TestCase):
         r = Rest(1.5)
         r.duratior = 1.0
         self.assertEqual(r.duration, 1.5)
-
-    def test_pitch_number_C4_is_0(self):
-        r = Rest(1.0)
-        self.assertEqual(r.pitch_number, 0)
-
-    def test_pitch_number_C5_is_12(self):
-        r = Rest(1.0)
-        self.assertEqual(r.pitch_number, 12)
-
-    def test_augment(self):
-        r = Rest(1.0)
-        r.augment()
-        self.assertEqual(r.pitch, 'C#4')
-
-    def test_diminish(self):
-        r = Rest(1.0)
-        r.diminish()
-        self.assertEqual(r.pitch, 'Cb4')
-
-    def test_transpose(self):
-        r = Rest(1.0)
-        r.transpose(12)
-        self.assertEqual(r.pitch, 'C5')
-
-    def test_octave_up(self):
-        r = Rest(1.0)
-        r.octave_up()
-        self.assertEqual(r.pitch, 'C5')
-
-    def test_octave_down(self):
-        r = Rest(1.0)
-        r.octave_down()
-        self.assertEqual(r.pitch, 'C3')
 
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):

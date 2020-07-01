@@ -59,7 +59,7 @@ class TestNote(unittest.TestCase):
     def test_duration_is_settable(self):
         n = Note('A4', 1.5)
         n.duration = 1.0
-        self.assertEqual(n.duration, 1.5)
+        self.assertEqual(n.duration, 1.0)
 
     def test_pitch_number_C4_is_0(self):
         n = Note('C4', 1.0)
@@ -81,8 +81,8 @@ class TestNote(unittest.TestCase):
 
     def test_transpose(self):
         n = Note('C4', 1.0)
-        n.transpose(12)
-        self.assertEqual(n.pitch, 'C5')
+        n.transpose('+12')
+        self.assertEqual(n.pitch_number, Note('C5', 1.0).pitch_number)
 
     def test_octave_up(self):
         n = Note('C4', 1.0)

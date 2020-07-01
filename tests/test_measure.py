@@ -20,10 +20,10 @@ class TestMeasure(unittest.TestCase):
 
         self.assertRaises(KeyError, lambda: m[2.0])
 
-    def test_measure_len_returns_duration_of_measure_in_beats(self):
+    def test_measure_duration_returns_duration_of_measure_in_beats(self):
         m = Measure(notes=[Note('A', 0.5), Note('B', 1.5)])
 
-        self.assertEqual(len(m), 2.0)
+        self.assertEqual(m.duration, 2.0)
 
     """
     def test_measure_del_replaces_note_with_rest(self):
@@ -36,7 +36,6 @@ class TestMeasure(unittest.TestCase):
 
     def test_measure_contains(self):
         m = Measure(notes=[Note('A', 0.5), Note('B', 1.5)])
-
         self.assertTrue(Note('A', 0.5) in m)
 
     def test_measure_append_appends_notes(self):
