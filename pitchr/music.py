@@ -240,7 +240,7 @@ class Part(_Music):
         :param time_signature: Time
         """
         self._time_signature = time_signature
-        
+
     @property
     def tempo(self):
         return self._tempo
