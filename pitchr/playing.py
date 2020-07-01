@@ -54,7 +54,7 @@ def play_score(score):
 
     for part in score:
         tempo = 700 - part.tempo
-        print("tempo:", str(tempo))
+        #print("tempo:", str(tempo))
         for i_staff, staff in enumerate(part):
 
 
