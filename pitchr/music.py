@@ -196,6 +196,9 @@ class Score(_Music):
     def show(self):
         showing.show_score_png(self)
 
+    def save(self, filename):
+        _showing.write_to_pdf(self, filename)
+
     def __iter__(self):
         return iter(self._parts)
 
@@ -220,11 +223,9 @@ class Part(_Music):
     @key_signature.setter
     def key_signature(self, key_signature):
         """Set the key signature of the current Part
-
         :param key_signature: Key
         """
         self._key_signature = key_signature
-
     @property
     def time_signature(self):
         """Get the time signature of the current Part
@@ -236,15 +237,22 @@ class Part(_Music):
     @time_signature.setter
     def time_signature(self, time_signature):
         """Set the time signature of the current Part
-
         :param time_signature: Time
         """
         self._time_signature = time_signature
+        
+    @property
+    def tempo(self):
+        return self._tempo
+
+    @tempo.setter
+    def tempo(self, tempo):
+        self._tempo = tempo
 
     def __init__(
             self,
             staffs=None,
-            tempo=40,
+            tempo=60,
             time_signature=None,
             key_signature=None,
     ):
@@ -259,7 +267,7 @@ class Part(_Music):
 
         self._time_signature = time_signature
         self._key_signature = key_signature
-        self.tempo = tempo
+        self._tempo = tempo
 
     def add_staff(self, staff):
         """Adds a staff to the current Part
@@ -273,6 +281,9 @@ class Part(_Music):
 
     def show(self):
         return Score(parts=[self]).show()
+
+    def save(self, filename):
+        return Score(parts=[self]).save(filename)
 
     def __iter__(self):
         return iter(self._staffs)
@@ -337,6 +348,9 @@ class Staff(_Music):
 
     def show(self):
         return Part(staffs=[self]).show()
+
+    def save(self, filename):
+        return Part(staffs=[self]).save(filename)
 
     def __iter__(self):
         return iter(self._measures)
@@ -409,6 +423,9 @@ class Measure(_Music, Collection):
 
     def show(self):
         return Staff(measures=[self]).show()
+
+    def save(self, filename):
+        return Staff(measures=[self]).save(filename)
 
 
 class Chord(_Music):
@@ -557,6 +574,8 @@ class Chord(_Music):
     def show(self):
         return Measure(notes=[self]).show()
 
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 class Note(_Music):
     """Class representing the smallest unit for the Pitcher.
@@ -743,6 +762,9 @@ class Note(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 
 class Rest(Note):

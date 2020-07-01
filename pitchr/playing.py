@@ -53,9 +53,8 @@ def play_score(score):
     events = []
 
     for part in score:
-        tempo = 700
-
-
+        tempo = 700 - part.tempo
+        print("tempo:", str(tempo))
         for i_staff, staff in enumerate(part):
 
 
@@ -80,9 +79,18 @@ def play_score(score):
                         beat_keyon = measure_beat_offset + start
                         beat_keyoff = beat_keyon + note.duration
 
+                        #midi_seconds = 60000 / (1120 * tempo)
+                        #midi_ticks = 5000*tempo/60000
+                        #print("midi_seconds:", str(midi_seconds))
+                        #print("midi_ticks:", str(midi_ticks))
+
                         time_keyon = beat_keyon * tempo
                         time_keyoff = beat_keyoff * tempo
 
+                        #print("beat_keyon:", str(beat_keyon))
+                        #print("beat_keyoff:", str(beat_keyoff))
+                        #print("time_keyon:", str(time_keyon))
+                        #print("time_keyoff:", str(time_keyoff))
                         events.extend([
                            Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
                            Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
