@@ -2,6 +2,7 @@
 
 import unittest
 from unittest.mock import patch
+from tempfile import TemporaryDirectory
 from pitchr import *
 
 class TestRest(unittest.TestCase):

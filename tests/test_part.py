@@ -3,6 +3,7 @@
 import unittest
 from unittest.mock import patch
 import os
+from tempfile import TemporaryDirectory
 from pitchr import *
 
 class TestPart(unittest.TestCase):
@@ -45,9 +46,9 @@ class TestPart(unittest.TestCase):
         p.time_signature = Time('5/4')
         self.assertEqual(p.time_signature, Time('5/4'))
 
-    def test_part_init_defaults_tempo_to_40(self):
+    def test_part_init_defaults_tempo_to_60(self):
         p = Part()
-        self.assertEqual(p.tempo, 40)
+        self.assertEqual(p.tempo, 60)
 
     def test_part_init_sets_tempo(self):
         p = Part(tempo=96)
@@ -80,14 +81,15 @@ class TestPart(unittest.TestCase):
 
         self.assertTrue(show_score.called)
 
-    def test_save_calls_save_score(self):
+    @patch('pitchr.lyexport.write_to_pdf')
+    def test_save_calls_save_score(self, save_score):
         p = Part()
 
         with TemporaryDirectory() as tempdirname:
             filepath = tempdirname + '/export.pdf'
             p.save(filepath)
 
-            self.assertTrue(os.path.exists(filepath))
+            self.assertTrue(save_score.called)
 
     def test_add_staff_adds_staffs(self):
         p = Part()

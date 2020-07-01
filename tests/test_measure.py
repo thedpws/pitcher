@@ -67,7 +67,7 @@ class TestMeasure(unittest.TestCase):
 
     @patch('pitchr.lyexport.write_to_pdf')
     def test_measure_save_calls_save_score(self, save_score):
-        with TemporaryDirecty() as tempdirname:
+        with TemporaryDirectory() as tempdirname:
             filepath = tempdirname + '/export.pdf'
             Measure().save(filepath)
         self.assertTrue(save_score.called)
