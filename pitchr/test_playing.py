@@ -2,7 +2,11 @@
 
 
 #from playing import *
-from music import *
+from pitchr.music import *
+from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
+
+
+
 
 key(Key.C_MAJOR)
 time(Time.COMMON_TIME)
@@ -35,7 +39,7 @@ n[2] = Chord([
 ])
 
 
-m.play()
+#m.play()
 
 s = Staff(measures=[m, n])
 s.play()
@@ -48,7 +52,7 @@ class N2(Note):
 
 sc = Score()
 
-p = Part(tempo=100)
+p = Part(tempo=150)
 sc.add_part(p)
 
 
@@ -86,5 +90,4 @@ bass[4].append(Note('Eb3', 1/2))
 
 
 p.play()
-
 
