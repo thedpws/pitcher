@@ -156,6 +156,9 @@ class Score(_Music):
     def show(self):
         _showing.show_score_png(self)
 
+    def save(self, filename):
+        _showing.write_to_pdf(self, filename)
+
     def __iter__(self):
         return iter(self._parts)
 
@@ -174,7 +177,6 @@ class Part(_Music):
     def key_signature(self, key_signature):
         self._key_signature = key_signature
 
-
     @property
     def time_signature(self):
         return self._time_signature
@@ -183,11 +185,18 @@ class Part(_Music):
     def time_signature(self, time_signature):
         self._time_signature = time_signature
 
+    @property
+    def tempo(self):
+        return self._tempo
+
+    @tempo.setter
+    def tempo(self, tempo):
+        self._tempo = tempo
 
     def __init__(
             self,
             staffs=None,
-            tempo=40,
+            tempo=60,
             time_signature=None,
             key_signature=None,
     ):
@@ -202,7 +211,7 @@ class Part(_Music):
 
         self._time_signature = time_signature
         self._key_signature = key_signature
-        self.tempo = tempo
+        self._tempo = tempo
 
     def add_staff(self, staff):
         self._staffs.append(staff)
@@ -212,6 +221,9 @@ class Part(_Music):
 
     def show(self):
         return Score(parts=[self]).show()
+
+    def save(self, filename):
+        return Score(parts=[self]).save(filename)
 
     def __iter__(self):
         return iter(self._staffs)
@@ -259,6 +271,9 @@ class Staff(_Music):
 
     def show(self):
         return Part(staffs=[self]).show()
+
+    def save(self, filename):
+        return Part(staffs=[self]).save(filename)
 
     def __iter__(self):
         return iter(self._measures)
@@ -323,6 +338,9 @@ class Measure(_Music):
 
     def show(self):
         return Staff(measures=[self]).show()
+
+    def save(self, filename):
+        return Staff(measures=[self]).save(filename)
 
 
 
@@ -436,6 +454,9 @@ class Chord(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 class Note(_Music):
 
@@ -578,6 +599,9 @@ class Note(_Music):
 
     def show(self):
         return Measure(notes=[self]).show()
+
+    def save(self, filename):
+        return Measure(notes=[self]).save(filename)
 
 
 class Rest(Note):

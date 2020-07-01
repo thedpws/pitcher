@@ -1,10 +1,12 @@
 # Pitchr
 A python library and framework for composing music.
 
+# Install
+`pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
 
 # Writing music documentation
 
-![flow](./demo/flow.png)
+![flow](https://raw.githubusercontent.com/thedpws/pitcher/master/demo/flow.png)
 
 
 ## Note() class
@@ -73,6 +75,7 @@ A python library and framework for composing music.
 * Install these dependencies using your local package manager (ex. `sudo apt install python3-dev`):
   * `python3-dev`
   * `libasound2`
+  * `lilypond`
 
 ### Working on the project
 * Before working, activate the environment by `source env/bin/activate`
