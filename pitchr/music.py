@@ -1,22 +1,21 @@
-from abc import ABC
-from collections.abc import Collection
-import mingus.core.notes as mingus_notes
-from mingus.containers import Note as MingusNote
-import mingus.core.chords as MingusChord
-from mingus.containers import NoteContainer as MingusNoteContainer
-from mingus.containers import Composition as MingusComposition
-from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
-from enum import Enum
-import re
-import src.playing as playing
-import src.lyexport as showing
+from abc import ABC as _ABC
+from collections.abc import Collection as _Collection
+import mingus.core.notes as _mingus_notes
+from mingus.containers import Note as _MingusNote
+import mingus.core.chords as _MingusChord
+from mingus.containers import NoteContainer as _MingusNoteContainer
+from mingus.containers import Composition as _MingusComposition
+from mingus.containers.instrument import Instrument as _MingusInstrument, Piano as _MingusPiano, Guitar as _MingusGuitar
+from enum import Enum as _Enum
+import re as _re
+from pitchr import playing as _playing
+import pitchr.lyexport as _showing
 
 """
 .. module:: Pitcher
   :synopsis: A python library and framework for composing music.
 .. moduleauthor:: Quarantine Quintet
 """
-
 
 class PitcherException(Exception):
     pass
@@ -41,6 +40,7 @@ class Key:
         :param sharps: number of sharps in the Key
     """
     def __init__(self, flats=0, sharps=0):
+
         if flats and sharps:
             raise PitcherException(f'Key signature with {flats} flats and {sharps} sharps is invalid')
 

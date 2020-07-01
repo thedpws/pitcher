@@ -1,4 +1,4 @@
-from src.music import *
+from pitchr.music import *
 
 # https://www.letsplaykidsmusic.com/happy-birthday-easy-piano-music/#:~:text=This%20version%20is%20in%20the,an%20F%20sharp%20(F%23)%20.
 
