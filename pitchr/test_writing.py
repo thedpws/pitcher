@@ -2,7 +2,7 @@
 
 
 
-from pitchr.music import *
+from src.music import *
 
 
 # Simple piano score
