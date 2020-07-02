@@ -42,11 +42,11 @@ class TestKey(unittest.TestCase):
 
         self.assertEqual(k, 'c \\major')
 
-    def test_key_str_c_minor(self):
+    def test_key_str_no_minors(self):
 
         k = str(Key.C_MINOR)
 
-        self.assertEqual(k, 'c \\minor')
+        self.assertEqual(k, 'e-flat \\major')
 
     def test_key_str_c_sharp_major(self):
 
@@ -59,3 +59,6 @@ class TestKey(unittest.TestCase):
         k = str(Key.Eb_MAJOR)
 
         self.assertEqual(k, 'e-flat \\major')
+
+    def test_key_equivalence(self):
+        self.assertEqual(Key(sharps=6), Key(sharps=6))
