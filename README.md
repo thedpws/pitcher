@@ -9,7 +9,7 @@ Documentation is hosted on Github Pages [here](https://thedpws.github.io/pitcher
 
 
 ## Getting Started
-```
+```python
 from pitcher import *
 
 # Instantiate notes
