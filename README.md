@@ -27,9 +27,9 @@ A python library and framework for composing music.
 ### Note()
     from pitchr import *
     note1 = Note("C4", 1, "forte")
-    note1.note() # C-4
-    note1.duration() # 1
-    note1.dynamic() # "forte"
+    note1.mingus_note # 'C-4'
+    note1.duration # 1
+    note1.dynamic # "forte"
     note1.augment() or note1.diminish()
 
 ### Building chords
