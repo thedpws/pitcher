@@ -10,7 +10,7 @@ Documentation is hosted on Github Pages [here](https://thedpws.github.io/pitcher
 
 ## Getting Started
 ```python
-from pitcher import *
+from pitchr import *
 
 # Instantiate notes
 n = Note(pitch='C4', duration=1.0)
