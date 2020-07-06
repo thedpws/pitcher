@@ -1,6 +1,17 @@
 # Pitchr
 A python library and framework for composing music.
 
+## Features
+
+1. Enables creation of music by composition of music objects (notes, chords, measures, and staffs)
+2. Unified interface for playing any music object (`note.play()`, `staff.play()`)
+3. Unified interface for showing any music object (`note.show()`, `staff.show()`)
+4. Unified interface for exporting any music object (`note.save('note.pdf')`, `staff.save('staff.pdf')`)
+5. Flexible manipulation of music
+  * easily access notes by indexing a measure by beat: `note0 = measure[0]`
+  * edit note attributes' pitch via methods `transpose`, `octave_up`, `augment`
+6. Finalizes your composition as beautiful standard sheet music
+
 ## Installation
 `pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
 
