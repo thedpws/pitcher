@@ -6,11 +6,13 @@ A python library and framework for composing music.
 1. Enables creation of music by composition of music objects (notes, chords, measures, and staffs)
 2. Unified interface for playing any music object (`note.play()`, `staff.play()`)
 3. Unified interface for showing any music object (`note.show()`, `staff.show()`)
+  * Spawns an image of the music object
 4. Unified interface for exporting any music object (`note.save('note.pdf')`, `staff.save('staff.pdf')`)
 5. Flexible manipulation of music
   * easily access notes by indexing a measure by beat: `note0 = measure[0]`
   * edit note attributes' pitch via methods `transpose`, `octave_up`, `augment`
 6. Finalizes your composition as beautiful standard sheet music
+7. Enables interactive development in Jupyter Notebook
 
 ## Installation
 `pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
