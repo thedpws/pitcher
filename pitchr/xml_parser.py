@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 import os
 import pandas as pd
 
+circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
+
 path = "../docs/_xml_scores"
 score_files = os.listdir(path)
 score_files = score_files[1:] # eliminate .DS_Store file
@@ -26,6 +28,8 @@ for score_name in score_files:
         print("Part: %s" % part.get("id"))
         sign = part.find("sign").get_text()
         line = part.find("line").get_text()
+        fifths = part.find("fifths").get_text()
+        key = circle_of_fifths[int(fifths)]
         beats = part.find("beats").get_text()
         beat_type = part.find("beat-type").get_text()
         for measure in part.findChildren("measure"):
@@ -35,7 +39,7 @@ for score_name in score_files:
             if measure.find("clef"):
                 sign = measure.find("sign").get_text()
                 line = measure.find("line").get_text()
-            print(f"\tMeasure: %s \tClef: {sign}{line} \tTime: {beats}/{beat_type}" % measure.get("number"))
+            print(f"\tMeasure: %s \tKey: {key} \t\tClef: {sign}{line} \tTime: {beats}/{beat_type}" % measure.get("number"))
 
             i = 1
             for note in measure.findChildren("note"):
