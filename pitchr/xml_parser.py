@@ -4,10 +4,14 @@
 
 from bs4 import BeautifulSoup
 import os
+import pandas as pd
 
 path = "../docs/_xml_scores"
 score_files = os.listdir(path)
 score_files = score_files[1:] # eliminate .DS_Store file
+
+notes = []
+
 for score_name in score_files:
     file_name = "score.xml"
     target = (f"{path}/{score_name}/{file_name}")
