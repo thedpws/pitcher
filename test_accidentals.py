@@ -73,5 +73,23 @@ class TestAccidentals(unittest.TestCase):
 
         m.show()
 
-        self.assertEqual(input('Did you see no flats?? [y/N]'), 'y')
+        self.assertEqual(input('Did you see no flats? [y/N]'), 'y')
 
+    def test_key_signature_shows(self):
+
+
+        key(Key.Eb_MAJOR)
+        m = Measure([
+            Note('C', 1.0),
+            Note('D', 1.0),
+            Note('Eb', 1.0),
+            Note('F', 1.0),
+            Note('G', 1.0),
+            Note('Ab', 1.0),
+            Note('Bb', 1.0),
+            Note('C5', 1.0),
+        ])
+
+        m.show()
+
+        self.assertEqual(input('Do you see 3 flats in the key signature? [y/N]'), 'y')
