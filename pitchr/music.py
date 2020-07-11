@@ -8,8 +8,8 @@ from mingus.containers import Composition as MingusComposition
 from mingus.containers.instrument import Instrument as MingusInstrument, Piano as MingusPiano, Guitar as MingusGuitar
 from enum import Enum
 import re
-import playing as playing
-import lyexport as showing
+import pitchr.playing as playing
+import pitchr.lyexport as showing
 
 """
 .. module:: Pitcher
@@ -297,10 +297,13 @@ class Staff(_Music):
        :param measures: Measure()
     """
 
-    def __init__(self, clef=Clef.TREBLE, voice=Voice.PIANO, measures=None):
+    def __init__(self, clef=Clef.TREBLE, voice=Voice.PIANO, measures=None, time_signature=None):
         self._clef = clef
         self._voice = voice
         self._measures = measures if measures else [Measure()]
+        for measure in self._measures:
+            measure.time_signature = time_signature
+        self._time_signature = time_signature
 
     @property
     def clef(self):
@@ -334,6 +337,22 @@ class Staff(_Music):
         """
         self._voice = voice
 
+    @property
+    def time_signature(self):
+        """Get time signature of the Staff
+
+        :returns: time signature
+        """
+        return self._time_signature
+
+    @time_signature.setter
+    def time_signature(self, time_signature):
+        """Set time signature of the Staff
+
+        :param time_signature: Time signature
+        """
+        self._time_signature = time_signature
+
     def __getitem__(self, i):
         enough_measures = len(self._measures) > i
 
@@ -363,9 +382,10 @@ class Measure(_Music, Collection):
        :param notes: []
     """
 
-    def __init__(self, notes=None):
+    def __init__(self, notes=None, time_signature=None):
         self._notes = dict()
         self._next_count = 0.0
+        self._time_signature = time_signature
 
         if notes:
             self.extend(notes)
@@ -374,13 +394,32 @@ class Measure(_Music, Collection):
         self._notes[start] = item
         self._next_count = max(self._next_count, start + item.duration)
 
+    @property
+    def time_signature(self):
+        """Get time signature of the Measure
+
+        :returns: time signature
+        """
+        return self._time_signature
+
+    @time_signature.setter
+    def time_signature(self, time_signature):
+        """Set time signature of the Measure
+
+        :param time_signature: Time signature
+        """
+        self._time_signature = time_signature
+
     def append(self, item):
         """Adds new note to current measure
 
         :param item: Note
         """
         # TODO: FIX
-        if False and self._next_count + item.duration > _time_signature:
+        beats_per_measure = self._time_signature.beats_per_measure   # numerator
+        beat_definition = self._time_signature.beat_definition   # denominator
+        max_length = beats_per_measure * (1 / beat_definition)
+        if self._next_count + item.duration > max_length:
             print("Item exceeds measure's time signature")
         else:
             self._notes[self._next_count] = item
@@ -391,8 +430,17 @@ class Measure(_Music, Collection):
 
         :param items: [Note] or [Chord]
         """
+        beats_per_measure = self._time_signature.beats_per_measure  # numerator
+        beat_definition = self._time_signature.beat_definition  # denominator
+        max_length = beats_per_measure * (1 / beat_definition)
+        items_duration = 0
         for item in items:
-            self.append(item)
+            items_duration += item.duration
+        if self._next_count + items_duration > max_length:
+            print("Items exceed measure's time signature")
+        else:
+            for item in items:
+                self.append(item)
 
     def __getitem__(self, start):
         return self._notes[start]
