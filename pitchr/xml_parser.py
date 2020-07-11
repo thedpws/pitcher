@@ -63,8 +63,8 @@ for score_name in score_files:
                 notes.append((key, sign, step, octave, accidental, duration))
                 i += 1
 
-        df = pd.DataFrame(notes, columns=["Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-        score_dfs[title] = df
+    df = pd.DataFrame(notes, columns=["Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+    score_dfs[title] = df
 
 for title, df in score_dfs.items():
     print(title)
