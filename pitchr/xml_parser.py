@@ -13,6 +13,7 @@ for score_name in score_files:
     target = (f"{path}/{score_name}/{file_name}")
     infile = open(target, 'r')
     contents = infile.read()
+    infile.close()
     soup = BeautifulSoup(contents, 'xml')
     parts = soup.find_all('part')
 
