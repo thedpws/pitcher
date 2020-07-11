@@ -49,7 +49,11 @@ for score_name in score_files:
                     duration = note.find("duration").get_text()
                 else:
                     duration = "missing"
-                print(f"\t\t\tNote: {i} \tStep: {step} \tOctave: {octave} \tDuration: {duration} ")
+                if note.find("accidental"):
+                    accidental = note.find("accidental").get_text()
+                else:
+                    accidental = None
+                print(f"\t\t\tNote: {i} \tStep: {step} \tOctave: {octave} \tDuration: {duration} \tAccidental: {accidental}")
                 i += 1
 
 
