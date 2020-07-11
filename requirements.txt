@@ -1,5 +1,8 @@
+beautifulsoup4==4.9.1
+bs4==0.0.1
 cycler==0.10.0
 kiwisolver==1.2.0
+lxml==4.5.2
 matplotlib==3.2.2
 mido==1.2.9
 mingus==0.6.0
@@ -8,8 +11,7 @@ Pillow==7.1.2
 pyparsing==2.4.7
 python-dateutil==2.8.1
 scipy==1.4.1
+simpleaudio==1.0.4
 six==1.15.0
+soupsieve==2.0.1
 timidity==0.1.2
-beautifulsoup4==4.9.1
-bs4==0.0.1
-lxml==4.5.1
