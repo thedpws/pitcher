@@ -4,13 +4,19 @@
 
 from bs4 import BeautifulSoup
 import os
+import pandas as pd
 
 circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
 
 path = "../docs/_xml_scores"
 score_files = os.listdir(path)
 score_files = score_files[1:] # eliminate .DS_Store file
+
+score_dfs = dict()
+
+
 for score_name in score_files:
+    notes = []
     file_name = "score.xml"
     target = (f"{path}/{score_name}/{file_name}")
     infile = open(target, 'r')
@@ -18,7 +24,7 @@ for score_name in score_files:
     infile.close()
     soup = BeautifulSoup(contents, 'xml')
     parts = soup.find_all('part')
-
+    title = soup.find("work-title").get_text().title()
     print("Score Name: %s" % soup.find("work-title").get_text().title())
     for part in soup.find_all("part"):
         print("Part: %s" % part.get("id"))
@@ -54,6 +60,13 @@ for score_name in score_files:
                 else:
                     accidental = None
                 print(f"\t\t\tNote: {i} \tStep: {step} \tOctave: {octave} \tDuration: {duration} \tAccidental: {accidental}")
+                notes.append((key, sign, step, octave, accidental, duration))
                 i += 1
 
+    df = pd.DataFrame(notes, columns=["Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+    score_dfs[title] = df
+
+for title, df in score_dfs.items():
+    print(title)
+    print(df)
 
