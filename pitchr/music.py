@@ -397,9 +397,10 @@ class Measure(_Music):
        :param notes: []
     """
 
-    def __init__(self, notes=None):
+    def __init__(self, notes=None, time_signature=None):
         self._notes = dict()
         self._next_count = 0.0
+        self._time_signature = time_signature
 
         if notes:
             self.extend(notes)
@@ -429,10 +430,9 @@ class Measure(_Music):
 
         :param item: Note
         """
-        # TODO: FIX
         beats_per_measure = self._time_signature.beats_per_measure   # numerator
         beat_definition = self._time_signature.beat_definition   # denominator
-        max_length = beats_per_measure * (1 / beat_definition)
+        max_length = 4 * (beats_per_measure * (1 / beat_definition))
         if self._next_count + item.duration > max_length:
             print("Item exceeds measure's time signature")
         else:
@@ -446,7 +446,7 @@ class Measure(_Music):
         """
         beats_per_measure = self._time_signature.beats_per_measure  # numerator
         beat_definition = self._time_signature.beat_definition  # denominator
-        max_length = beats_per_measure * (1 / beat_definition)
+        max_length = 4 * (beats_per_measure * (1 / beat_definition))
         items_duration = 0
         for item in items:
             items_duration += item.duration

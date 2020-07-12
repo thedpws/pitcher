@@ -81,7 +81,7 @@ pt.add_staff(s)
 
 
 
-
+"""
 
 rh[0].append(Note('D4', .5))
 rh[0].append(Note('D4', 0.5))
@@ -96,9 +96,11 @@ print(d_chord, d_chord.accidentals)
 d_chord.transpose('-99')
 print(d_chord, d_chord.accidentals)
 """
+"""
 pc.show()
 pc.listen()
 pc.save('myfile.pdf')
+"""
 """
 
 
@@ -121,13 +123,13 @@ rh[0][2.0] = Note('G4', 0.5)
 rh[0][2.5] = Note('F4', 0.5)
 rh[0][3.0] = Note('E4', 0.5)
 rh[0][3.5] = Note('D4', 0.5)
-
+"""
 print("test_measure time:")
 test_measure = Measure(time_signature=Time('3/4'))
-test_measure.append(Note('C', .25))
-test_measure.append(Note('C', .25))
-test_measure.append(Note('C', .25))
-test_measure.append(Note('C', .25))
+test_measure.append(Note('C', 1))
+test_measure.append(Note('C', 1))
+test_measure.append(Note('C', 1))
+test_measure.append(Note('C', 1))
 
 #Key.C_MAJOR.scale() # should return list of notes
 
