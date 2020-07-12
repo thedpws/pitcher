@@ -67,8 +67,8 @@ class TestScore(unittest.TestCase):
 
     def test_save_creates_pdf(self):
         s = Score()
+        s.add_part(Part([Staff([Measure([Note('A', 1.0)])])]))
         with tempfile.TemporaryDirectory() as tempdirname:
-
             filepath = tempdirname + '/export.pdf'
             s.save(filepath)
             self.assertTrue(os.path.exists(filepath))
