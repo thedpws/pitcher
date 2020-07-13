@@ -40,25 +40,25 @@ class TestKey(unittest.TestCase):
 
         k = str(Key.C_MAJOR)
 
-        self.assertEqual(k, 'c \\major')
+        self.assertEqual(k, 'C major')
 
     def test_key_str_no_minors(self):
 
         k = str(Key.C_MINOR)
 
-        self.assertEqual(k, 'ees \\major')
+        self.assertEqual(k, 'Eb major')
 
     def test_key_str_c_sharp_major(self):
 
         k = str(Key.C_SHARP_MAJOR)
 
-        self.assertEqual(k, 'cis \\major')
+        self.assertEqual(k, 'C# major')
 
     def test_key_str_e_flat_major(self):
 
         k = str(Key.Eb_MAJOR)
 
-        self.assertEqual(k, 'ees \\major')
+        self.assertEqual(k, 'Eb major')
 
     def test_key_equivalence(self):
         self.assertEqual(Key(sharps=6), Key(sharps=6))

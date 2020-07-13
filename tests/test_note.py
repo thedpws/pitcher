@@ -48,6 +48,14 @@ class TestNote(unittest.TestCase):
         n = Note('Fxbbxbbxbb', 1.0)
         self.assertEqual(n.accidentals, '')
 
+    def test_accidentals_wrt_key_native_dont_return(self):
+        n = Note('F#', 1.0)
+        self.assertEqual(n.get_accidentals_wrt_key(Key.D_MAJOR), '')
+
+    def test_accidentals_wrt_key_foreign_return(self):
+        n = Note('F#', 1.0)
+        self.assertEqual(n.get_accidentals_wrt_key(Key.C_MAJOR), '#')
+
     def test_pitch_is_settable(self):
         n = Note('A4', 1.0)
         n.pitch = 'A5'
