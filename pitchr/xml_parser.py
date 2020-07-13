@@ -1,14 +1,14 @@
 # must "pip install beautifulsoup4 bs4 lxml" before this will work. These were added to requirements.txt
 # this script will traverse all files in docs/_xml_scores
-# currently output is just print to console but in future will send to numpy array or other structure for ML ingestion
 
 from bs4 import BeautifulSoup
 import os
 import pandas as pd
+from pitchr.pitch_tagger import tag_pitch
 
 circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
 
-path = "../docs/_xml_scores"
+path = "docs/_xml_scores"
 score_files = os.listdir(path)
 score_files = score_files[1:] # eliminate .DS_Store file
 
@@ -25,9 +25,7 @@ for score_name in score_files:
     soup = BeautifulSoup(contents, 'xml')
     parts = soup.find_all('part')
     title = soup.find("work-title").get_text().title()
-    print("Score Name: %s" % soup.find("work-title").get_text().title())
     for part in soup.find_all("part"):
-        print("Part: %s" % part.get("id"))
         sign = part.find("sign").get_text()
         line = part.find("line").get_text()
         fifths = part.find("fifths").get_text()
@@ -41,7 +39,6 @@ for score_name in score_files:
             if measure.find("clef"):
                 sign = measure.find("sign").get_text()
                 line = measure.find("line").get_text()
-            print(f"\tMeasure: %s \tKey: {key} \t\tClef: {sign}{line} \tTime: {beats}/{beat_type}" % measure.get("number"))
 
             i = 1
             for note in measure.findChildren("note"):
@@ -59,7 +56,6 @@ for score_name in score_files:
                     accidental = note.find("accidental").get_text()
                 else:
                     accidental = None
-                print(f"\t\t\tNote: {i} \tStep: {step} \tOctave: {octave} \tDuration: {duration} \tAccidental: {accidental}")
                 notes.append((key, sign, step, octave, accidental, duration))
                 i += 1
 
@@ -68,5 +64,6 @@ for score_name in score_files:
 
 for title, df in score_dfs.items():
     print(title)
+    tag_pitch(df)
     print(df)
 
