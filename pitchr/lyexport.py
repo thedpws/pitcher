@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
 import numpy as np
+import re
 
 
 
@@ -18,7 +19,6 @@ def to_ly(score):
     for part in score:
 
         time_sig = part.time_signature
-        key_sig = part.key_signature
         tempo = part.tempo
 
         durations = {
@@ -58,6 +58,14 @@ def to_ly(score):
             try:
                 letter = note.letter.lower()
 
+                #accidentals = note.get_accidentals_wrt_key(part.key_signature)
+                accidentals = note.accidentals
+                accidentals = re.sub('#', 'is', accidentals)
+                accidentals = re.sub('b', 'es', accidentals)
+                accidentals_suffix = accidentals
+                print('############################################', part.key_signature, accidentals)
+
+
                 if note.octave > MIDDLE:
                     octave_suffix = '\'' * (note.octave - MIDDLE)
                 elif note.octave < MIDDLE:
@@ -74,7 +82,7 @@ def to_ly(score):
                 # TODO: make PitcherException
                 raise Exception(f'Duration not representable by a note: {note.duration}')
 
-            return letter + octave_suffix + duration_suffix
+            return letter + accidentals_suffix + octave_suffix + duration_suffix
 
         ly_staffs = []
 
@@ -138,7 +146,7 @@ def to_ly(score):
     \\clef %s
     %s
 >>
-''' % (part.time_signature, part.key_signature, ['treble', 'bass'][staff.clef.value], '%s')
+''' % (part.time_signature, part.key_signature.ly, ['treble', 'bass'][staff.clef.value], '%s')
 
 
             if not ly_voices:

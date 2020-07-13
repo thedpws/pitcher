@@ -110,6 +110,9 @@ class Key:
         self._flats = flats
         self._sharps = sharps
 
+    def __str__(self):
+        return self.major_tonic + ' major'
+
     @property
     def fifths(self):
         return self._sharps - self._flats
@@ -126,7 +129,8 @@ class Key:
         intvs = [0, 2, 2, 1, 2, 2, 2, 1]
         return [Keyboard.key(intv + sum(intvs[:i]) + self.major_tonic_offset, self.sharp) for i,intv in enumerate(intvs)]
 
-    def __str__(self):
+    @property
+    def ly(self):
         tonic = self.major_tonic
 
         tonic = _re.sub('#', 'is', tonic)
@@ -267,8 +271,8 @@ class Part(_Music):
 
        :param staffs: from Staff()
        :param tempo: int
-       :param time_signature: e.g. 3/4
-       :param key_signature: int
+       :param time_signature: instance of Time
+       :param key_signature: instance of Key
     """
 
     @property
@@ -696,17 +700,17 @@ class Note(_Music):
         """
         return self._pitch.letter
 
+    def get_accidentals_wrt_key(self, key):
+        if self.pitch not in key:
+            return self._pitch.accidentals
+        else:
+            return ''
     @property
-    def accidentals(self, key=Key.C_MAJOR):
+    def accidentals(self):
         """Get the accidentals of a Note
-
-           :param key: Key for which to calculate the accidentals
 
         :returns: accidentals (string)
         """
-
-        if self.pitch in key:
-            return ''
 
         return self._pitch.accidentals
 
