@@ -70,6 +70,30 @@ def time(time_signature):
     _time_signature = time_signature
 
 
+
+class Keyboard:
+    @staticmethod
+    def key(i, sharps=True):
+        return {
+                0: ['C', 'C'],
+                1: ['Db', 'C#'],
+                2: ['D', 'D'],
+                3: ['Eb', 'D#'],
+                4: ['E', 'E'],
+                5: ['F', 'F'],
+                6: ['Gb', 'F#'],
+                7: ['G', 'G'],
+                8: ['Ab', 'G#'],
+                9: ['A', 'A'],
+                10: ['Bb', 'A#'],
+                11: ['B', 'B'],
+        }[i % 12][sharps]
+
+class Interval:
+    pass
+for halfsteps, attr in enumerate(['m2', 'M2', 'm3', 'M3', 'M4', 'm5', 'M5', 'm6', 'M6', 'm7', 'M7', 'M8']):
+    setattr(Interval, attr, halfsteps+1)
+
 class Key:
     """
         Class representing the Key the Score is played in
@@ -86,28 +110,53 @@ class Key:
         self._flats = flats
         self._sharps = sharps
 
-    def __str__(self):
+    @property
+    def fifths(self):
+        return self._sharps - self._flats
 
-        return {
-            (0, 0): 'c',
-            (0, 1): 'g',
-            (0, 2): 'd',
-            (0, 3): 'a',
-            (0, 4): 'e',
-            (0, 5): 'b',
-            (0, 6): 'f-sharp',
-            (0, 7): 'c-sharp',
-            (1, 0): 'f',
-            (2, 0): 'b-flat',
-            (3, 0): 'e-flat',
-            (4, 0): 'a-flat',
-            (5, 0): 'd-flat',
-            (6, 0): 'g-flat',
-            (7, 0): 'c-flat', 
-        }[(self._flats, self._sharps)] + ' \\major'
+    @property
+    def major_tonic(self):
+        return Keyboard.key(self.major_tonic_offset, sharps=self.sharp)
+    @property
+    def major_tonic_offset(self):
+        return (Interval.M5 * self.fifths) % 12
+
+    @property
+    def major_scale(self):
+        intvs = [0, 2, 2, 1, 2, 2, 2, 1]
+        return [Keyboard.key(intv + sum(intvs[:i]) + self.major_tonic_offset, self.sharp) for i,intv in enumerate(intvs)]
+
+    def __str__(self):
+        tonic = self.major_tonic
+
+        tonic = _re.sub('#', 'is', tonic)
+        tonic = _re.sub('b', 'es', tonic)
+        tonic = tonic.lower()
+
+        return tonic + ' \\major'
+
+    @property
+    def sharp(self):
+        return self._sharps > 0
+
+    @property
+    def flat(self):
+        return self._flats > 0
 
     def __eq__(self, other):
         return self._sharps == other._sharps and self._flats == other._flats
+
+    def __contains__(self, pitch):
+
+        if isinstance(pitch, Note):
+            pitch = pitch.pitch
+
+        pitch = _re.sub('\\d','', pitch)
+
+        return pitch in self.major_scale
+
+
+
 
 
 Key.Cb_MAJOR = Key(flats=7)
@@ -615,16 +664,15 @@ class Note(_Music):
     """
 
     def __str__(self):
-        return f'Note({self.letter}{self.octave}, {self.duration})'
+        return f'Note({self.pitch}, {self.duration})'
+    def __repr__(self):
+        return f'Note({self.pitch}, {self.duration})'
 
     def __eq__(self, other):
         return self.pitch_number == other.pitch_number and self.duration == other.duration
 
     def __lt__(self, other):
         return (self.pitch_number, self.duration) < (other.pitch_number, other.duration)
-
-    def __str__(self):
-        return f'{self.letter} {self.duration}'
 
     @staticmethod
     def mingusNote_to_note(mingus_note, note):
@@ -649,11 +697,17 @@ class Note(_Music):
         return self._pitch.letter
 
     @property
-    def accidentals(self):
+    def accidentals(self, key=Key.C_MAJOR):
         """Get the accidentals of a Note
+
+           :param key: Key for which to calculate the accidentals
 
         :returns: accidentals (string)
         """
+
+        if self.pitch in key:
+            return ''
+
         return self._pitch.accidentals
 
     @property
@@ -749,6 +803,8 @@ class Note(_Music):
         self._articulation = articulation
 
     def __eq__(self, other):
+        if not isinstance(other, Note):
+            return False
         return self.duration == other.duration and self.pitch == other.pitch
 
     # _Mingus interface
@@ -770,13 +826,14 @@ class Note(_Music):
 
         :param half_steps: string of +/- and number of half-steps, ex: '+11' or '-4'
         """
-        num_half_steps = int(half_steps[1:])
-        if half_steps[0] == '+':
-            for num in range(num_half_steps):
-                self._pitch.accidentals += '#'
-        elif half_steps[0] == '-':
+        num_half_steps = int(half_steps)
+        if half_steps[0] == '-':
             for num in range(num_half_steps):
                 self._pitch.accidentals += 'b'
+        else:
+            for num in range(num_half_steps):
+                self._pitch.accidentals += '#'
+        return self
 
     @property
     def mingus_note(self):
@@ -971,8 +1028,6 @@ class _Pitch:
         if pitch_number == None: return None
         raise NotImplementedError('TODO')
 
-    def transpose(self, half_steps):
-        raise PitcherException('Rests cannot be assigned a pitch')
 
 # class Song(Note, Score, _Music, Chord, Part):
 #     def __init__(self, title, subtitle, author, author_email):
