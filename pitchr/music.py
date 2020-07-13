@@ -313,6 +313,10 @@ class Staff(_Music):
 
     '''_Collection of measures'''
     def __init__(self, measures=None, clef=Clef.TREBLE, voice=Voice.PIANO, time_signature=None):
+
+        if not time_signature:
+            global _time_signature
+            time_signature = _time_signature
         self._clef = clef
         self._voice = voice
         self._measures = measures if measures else []
@@ -400,6 +404,9 @@ class Measure(_Music):
     def __init__(self, notes=None, time_signature=None):
         self._notes = dict()
         self._next_count = 0.0
+        if not time_signature:
+            global _time_signature
+            time_signature = _time_signature
         self._time_signature = time_signature
 
         if notes:
@@ -434,7 +441,7 @@ class Measure(_Music):
         beat_definition = self._time_signature.beat_definition   # denominator
         max_length = 4 * (beats_per_measure * (1 / beat_definition))
         if self._next_count + item.duration > max_length:
-            print("Item exceeds measure's time signature")
+            raise PitcherException("Item exceeds measure's time signature")
         else:
             self._notes[self._next_count] = item
             self._next_count += item.duration
