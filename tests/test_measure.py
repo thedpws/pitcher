@@ -53,6 +53,22 @@ class TestMeasure(unittest.TestCase):
         self.assertEqual(m[0], Note('A', 1.0))
         self.assertEqual(m[1], Note('B', 1.0))
 
+    def test_measure_overfill_throws_exception(self):
+
+        time(Time.COMMON_TIME)
+
+        m = Measure()
+
+        m.append(Note('C', 1.0))
+        m.append(Note('C', 1.0))
+        m.append(Note('C', 1.0))
+        m.append(Note('C', 1.0))
+
+        def act():
+            m.append(Note('C', 1.0))
+
+        self.assertRaises(Exception, act)
+
     @patch('pitchr.playing.play_score')
     def test_measure_play_calls_play_score(self, play_score):
         Measure().play()

@@ -16,6 +16,7 @@ A python library and framework for composing music.
 
 ## Installation
 `pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
+`lilypond` is required for listening.
 
 ## Documentation
 Documentation is hosted on Github Pages [here](https://thedpws.github.io/pitcher/)
