@@ -441,7 +441,7 @@ class Measure(_Music):
         beat_definition = self._time_signature.beat_definition   # denominator
         max_length = 4 * (beats_per_measure * (1 / beat_definition))
         if self._next_count + item.duration > max_length:
-            print("Item exceeds measure's time signature")
+            raise PitcherException("Item exceeds measure's time signature")
         else:
             self._notes[self._next_count] = item
             self._next_count += item.duration
