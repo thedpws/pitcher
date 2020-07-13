@@ -18,9 +18,10 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
-        m.play()
 
-        self.assertEqual(input('Did you hear a minor key? [y/N]'), 'y')
+        print('Do you hear a minor key? [y/N]')
+        m.play()
+        self.assertEqual(input(), 'y')
 
     def test_native_accidentals_play(self):
         key(Key.Eb_MAJOR)
@@ -35,9 +36,10 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
-        m.play()
 
-        self.assertEqual(input('Did you hear a minor key? [y/N]'), 'y')
+        print('Do you hear a minor key? [y/N]')
+        m.play()
+        self.assertTrue(input() == 'y')
 
     def test_foreign_accidentals_show(self):
 
@@ -52,9 +54,9 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
+        print('Do you see flats on Eb, Ab, Bb? [y/N]')
         m.show()
-
-        self.assertEqual(input('Did you see flats on Eb, Ab, Bb? [y/N]'), 'y')
+        self.assertTrue(input() == 'y')
 
     def test_native_accidentals_dont_show(self):
 
@@ -71,9 +73,9 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
+        print('Do you see no accidentals on Eb, Ab, Bb? [y/N]')
         m.show()
-
-        self.assertEqual(input('Did you see no flats? [y/N]'), 'y')
+        self.assertTrue(input() == 'y')
 
     def test_key_signature_shows(self):
 
@@ -90,6 +92,6 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
+        print('Do you see 3 flats in the key signature? [y/N]')
         m.show()
-
-        self.assertEqual(input('Do you see 3 flats in the key signature? [y/N]'), 'y')
+        self.assertTrue(input() == 'y')

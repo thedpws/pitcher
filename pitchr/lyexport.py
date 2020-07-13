@@ -58,12 +58,10 @@ def to_ly(score):
             try:
                 letter = note.letter.lower()
 
-                #accidentals = note.get_accidentals_wrt_key(part.key_signature)
                 accidentals = note.accidentals
                 accidentals = re.sub('#', 'is', accidentals)
                 accidentals = re.sub('b', 'es', accidentals)
                 accidentals_suffix = accidentals
-                print('############################################', part.key_signature, accidentals)
 
 
                 if note.octave > MIDDLE:
