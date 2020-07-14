@@ -17,10 +17,10 @@ input('Do these requirements look okay?')
 
 setuptools.setup(
     name="pitchr",
-    version="0.1.3",
+    version="0.1.5",
     author=authors_string,
     author_email="azvasquez99@gmail.com",
-    description="A Python framework for composing and playing music.",
+    description="A Python library and framework for composing and playing music.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/thedpws/pitcher",

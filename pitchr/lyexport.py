@@ -270,7 +270,7 @@ def show_score_png(score):
 
         plt.axis('off')
         plt.imshow(im)
-
+        plt.show()
 
 
 
