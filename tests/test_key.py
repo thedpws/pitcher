@@ -40,25 +40,54 @@ class TestKey(unittest.TestCase):
 
         k = str(Key.C_MAJOR)
 
-        self.assertEqual(k, 'c \\major')
+        self.assertEqual(k, 'C major')
 
     def test_key_str_no_minors(self):
 
         k = str(Key.C_MINOR)
 
-        self.assertEqual(k, 'e-flat \\major')
+        self.assertEqual(k, 'Eb major')
 
     def test_key_str_c_sharp_major(self):
 
         k = str(Key.C_SHARP_MAJOR)
 
-        self.assertEqual(k, 'c-sharp \\major')
+        self.assertEqual(k, 'C# major')
 
     def test_key_str_e_flat_major(self):
 
         k = str(Key.Eb_MAJOR)
 
-        self.assertEqual(k, 'e-flat \\major')
+        self.assertEqual(k, 'Eb major')
 
     def test_key_equivalence(self):
         self.assertEqual(Key(sharps=6), Key(sharps=6))
+
+    def test_major_scale(self):
+        scale = Key.Eb_MAJOR.major_scale
+        self.assertEqual(scale, [ 'Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D', 'Eb' ])
+
+    def test_major_tonic(self):
+        self.assertEqual(Key.C_MAJOR.major_tonic, 'C')
+        self.assertEqual(Key.D_MAJOR.major_tonic, 'D')
+        self.assertEqual(Key.Db_MAJOR.major_tonic, 'Db')
+        self.assertEqual(Key.G_MAJOR.major_tonic, 'G')
+        self.assertEqual(Key.A_MINOR.major_tonic, 'C')
+
+    def test_contains_letter(self):
+        self.assertTrue('E' in Key.C_MAJOR)
+
+    def test_contains_letter_with_octave(self):
+        self.assertTrue('E5' in Key.C_MAJOR)
+
+    def test_contains_letter_with_accidental(self):
+        self.assertFalse('C#' in Key.C_MAJOR)
+        self.assertTrue('C#' in Key.A_MAJOR)
+
+    def test_contains_letter_with_accidental_and_octave(self):
+        self.assertFalse('C#5' in Key.C_MAJOR)
+        self.assertTrue('C#5' in Key.A_MAJOR)
+
+    def test_contains_note(self):
+        self.assertFalse(Note('C#5', 1.0) in Key.C_MAJOR)
+        self.assertTrue(Note('C#5', 1.0) in Key.A_MAJOR)
