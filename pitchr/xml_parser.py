@@ -1,5 +1,4 @@
-# must "pip install beautifulsoup4 bs4 lxml" before this will work. These were added to requirements.txt
-# this script will traverse all files in docs/_xml_scores
+# this script will traverse all files in dataset/_xml_scores
 
 from bs4 import BeautifulSoup
 import os
@@ -8,9 +7,9 @@ from pitchr.pitch_tagger import tag_pitch
 
 circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
 
-path = "docs/_xml_scores"
+path = "../dataset/_xml_scores"
 score_files = os.listdir(path)
-score_files = score_files[1:] # eliminate .DS_Store file
+score_files.remove(".DS_Store") # eliminate .DS_Store file
 
 score_dfs = dict()
 
@@ -24,7 +23,10 @@ for score_name in score_files:
     infile.close()
     soup = BeautifulSoup(contents, 'xml')
     parts = soup.find_all('part')
-    title = soup.find("work-title").get_text().title()
+    if soup.find("work-title"):
+        title = soup.find("work-title").get_text().title()
+    else:
+        title = ""
     for part in soup.find_all("part"):
         sign = part.find("sign").get_text()
         line = part.find("line").get_text()
