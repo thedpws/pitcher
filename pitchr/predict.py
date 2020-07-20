@@ -77,3 +77,6 @@ m[11] = Note('C5', t)
 
 p = Predict(m)
 print(p.predict2())
+
+def predict(notes_df):
+    notes_df['Pitch Predictability'] = notes_df.apply(lambda _: 0.0, axis=1)
