@@ -1,21 +1,8 @@
 import collections
 
-#
+# Local testing
 from pitchr.music import *
-from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
-#
 
-# To download the needed libraries:
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('rslp')
-
-# coding=utf-8
-
-from nltk.tokenize import sent_tokenize
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
 
 class Predict():
     def __init__(self, measure):
@@ -30,49 +17,84 @@ class Predict():
 
         return base
 
-    def predict2(self):
-        base = self._get_base(self._measure)
-        words = [base[len(base)-2], base[len(base)-1]]
-        bigrams = []
-        suggestions = []
-
-        print(base)
-        print(words)
-
-        for i in range(0, len(base)):
-            if (i == len(base)-1):
-                break
-            else:
-                if(base[i] == words[1] and base[i-1] == words[0]):
-                    bigrams.append(base[i+1])
-
-        counter = collections.Counter(bigrams)
+    def find_in_tuples(self, note_tuple, tuples):
+        for t in tuples:
+            if (t == note_tuple):
+                return True
         
-        for i in range(0,len(counter.most_common())):
-            if(i>=3):
-                break
+        return False
+
+    def qtd_in_tuples(self, note_tuple, tuples):
+        found_pair = 0
+        found_single = 0
+        for t in tuples:
+            if (t == note_tuple):
+                found_pair = found_pair + 1
+
+        for t in tuples:
+            if (t[0] == note_tuple[0]):
+                found_single = found_single + 1
+
+        return (found_single, found_pair)
+
+
+    def novel(self):
+        base = self._get_base(self._measure)
+        tuples = []
+        novelty = []
+        i = 0
+
+        while(i < (len(base)-1)):
+            this_tuple = tuple((base[i], base[i+1]))
+            if (len(tuples) == 0): 
+                novelty.append(0.0)
             else:
-                suggestions.append(counter.most_common()[i][0])
-        return suggestions
+                if not self.find_in_tuples(this_tuple, tuples): 
+                    novelty.append(0.0)
+                else:
+                    (found_single, found_pair) = self.qtd_in_tuples(this_tuple, tuples)
+                    novelty.append(float('%.2f' % (found_pair/found_single)))
 
-# key(Key.C_MAJOR)
-# time(Time.COMMON_TIME)
+            tuples.append(this_tuple)
+            i = i+1
+        return novelty
 
-# m = Measure()
+key(Key.C_MAJOR)
+time(Time.COMMON_TIME)
 
-# m[0] = Note('C5', 3/2)
-# m[1.5] = Note('D5', 1/2)
-# m[2] = Note('E5', 3/2)
-# m[3.5] = Note('C5', 1/2)
-# t = 1
-# m[4] = Note('C5', t)
-# m[5] = Note('D5', t)
-# m[6] = Note('E5', t)
-# m[7] = Note('C5', t)
-# m[8] = Note('C5', t)
-# m[9] = Note('D5', t)
-# m[10] = Note('E5', t)
-# m[11] = Note('C5', t)
+melody = [
+    Note('C', 1.0), # Predictability: 0.0 
+    Note('D', 1.0), # 0.0
+    Note('E', 1.0), # 0.0
 
-# p = Predict(m)
-# print(p.predict2())
+    Note('C', 1.0), # 0.0
+    Note('D', 1.0), # 1.0
+    Note('E', 1.0), # 1.0
+
+    Note('C', 1.0), # 1.0
+    Note('D', 1.0), # 1.0
+    Note('G', 1.0), # 0.0
+    Note('F', 1.0), # 0.0
+    Note('E', 1.0), # 0.0
+
+    Note('C', 1.0), # 1.0
+    Note('D', 1.0), # 1.0
+    Note('E', 1.0), # 0.67
+    Note('C', 1.0), # 1.0
+    Note('D', 1.0), # 1.0
+    Note('G', 1.0), # 0.33
+    Note('C5', 1.0) # 0.0
+]
+
+q = 0
+m = Measure()
+while (q < len(melody)):
+    m[q] = melody[q]
+    q = q+1
+
+p = Predict(m)
+novelty = p.novel()
+print(novelty)
+
+# def predict(notes_df):
+#     notes_df['Pitch Predictability'] = notes_df.apply(lambda _: 0.0, axis=1)
