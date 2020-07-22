@@ -1,19 +1,13 @@
-
-from mingus.extra.lilypond import to_png, to_pdf
+import re
 from tempfile import TemporaryDirectory
 from threading import get_ident
-import matplotlib
-import matplotlib.pyplot as plt
+
 import matplotlib.image as mpimg
-from PIL import Image
-import numpy as np
-import re
-
-
+import matplotlib.pyplot as plt
+from mingus.extra.lilypond import to_png, to_pdf
 
 
 def to_ly(score):
-
     ly_staffs = []
     ly_parts = []
     for part in score:
@@ -22,35 +16,34 @@ def to_ly(score):
         tempo = part.tempo
 
         durations = {
-            1/64 : '64',
+            1 / 64: '64',
 
-            1/32 : '32',
-            3/64 : '32.',
+            1 / 32: '32',
+            3 / 64: '32.',
 
-            1/16 : '16',
-            3/32 : '16.',
-            9/64 : '16..',
+            1 / 16: '16',
+            3 / 32: '16.',
+            9 / 64: '16..',
 
-            1/8 : '8',
-            3/16 : '8.',
-            9/32 : '8..',
+            1 / 8: '8',
+            3 / 16: '8.',
+            9 / 32: '8..',
 
+            1 / 4: '4',
+            3 / 8: '4.',
+            9 / 16: '4..',
 
-            1/4 : '4',
-            3/8 : '4.',
-            9/16 : '4..',
+            1 / 2: '2',
+            3 / 4: '2.',
+            9 / 8: '2..',
 
-            1/2 : '2',
-            3/4 : '2.',
-            9/8 : '2..',
-
-            1/1  : '1',
-            3/2  : '1.',
-            9/4  : '1..',
+            1 / 1: '1',
+            3 / 2: '1.',
+            9 / 4: '1..',
         }
 
         base = part.time_signature.beat_definition
-        durations = {k*base : v for (k,v) in durations.items()}
+        durations = {k * base: v for (k, v) in durations.items()}
 
         def ly_from_note(note):
 
@@ -62,7 +55,6 @@ def to_ly(score):
                 accidentals = re.sub('#', 'is', accidentals)
                 accidentals = re.sub('b', 'es', accidentals)
                 accidentals_suffix = accidentals
-
 
                 if note.octave > MIDDLE:
                     octave_suffix = '\'' * (note.octave - MIDDLE)
@@ -86,8 +78,6 @@ def to_ly(score):
 
         for staff in part:
 
-            
-
             voice_i = 0
             ly_voices = []
 
@@ -103,16 +93,15 @@ def to_ly(score):
                         notes = [n for n in item.notes]
                         note = notes[voice_i]
 
-
                         # No index error -> some notes are unwritten
-                        nonlocal some_notes_are_unwritten 
+                        nonlocal some_notes_are_unwritten
                         some_notes_are_unwritten = True
 
                         return ly_from_note(note)
 
                     except IndexError:
                         # Chord's notes are all written. write hidden rest.
-                        return  's' + durations[item.duration]
+                        return 's' + durations[item.duration]
 
                     except TypeError:
                         # Is a Note
@@ -125,16 +114,13 @@ def to_ly(score):
                         note = item
                         return ly_from_note(note)
 
-
                 ly_voice_format = '\\new Voice {%s}'
 
                 ly_voice = ly_voice_format % ' '.join([ly_from_item(item) for measure in staff for item in measure])
 
-
                 if not (ly_voice == (ly_voice_format % '')):
                     ly_voices.append(ly_voice)
                 voice_i += 1
-
 
             ly_staff_format = '''
 \\new Staff <<
@@ -145,7 +131,6 @@ def to_ly(score):
     %s
 >>
 ''' % (part.time_signature, part.key_signature.ly, ['treble', 'bass'][staff.clef.value], '%s')
-
 
             if not ly_voices:
                 continue
@@ -159,8 +144,6 @@ def to_ly(score):
 
         ly_parts.append(ly_part)
 
-
-
     ly_staffs = ly_staffs or []
     ly_score = '''
 \\score {
@@ -169,7 +152,6 @@ def to_ly(score):
     >>
 }
 ''' % '\n\n'.join(ly_staffs)
-
 
     ly_book_format = '''
 \\header {
@@ -180,41 +162,35 @@ def to_ly(score):
 %s
 ''' % (score.title or '', score.author or '', '%s')
 
-
     ly = ly_book_format % ly_score
-
 
     return ly
 
 
 def write_to_pdf(score, output_file):
-
     lilypond_string = to_ly(score)
     to_pdf(lilypond_string, output_file)
 
-def write_to_png(score, output_file):
 
+def write_to_png(score, output_file):
     lilypond_string = to_ly(score)
     to_png(lilypond_string, output_file)
 
 
 def show_score_png(score):
-
     with TemporaryDirectory() as tmpdirname:
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
 
         lilypond_string = to_ly(score)
         to_png(lilypond_string, png_filepath)
 
-        #im = Image.open(png_filepath)
+        # im = Image.open(png_filepath)
         im = mpimg.imread(png_filepath)
 
         height, width, _ = im.shape
 
         # account for lilypond default text at bottom
         height -= 40
-
-
 
         # Crop
         text_start_row = None
@@ -243,7 +219,7 @@ def show_score_png(score):
             for col in reversed(range(width)):
                 p = im[row][col]
                 if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_end_row = min(row + padding, height-1)
+                    text_end_row = min(row + padding, height - 1)
                     found_text = True
                     break
             if found_text:
@@ -265,7 +241,7 @@ def show_score_png(score):
             for row in reversed(range(height)):
                 p = im[row][col]
                 if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_end_col = min(col+padding, width)
+                    text_end_col = min(col + padding, width)
                     found_text = True
                     break
             if found_text:
@@ -273,10 +249,6 @@ def show_score_png(score):
 
         im = im[text_start_row:text_end_row, text_start_col:text_end_col]
 
-
         plt.axis('off')
         plt.imshow(im)
         plt.show()
-
-
-

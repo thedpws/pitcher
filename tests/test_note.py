@@ -1,9 +1,9 @@
-
-
 import unittest
-from unittest.mock import patch
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
+
 from pitchr import *
+
 
 class TestNote(unittest.TestCase):
 

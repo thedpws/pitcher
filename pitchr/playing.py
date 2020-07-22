@@ -1,12 +1,12 @@
-
-from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
-from timidity import Parser, play_notes
+from enum import Enum
 from tempfile import TemporaryDirectory
 from threading import get_ident
+
 import numpy as np
+from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
+from timidity import Parser, play_notes
 
 
-from enum import Enum
 class EventType(Enum):
     KEY_ON = 'note_on'
     KEY_OFF = 'note_off'
@@ -39,7 +39,6 @@ class Event:
         return self._time < other._time
 
 
-
 def play_score(score):
     events = []
 
@@ -54,7 +53,7 @@ def play_score(score):
 
     for part in score:
         tempo = 700 - part.tempo
-        #print("tempo:", str(tempo))
+        # print("tempo:", str(tempo))
         for i_staff, staff in enumerate(part):
             for i_measure, measure in enumerate(staff):
                 measure_beat_offset = part.time_signature.beats_per_measure * i_measure
@@ -73,32 +72,32 @@ def play_score(score):
                         beat_keyon = measure_beat_offset + start
                         beat_keyoff = beat_keyon + note.duration
 
-                        #midi_seconds = 60000 / (1120 * tempo)
-                        #midi_ticks = 5000*tempo/60000
-                        #print("midi_seconds:", str(midi_seconds))
-                        #print("midi_ticks:", str(midi_ticks))
+                        # midi_seconds = 60000 / (1120 * tempo)
+                        # midi_ticks = 5000*tempo/60000
+                        # print("midi_seconds:", str(midi_seconds))
+                        # print("midi_ticks:", str(midi_ticks))
 
                         time_keyon = beat_keyon * tempo
                         time_keyoff = beat_keyoff * tempo
-                        #time_delay = (time_keyoff - time_keyon)/15
+                        # time_delay = (time_keyoff - time_keyon)/15
                         time_delay = 80
                         time_keyoff = time_keyoff - time_delay
 
-                        #print("beat_keyon:", str(beat_keyon))
-                        #print("beat_keyoff:", str(beat_keyoff))
-                        #print("time_keyon:", str(time_keyon))
-                        #print("time_keyoff:", str(time_keyoff))
+                        # print("beat_keyon:", str(beat_keyon))
+                        # print("beat_keyoff:", str(beat_keyoff))
+                        # print("time_keyon:", str(time_keyon))
+                        # print("time_keyoff:", str(time_keyoff))
                         events.extend([
-                           Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
-                           Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
+                            Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
+                            Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
                         ])
 
     curr_time = 0
     for e in sorted(events):
         delta_time = e.time - curr_time
-        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity, time=int(round(delta_time))))
+        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity,
+                             time=int(round(delta_time))))
         curr_time += delta_time
-
 
     with TemporaryDirectory() as tmpdirname:
         midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
@@ -107,9 +106,6 @@ def play_score(score):
         play_notes(*ps.parse(), np.sin)
 
     return True
-
-
-    
 
 
 """
