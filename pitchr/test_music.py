@@ -1,4 +1,5 @@
-from unittest import TestCase, skip, mock
+from unittest import TestCase
+
 import music as ptr
 
 
@@ -22,6 +23,7 @@ class TestGlobals(TestCase):
 
         # Assert
         self.assertEqual(time, ptr.Time.COMMON_TIME)
+
 
 class TestNotes(TestCase):
 
@@ -68,8 +70,9 @@ class TestNotes(TestCase):
         # Assert
         self.assertTrue(equal)
 
+
 class TestRests(TestCase):
-    
+
     def test_rest_init_sets_pitch_and_duration(self):
         # Arrange
         n = ptr.Rest(1.0)

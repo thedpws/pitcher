@@ -1,11 +1,11 @@
+import unittest
+
 from pitchr import *
 
-import unittest
 
 class TestAccidentals(unittest.TestCase):
 
     def test_foreign_accidentals_play(self):
-
         # Should sound in Minor scale
         m = Measure([
             Note('C', 1.0),
@@ -17,7 +17,6 @@ class TestAccidentals(unittest.TestCase):
             Note('Bb', 1.0),
             Note('C5', 1.0),
         ])
-
 
         print('Do you hear a minor key? [y/N]')
         m.play()
@@ -36,13 +35,11 @@ class TestAccidentals(unittest.TestCase):
             Note('C5', 1.0),
         ])
 
-
         print('Do you hear a minor key? [y/N]')
         m.play()
         self.assertTrue(input() == 'y')
 
     def test_foreign_accidentals_show(self):
-
         m = Measure([
             Note('C', 1.0),
             Note('D', 1.0),
@@ -59,8 +56,6 @@ class TestAccidentals(unittest.TestCase):
         self.assertTrue(input() == 'y')
 
     def test_native_accidentals_dont_show(self):
-
-
         key(Key.Eb_MAJOR)
         m = Measure([
             Note('C', 1.0),
@@ -78,8 +73,6 @@ class TestAccidentals(unittest.TestCase):
         self.assertTrue(input() == 'y')
 
     def test_key_signature_shows(self):
-
-
         key(Key.Eb_MAJOR)
         m = Measure([
             Note('C', 1.0),

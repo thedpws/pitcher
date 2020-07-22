@@ -1,7 +1,7 @@
-
-
 import unittest
+
 from pitchr import *
+
 
 class TestKey(unittest.TestCase):
 
@@ -25,17 +25,17 @@ class TestKey(unittest.TestCase):
     def test_key_fails_on_less_than_0_sharps(self):
         act = lambda: Key(sharps=-1)
         self.assertRaises(PitcherException, act)
-        
+
     def test_key_allows_good_key_signatures(self):
 
-        acts = [lambda: Key(*args) for args in [(0,0), (1, 0), (0,1)]]
+        acts = [lambda: Key(*args) for args in [(0, 0), (1, 0), (0, 1)]]
 
         for act in acts:
             try:
                 act()
             except Exception:
                 self.fail(f'{act} raised an Exception')
-    
+
     def test_key_str_c_major(self):
 
         k = str(Key.C_MAJOR)
@@ -65,7 +65,7 @@ class TestKey(unittest.TestCase):
 
     def test_major_scale(self):
         scale = Key.Eb_MAJOR.major_scale
-        self.assertEqual(scale, [ 'Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D', 'Eb' ])
+        self.assertEqual(scale, ['Eb', 'F', 'G', 'Ab', 'Bb', 'C', 'D', 'Eb'])
 
     def test_major_tonic(self):
         self.assertEqual(Key.C_MAJOR.major_tonic, 'C')
