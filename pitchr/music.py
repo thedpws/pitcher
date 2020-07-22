@@ -43,9 +43,9 @@ class Time:
 
     @property
     def beat_definition(self):
-        """Get the beat defition of the Score
+        """Get the beat definition of the Score
 
-        :returns: beat defition
+        :returns: beat definition
         """
         return int(self._time.partition('/')[2])
 
@@ -193,15 +193,15 @@ class Voice(_Enum):
 class _Music:
 
     def play(self, **kwargs):
-        '''Plays music'''
+        """Plays music"""
         raise NotImplementedError
 
     def show(self, **kwargs):
-        '''Shows a graphic of music'''
+        """Shows a graphic of music"""
         raise NotImplementedError
 
     def save(self, filename, **kwargs):
-        '''Saves music to a PDF'''
+        """Saves music to a PDF"""
         raise NotImplementedError
 
 
@@ -364,7 +364,7 @@ class Staff(_Music):
     """
 
 
-    '''_Collection of measures'''
+    """_Collection of measures"""
     def __init__(self, measures=None, clef=Clef.TREBLE, voice=Voice.PIANO, time_signature=None):
 
         if not time_signature:
@@ -527,11 +527,11 @@ class Measure(_Music):
 
     @property
     def duration(self):
-        '''Returns the total duration of notes in this measure'''
+        """Returns the total duration of notes in this measure"""
         return self._next_count
 
     def __contains__(self, note):
-        '''Returns True if note is in this measure'''
+        """Returns True if note is in this measure"""
         for item in self._notes.values():
             if item == note:
                 return True
