@@ -55,25 +55,24 @@ class Predict():
                 suggestions.append(counter.most_common()[i][0])
         return suggestions
 
-key(Key.C_MAJOR)
-time(Time.COMMON_TIME)
+# key(Key.C_MAJOR)
+# time(Time.COMMON_TIME)
 
-m = Measure()
+# m = Measure()
 
+# m[0] = Note('C5', 3/2)
+# m[1.5] = Note('D5', 1/2)
+# m[2] = Note('E5', 3/2)
+# m[3.5] = Note('C5', 1/2)
+# t = 1
+# m[4] = Note('C5', t)
+# m[5] = Note('D5', t)
+# m[6] = Note('E5', t)
+# m[7] = Note('C5', t)
+# m[8] = Note('C5', t)
+# m[9] = Note('D5', t)
+# m[10] = Note('E5', t)
+# m[11] = Note('C5', t)
 
-m[0] = Note('C5', 3/2)
-m[1.5] = Note('D5', 1/2)
-m[2] = Note('E5', 3/2)
-m[3.5] = Note('C5', 1/2)
-t = 1
-m[4] = Note('C5', t)
-m[5] = Note('D5', t)
-m[6] = Note('E5', t)
-m[7] = Note('C5', t)
-m[8] = Note('C5', t)
-m[9] = Note('D5', t)
-m[10] = Note('E5', t)
-m[11] = Note('C5', t)
-
-p = Predict(m)
-print(p.predict2())
+# p = Predict(m)
+# print(p.predict2())
