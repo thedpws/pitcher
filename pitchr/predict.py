@@ -1,9 +1,3 @@
-import collections
-
-# Local testing
-from pitchr.music import *
-
-
 class Predict():
     def __init__(self, measure):
         self._measure = measure
@@ -59,42 +53,7 @@ class Predict():
             i = i+1
         return novelty
 
-key(Key.C_MAJOR)
-time(Time.COMMON_TIME)
-
-melody = [
-    Note('C', 1.0), # Predictability: 0.0 
-    Note('D', 1.0), # 0.0
-    Note('E', 1.0), # 0.0
-
-    Note('C', 1.0), # 0.0
-    Note('D', 1.0), # 1.0
-    Note('E', 1.0), # 1.0
-
-    Note('C', 1.0), # 1.0
-    Note('D', 1.0), # 1.0
-    Note('G', 1.0), # 0.0
-    Note('F', 1.0), # 0.0
-    Note('E', 1.0), # 0.0
-
-    Note('C', 1.0), # 1.0
-    Note('D', 1.0), # 1.0
-    Note('E', 1.0), # 0.67
-    Note('C', 1.0), # 1.0
-    Note('D', 1.0), # 1.0
-    Note('G', 1.0), # 0.33
-    Note('C5', 1.0) # 0.0
-]
-
-q = 0
-m = Measure()
-while (q < len(melody)):
-    m[q] = melody[q]
-    q = q+1
-
-p = Predict(m)
-novelty = p.novel()
-print(novelty)
-
-# def predict(notes_df):
-#     notes_df['Pitch Predictability'] = notes_df.apply(lambda _: 0.0, axis=1)
+def novelty(measure):
+    p = Predict(measure)
+    novelty = p.novel()
+    return novelty
