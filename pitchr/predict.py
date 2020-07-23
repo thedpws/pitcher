@@ -13,21 +13,17 @@ class Predict():
 
     def find_in_tuples(self, note_tuple, tuples):
         for t in tuples:
-            if (t == note_tuple):
-                return True
-        
+            if (t == note_tuple): return True
         return False
 
     def qtd_in_tuples(self, note_tuple, tuples):
         found_pair = 0
         found_single = 0
         for t in tuples:
-            if (t == note_tuple):
-                found_pair = found_pair + 1
+            if (t == note_tuple): found_pair = found_pair + 1
 
         for t in tuples:
-            if (t[0] == note_tuple[0]):
-                found_single = found_single + 1
+            if (t[0] == note_tuple[0]): found_single = found_single + 1
 
         return (found_single, found_pair)
 
