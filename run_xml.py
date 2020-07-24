@@ -1,4 +1,7 @@
 from pitchr.music import *
 
 
-import pitchr.xml_parser
+from pitchr.data import get_tagged_data
+
+
+print(get_tagged_data())

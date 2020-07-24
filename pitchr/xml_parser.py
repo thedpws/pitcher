@@ -7,21 +7,9 @@ from pitchr.pitch_tagger import tag_pitch
 
 circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
 
-path = "../dataset/_xml_scores"
-score_files = os.listdir(path)
-score_files.remove(".DS_Store") # eliminate .DS_Store file
-
-score_dfs = dict()
-
-
-for score_name in score_files:
+def parse_mxl(mxl):
     notes = []
-    file_name = "score.xml"
-    target = (f"{path}/{score_name}/{file_name}")
-    infile = open(target, 'r')
-    contents = infile.read()
-    infile.close()
-    soup = BeautifulSoup(contents, 'xml')
+    soup = BeautifulSoup(mxl, 'xml')
     parts = soup.find_all('part')
     if soup.find("work-title"):
         title = soup.find("work-title").get_text().title()
@@ -62,10 +50,4 @@ for score_name in score_files:
                 i += 1
 
     df = pd.DataFrame(notes, columns=["Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-    score_dfs[title] = df
-
-for title, df in score_dfs.items():
-    print(title)
-    tag_pitch(df)
-    print(df)
-
+    return df
