@@ -61,7 +61,7 @@ class PredictDF(Predict):
         self._measure = dataframe
 
     def _get_base(self, df):
-        return df['Pitch']
+        return df['Pitch Number']
 
 def tag_predictability(notes_df):
     predictabilities = [0.0] + PredictDF(notes_df).novel()

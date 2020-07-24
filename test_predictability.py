@@ -42,7 +42,7 @@ class TestPredictability(unittest.TestCase):
                 'Octave': n.octave,
                 'Accidental': n.accidentals,
                 'Duration': n.duration,
-                'Pitch': n.pitch_number
+                'Pitch Number': n.pitch_number
             } for n in melody
         ])
 
