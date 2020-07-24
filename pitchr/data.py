@@ -12,6 +12,7 @@ def tag_df(df):
     tag_pitch(df)
     tag_predictability(df)
 
+
 def get_tagged_data():
     dfs = []
 

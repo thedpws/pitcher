@@ -5,7 +5,11 @@ import os
 import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
 
-circle_of_fifths = [ 'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#', 'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F']
+circle_of_fifths = [
+        'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
+        'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'
+]
+
 
 def parse_mxl(mxl):
     notes = []
@@ -49,5 +53,8 @@ def parse_mxl(mxl):
                 notes.append((key, sign, step, octave, accidental, duration))
                 i += 1
 
-    df = pd.DataFrame(notes, columns=["Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+    df = pd.DataFrame(notes, columns=[
+        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
+    ])
+
     return df
