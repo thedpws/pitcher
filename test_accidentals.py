@@ -2,10 +2,10 @@ from pitchr import *
 
 import unittest
 
+
 class TestAccidentals(unittest.TestCase):
 
     def test_foreign_accidentals_play(self):
-
         # Should sound in Minor scale
         m = Measure([
             Note('C', 1.0),
