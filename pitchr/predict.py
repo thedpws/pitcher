@@ -61,10 +61,9 @@ class PredictDF(Predict):
         self._measure = dataframe
 
     def _get_base(self, df):
-        return df['Pitch Number']
+        return df['Pitch Interval']
 
 def tag_predictability(notes_df):
     predictabilities = [0.0] + PredictDF(notes_df).novel()
     notes_df['Pitch Predictability'] = np.array(predictabilities)
-    #notes_df['Pitch Predictability' = notes_df.apply(lambda row: predictabilitiesrow.index
 
