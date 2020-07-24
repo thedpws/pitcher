@@ -3,7 +3,7 @@ from pitchr.music import *
 
 import pandas as pd
 
-from pitchr.predict import predict
+from pitchr.predict import tag_predictability
 
 class TestPredictability(unittest.TestCase):
 
@@ -41,12 +41,13 @@ class TestPredictability(unittest.TestCase):
                 'Letter': n.letter,
                 'Octave': n.octave,
                 'Accidental': n.accidentals,
-                'Duration': n.duration
+                'Duration': n.duration,
+                'Pitch': n.pitch_number
             } for n in melody
         ])
 
         # Act
-        prediction = predict(df)
+        tag_predictability(df)
 
         # Assert
 
@@ -67,9 +68,9 @@ class TestPredictability(unittest.TestCase):
 
             1.,
             1.,
-            2/3,
+            0.67,
             1.,
             1.,
-            1/3,
+            0.25,
             0,
         ])
