@@ -1,3 +1,5 @@
+import numpy as np
+
 class Predict():
     def __init__(self, measure):
         self._measure = measure
@@ -53,3 +55,16 @@ def novelty(measure):
     p = Predict(measure)
     novelty = p.novel()
     return novelty
+
+class PredictDF(Predict):
+    def __init__(self, dataframe):
+        self._measure = dataframe
+
+    def _get_base(self, df):
+        return df['Pitch Number']
+
+def tag_predictability(notes_df):
+    predictabilities = [0.0] + PredictDF(notes_df).novel()
+    notes_df['Pitch Predictability'] = np.array(predictabilities)
+    #notes_df['Pitch Predictability' = notes_df.apply(lambda row: predictabilitiesrow.index
+
