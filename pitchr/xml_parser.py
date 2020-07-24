@@ -50,11 +50,15 @@ def parse_mxl(mxl):
                     accidental = note.find("accidental").get_text()
                 else:
                     accidental = None
-                notes.append((key, sign, step, octave, accidental, duration))
+                if note.find("voice"):
+                    voice = note.find("voice").get_text()
+                else:
+                    voice = None
+                notes.append((key, sign, voice, step, octave, accidental, duration))
                 i += 1
 
     df = pd.DataFrame(notes, columns=[
-        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
+        "Key", "Clef", "Voice", "Letter", "Octave", "Accidental", "Duration"
     ])
 
     return df
