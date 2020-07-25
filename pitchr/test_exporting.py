@@ -2,7 +2,7 @@
 
 
 #from showing import *
-from music import *
+from pitchr.music import *
 
 key(Key.C_MAJOR)
 time(Time.COMMON_TIME)

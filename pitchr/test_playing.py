@@ -1,7 +1,3 @@
-
-
-
-#from playing import *
 from pitchr.music import *
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
 

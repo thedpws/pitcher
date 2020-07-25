@@ -11,9 +11,9 @@ circle_of_fifths = [
 ]
 
 
-def parse_mxl(mxl):
+def parse_xml(xml):
     notes = []
-    soup = BeautifulSoup(mxl, 'xml')
+    soup = BeautifulSoup(xml, 'xml')
     parts = soup.find_all('part')
     if soup.find("work-title"):
         title = soup.find("work-title").get_text().title()
