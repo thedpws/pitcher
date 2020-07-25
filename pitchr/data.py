@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
 from pitchr.predict import tag_predictability
-from pitchr.xml_parser import parse_mxl
+from pitchr.xml_parser import parse_xml
 
 
 def tag_df(df):
@@ -16,7 +16,7 @@ def tag_df(df):
 def get_tagged_data():
     dfs = []
 
-    path = "./dataset/_xml_scores"
+    path = "../dataset/_xml_scores"
     score_files = os.listdir(path)
 
     if os.path.exists(".DS_Store"):
@@ -26,11 +26,11 @@ def get_tagged_data():
         notes = []
         file_name = "score.xml"
         target = (f"{path}/{score_name}/{file_name}")
-        infile = open(target, 'r')
+        infile = open(target, 'r', encoding='utf-8')
         contents = infile.read()
         infile.close()
 
-        df = parse_mxl(contents)
+        df = parse_xml(contents)
         tag_df(df)
         dfs.append(df)
     return dfs

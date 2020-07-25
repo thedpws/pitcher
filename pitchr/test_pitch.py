@@ -1,5 +1,5 @@
 import unittest
-from music import _Pitch
+from pitchr.music import _Pitch
 
 
 class TestPitch(unittest.TestCase):
