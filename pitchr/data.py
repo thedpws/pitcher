@@ -32,5 +32,6 @@ def get_tagged_data():
 
         df = parse_mxl(contents)
         tag_df(df)
+        df['Score Name'] = score_name
         dfs.append(df)
     return dfs
