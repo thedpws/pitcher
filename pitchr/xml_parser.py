@@ -11,15 +11,23 @@ circle_of_fifths = [
 ]
 
 
-def parse_xml(xml):
-    notes = []
-    soup = BeautifulSoup(xml, 'xml')
+def parse_xml(xml_contents):
+    """Parses the contents of an XML file
+
+        :input xml_contents: XML contents of the file we want to parse
+        :return melody_df: Dataframe of the melody notes
+        :return harmony_df: Dataframe of the harmony notes
+    """
+    melody_notes = []
+    harmony_notes = []
+    soup = BeautifulSoup(xml_contents, 'xml')
     parts = soup.find_all('part')
     if soup.find("work-title"):
         title = soup.find("work-title").get_text().title()
     else:
         title = ""
-    for part in soup.find_all("part"):
+    for part in parts:
+        part_number = int(part.get('id')[-1])
         sign = part.find("sign").get_text()
         line = part.find("line").get_text()
         fifths = part.find("fifths").get_text()
@@ -34,7 +42,6 @@ def parse_xml(xml):
                 sign = measure.find("sign").get_text()
                 line = measure.find("line").get_text()
 
-            i = 1
             for note in measure.findChildren("note"):
                 if note.find("step"):
                     step = note.find("step").get_text()
@@ -50,11 +57,20 @@ def parse_xml(xml):
                     accidental = note.find("accidental").get_text()
                 else:
                     accidental = None
-                notes.append((key, sign, step, octave, accidental, duration))
-                i += 1
 
-    df = pd.DataFrame(notes, columns=[
+                # melody part
+                if part_number == 1:
+                    melody_notes.append((key, sign, step, octave, accidental, duration))
+
+                # harmony part
+                elif part_number == 2:
+                    harmony_notes.append((key, sign, step, octave, accidental, duration))
+
+    melody_df = pd.DataFrame(melody_notes, columns=[
+        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
+    ])
+    harmony_df = pd.DataFrame(harmony_notes, columns=[
         "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
     ])
 
-    return df
+    return melody_df, harmony_df

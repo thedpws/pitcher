@@ -2,7 +2,6 @@
 
 from bs4 import BeautifulSoup
 import os
-import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
 from pitchr.predict import tag_predictability
 from pitchr.xml_parser import parse_xml
@@ -14,8 +13,13 @@ def tag_df(df):
 
 
 def get_tagged_data():
-    dfs = []
+    """Cycles through all data and tags Dataframes with predictability and other values
 
+        :return melody_dfs: list of melody dataframes
+        :return harmony_dfs: list of harmony dataframes
+    """
+    melody_dfs = []
+    harmony_dfs = []
     path = "../dataset/_xml_scores"
     score_files = os.listdir(path)
 
@@ -23,15 +27,17 @@ def get_tagged_data():
         score_files.remove(".DS_Store")
 
     for score_name in score_files:
-        notes = []
         file_name = "score.xml"
         target = (f"{path}/{score_name}/{file_name}")
         infile = open(target, 'r', encoding='utf-8')
         contents = infile.read()
         infile.close()
+        melody_df, harmony_df = parse_xml(contents)
+        tag_df(melody_df)
+        tag_df(harmony_df)
+        melody_df['Score Name'] = score_name
+        harmony_df['Score Name'] = score_name
+        melody_dfs.append(melody_df)
+        harmony_dfs.append(harmony_df)
 
-        df = parse_xml(contents)
-        tag_df(df)
-        df['Score Name'] = score_name
-        dfs.append(df)
-    return dfs
+    return melody_dfs, harmony_dfs
