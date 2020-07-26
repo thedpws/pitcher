@@ -43,28 +43,29 @@ def parse_xml(xml_contents):
                 line = measure.find("line").get_text()
 
             for note in measure.findChildren("note"):
-                if note.find("step"):
-                    step = note.find("step").get_text()
-                    octave = note.find("octave").get_text()
-                else:
-                    step = "REST"
-                    octave = "0"
-                if note.find("duration"):
-                    duration = note.find("duration").get_text()
-                else:
-                    duration = "missing"
-                if note.find("accidental"):
-                    accidental = note.find("accidental").get_text()
-                else:
-                    accidental = None
+                if not note.find("chord"):
+                    if note.find("step"):
+                        step = note.find("step").get_text()
+                        octave = note.find("octave").get_text()
+                    else:
+                        step = "REST"
+                        octave = "0"
+                    if note.find("duration"):
+                        duration = note.find("duration").get_text()
+                    else:
+                        duration = "0"
+                    if note.find("accidental"):
+                        accidental = note.find("accidental").get_text()
+                    else:
+                        accidental = None
 
-                # melody part
-                if part_number == 1:
-                    melody_notes.append((key, sign, step, octave, accidental, duration))
+                    # melody part
+                    if part_number == 1:
+                        melody_notes.append((key, sign, step, octave, accidental, duration))
 
-                # harmony part
-                elif part_number == 2:
-                    harmony_notes.append((key, sign, step, octave, accidental, duration))
+                    # harmony part
+                    elif part_number == 2:
+                        harmony_notes.append((key, sign, step, octave, accidental, duration))
 
     melody_df = pd.DataFrame(melody_notes, columns=[
         "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"

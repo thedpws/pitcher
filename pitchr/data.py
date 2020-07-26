@@ -23,7 +23,7 @@ def get_tagged_data():
     path = "../dataset/_xml_scores"
     score_files = os.listdir(path)
 
-    if os.path.exists(".DS_Store"):
+    while ".DS_Store" in score_files:
         score_files.remove(".DS_Store")
 
     for score_name in score_files:
