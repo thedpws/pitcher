@@ -95,6 +95,14 @@ class TestNote(unittest.TestCase):
         n.octave_down()
         self.assertEqual(n.pitch, 'C3')
 
+    def test_set_pitch_number_sets(self):
+        n = Note('C4', 1.0)
+
+        self.assertEqual('C4', str(n.pitch))
+        n.pitch_number = 3
+
+        self.assertEqual('D#4', str(n.pitch))
+
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):
         Note('A', 1.0).play()
@@ -111,3 +119,4 @@ class TestNote(unittest.TestCase):
             filepath = tempdirname + '/export.pdf'
             Note('A', 1.0).save(filepath)
         self.assertTrue(save_score.called)
+

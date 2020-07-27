@@ -804,6 +804,10 @@ class Note(_Music):
     def pitch_number(self):
         return int(self._pitch)
 
+    @pitch_number.setter
+    def pitch_number(self, pitch):
+        self._pitch = _Pitch.from_int(pitch)
+
     @property
     def duration(self):
         """Get the duration of a Note
@@ -992,6 +996,13 @@ class _Pitch:
         self._letter = letter
         self._accidental_offset = sum([offset*(sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in {'b':-1, '#':+1, 'x':+2}.items()])
         self._octave = octave
+
+    @staticmethod
+    def from_int(pitch):
+        octave = pitch // 12 + 4
+        return _Pitch.from_string(''.join([Keyboard.key(pitch), str(octave)]))
+
+
 
     @staticmethod
     def from_string(pitch):
