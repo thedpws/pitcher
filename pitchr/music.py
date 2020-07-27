@@ -666,6 +666,7 @@ class Note(_Music):
        :param duration: note duration
        :param dynamic: dynamic, such as piano, forte, crescendo, etc
        :param articulation: articulation, such as staccato, accent, fermata, etc
+       :param tie: when true will play this note continuously into the next note
     """
 
     def __str__(self):
@@ -685,11 +686,12 @@ class Note(_Music):
         result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
         return result
 
-    def __init__(self, pitch, duration, dynamic=None, articulation=None):
+    def __init__(self, pitch, duration, dynamic=None, articulation=None, tie=False):
         self._pitch = _Pitch.from_string(pitch)
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
+        self._tie = tie     # if True, no audible break between this note into next note
 
         if self.pitch_number != None:
             self._mingus_note = _MingusNote(self.letter, self.octave)
@@ -801,6 +803,22 @@ class Note(_Music):
         :param articulation: string
         """
         self._articulation = articulation
+
+    @property
+    def tie(self):
+        """Get the tie status of a Note
+
+        :returns: tie
+        """
+        return self._tie
+
+    @articulation.setter
+    def articulation(self, tie):
+        """Set the tie status of a Note
+
+        :param tie: boolean
+        """
+        self._tie = tie
 
     def __eq__(self, other):
         return self.duration == other.duration and self.pitch == other.pitch
