@@ -738,7 +738,10 @@ class Note(_Music):
         return result
 
     def __init__(self, pitch, duration, dynamic=None, articulation=None):
-        self._pitch = _Pitch.from_string(pitch)
+        if type(pitch) == str:
+            self._pitch = _Pitch.from_string(pitch)
+        elif type(pitch) == int:
+            self._pitch = _Pitch.from_int(pitch)
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc

@@ -103,6 +103,11 @@ class TestNote(unittest.TestCase):
 
         self.assertEqual('D#4', str(n.pitch))
 
+    def test_constructor_pitch_number(self):
+        n = Note(3, 1.0)
+
+        self.assertEqual('D#4', str(n.pitch))
+
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):
         Note('A', 1.0).play()
