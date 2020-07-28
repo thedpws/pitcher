@@ -35,6 +35,9 @@ def parse_xml(xml_contents):
         beats = part.find("beats").get_text()
         beat_type = part.find("beat-type").get_text()
         for measure in part.findChildren("measure"):
+
+            measure_index = measure["number"]
+
             if measure.find("beats"):
                 beats = measure.find("beats").get_text()
                 beat_type = measure.find("beat-type").get_text()
@@ -61,17 +64,17 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        melody_notes.append((key, sign, step, octave, accidental, duration))
+                        melody_notes.append((key, sign, measure_index, step, octave, accidental, duration))
 
                     # harmony part
                     elif part_number == 2:
-                        harmony_notes.append((key, sign, step, octave, accidental, duration))
+                        harmony_notes.append((key, sign, measure_index, step, octave, accidental, duration))
 
     melody_df = pd.DataFrame(melody_notes, columns=[
-        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
+        "Key", "Clef", "Measure", "Letter", "Octave", "Accidental", "Duration"
     ])
     harmony_df = pd.DataFrame(harmony_notes, columns=[
-        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
+        "Key", "Clef", "Measure", "Letter", "Octave", "Accidental", "Duration"
     ])
 
     return melody_df, harmony_df
