@@ -13,29 +13,17 @@ DATA_PATH = "../dataset/_xml_scores"
 
 # steps to NN model: 1) build model, 2) compile model, 3) train model, 4) evaluate model, 5) make predictions
 
-# loads the data: data_path is path to file which has 2 lines:
-# 1st line is a list of 32 arrays of melody info
-# 2nd line is a list of 32 arrays of harmony info
+
 def load_data(data_path):
     """Loads training dataset from xml_parser.
 
         :param data_path (str): Path to xml file containing data
-        :return melody (ndarray): Inputs to model
-        :return harmony (ndarray): Targets for model
+        :return list_melody_dfs (list of dataframes): Inputs to model
+        :return list_harmony_dfs (list of dataframes): Targets for model
     """
-    with open(data_path, "r") as file:
-        melody = file.readline()
-        harmony = file.readline()
-        melody.reshape(32, 4)
-        harmony.reshape(32, 4)
-        dataframe = data.get_tagged_data()
-        print("type(dataframe):", type(dataframe))
-        dataframe.to_numpy() # convert dataframe to numpy array
-        print("type(dataframe):", type(dataframe))
-        print("dataframe.shape:", dataframe.shape)
-        print("dataframe:", dataframe)
 
-    return melody, harmony
+    list_melody_dfs, list_harmony_dfs = data.get_tagged_data()
+    return list_melody_dfs, list_harmony_dfs
 
 
 def prepare_data(test_size, validation_size):
@@ -51,34 +39,49 @@ def prepare_data(test_size, validation_size):
         :return harmony_test (ndarray): target test set
     """
     # Load data
-    melody, harmony = load_data(DATA_PATH)
+    list_melody_dfs, list_harmony_dfs = load_data(DATA_PATH)
+
+    # transform dataframes into numpy arrays
+    for i in range(0, len(list_melody_dfs)):
+        temp_melody_df = list_melody_dfs[i]
+        temp_harmony_df = list_harmony_dfs[i]
+        temp_melody_df = temp_melody_df[['Pitch Number', 'Pitch Interval', 'Pitch Predictability']]
+        temp_harmony_df = temp_harmony_df[['Pitch Number', 'Pitch Interval', 'Pitch Predictability']]
+        temp_melody_np = temp_melody_df.to_numpy()
+        temp_harmony_np = temp_harmony_df.to_numpy()
+        list_melody_dfs[i] = temp_melody_np
+        list_harmony_dfs[i] = temp_harmony_np
+
+    # convert lists into 3d numpy arrays
+    list_melody_dfs = np.array(list_melody_dfs)
+    list_harmony_dfs = np.array(list_harmony_dfs)
 
     # split data
-    melody_train, melody_test, harmony_train, harmony_test = train_test_split(melody, harmony, test_size=test_size)
+    melody_train, melody_test, harmony_train, harmony_test = train_test_split(list_melody_dfs, list_harmony_dfs, test_size=test_size)
     melody_train, melody_validation, harmony_train, harmony_validation = train_test_split(melody_train, harmony_train, test_size=validation_size)
 
     return melody_train, melody_validation, melody_test, harmony_train, harmony_validation, harmony_test
 
 
-def build_model(input_shape):
+def build_model():
     """Builds RNN-LSTM model
 
-        :param input_shape (tuple): Shape of input set. Should be 32x4
+        :param input_shape (tuple): Shape of input set.
         :return model: RNN-LSTM model
     """
     model = Sequential()
 
     # 2 LSTM layers
-    model.add(LSTM(128, input_shape=input_shape, return_sequences=True))
-    model.add(LSTM(128))
+    model.add(LSTM(128, input_shape=(None, 3), return_sequences=True))
+    model.add(LSTM(64))
 
     # Dense layers
-    model.add(Dense(128, activation="relu"))
+    model.add(Dense(64, activation="relu"))
     model.add(Dropout(0.3))
 
     # Output Layer
     model.add(Dense(32, activation="softmax"))
-
+    model.summary()
     return model
 
 
@@ -110,8 +113,7 @@ def plot_history(history):
 if __name__ == "__main__":
     # dataframe columns are:
     # Index(['Key', 'Clef', 'Letter', 'Octave', 'Accidental', 'Duration', 'Pitch',
-    # 'Pitch Number', 'Pitch Interval', 'Pitch Predictability'],
-    # dtype='object')
+    # 'Pitch Number', 'Pitch Interval', 'Pitch Predictability']
 
     """
     # get data and split data
