@@ -1,27 +1,23 @@
-
 import pandas as pd
 import numpy as np
 from pitchr.music import *
-
 
 def tag_accidentals(notes_df):
     # get the corresponding key object
     key = getattr(Key, notes_df.iloc[0]['Key'] + '_MAJOR')
 
-
-    key_accidentals = { pitch[0]: pitch[1:] or None for pitch in key.major_scale }
+    key_accidentals = {pitch[0]: pitch[1:] or None for pitch in key.major_scale}
     key_accidentals.update({'REST': None})
 
     # The accidentals gotten from the music xml are relative to the key signature
-
 
     # Calculate accidentals wrt key
     notes_df['Accidental'] = notes_df.apply(lambda row: row['Accidental'] or key_accidentals[row['Letter']], axis=1)
 
     return
 
-def tag_pitch(notes_df):
 
+def tag_pitch(notes_df):
     tag_accidentals(notes_df)
 
     def pitch_fn(row):
@@ -39,15 +35,13 @@ def tag_pitch(notes_df):
 
     notes_df['Pitch Number'] = notes_df.apply(pitch_number, axis=1)
 
-
     curr_pitch = 0
+
     def pitch_interval_fn(row):
         nonlocal curr_pitch
-        
+
         interval = int(row['Pitch Number'] or '0') - curr_pitch
         curr_pitch += interval
         return interval
 
     notes_df['Pitch Interval'] = notes_df.apply(pitch_interval_fn, axis=1)
-
-

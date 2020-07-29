@@ -40,8 +40,8 @@ class Predict():
         novelty = []
         i = 0
 
-        while(i < (len(base)-1)):
-            this_tuple = tuple((base[i], base[i+1]))
+        while (i < (len(base) - 1)):
+            this_tuple = tuple((base[i], base[i + 1]))
             if (len(tuples) == 0):
                 novelty.append(0.0)
             else:
@@ -50,10 +50,10 @@ class Predict():
                 else:
                     qtd_tuple = self.qtd_in_tuples(this_tuple, tuples)
                     (found_single, found_pair) = qtd_tuple
-                    novelty.append(float('%.2f' % (found_pair/found_single)))
+                    novelty.append(float('%.2f' % (found_pair / found_single)))
 
             tuples.append(this_tuple)
-            i = i+1
+            i = i + 1
         return novelty
 
 

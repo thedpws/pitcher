@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 
 DATA_PATH = "../dataset/_xml_scores"
 
+
 # steps to NN model: 1) build model, 2) compile model, 3) train model, 4) evaluate model, 5) make predictions
 
 
@@ -57,8 +58,10 @@ def prepare_data(test_size, validation_size):
     list_harmony_dfs = np.array(list_harmony_dfs)
 
     # split data
-    melody_train, melody_test, harmony_train, harmony_test = train_test_split(list_melody_dfs, list_harmony_dfs, test_size=test_size)
-    melody_train, melody_validation, harmony_train, harmony_validation = train_test_split(melody_train, harmony_train, test_size=validation_size)
+    melody_train, melody_test, harmony_train, harmony_test = train_test_split(list_melody_dfs, list_harmony_dfs,
+                                                                              test_size=test_size)
+    melody_train, melody_validation, harmony_train, harmony_validation = train_test_split(melody_train, harmony_train,
+                                                                                          test_size=validation_size)
 
     return melody_train, melody_validation, melody_test, harmony_train, harmony_validation, harmony_test
 
@@ -72,7 +75,7 @@ def build_model():
     model = Sequential()
 
     # 2 LSTM layers
-    #model.add(LSTM(128, input_shape=(50, 3), return_sequences=True))
+    # model.add(LSTM(128, input_shape=(50, 3), return_sequences=True))
     model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
     model.add(LSTM(64))
 

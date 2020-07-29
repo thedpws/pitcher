@@ -6,8 +6,8 @@ import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
 
 circle_of_fifths = [
-        'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
-        'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'
+    'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
+    'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'
 ]
 
 
@@ -74,14 +74,15 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[measure_split_position]):
+                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[
+                            measure_split_position]):
                             temp_melody_notes.append((key, sign, step, octave, accidental, duration))
                         else:
                             measure_split_position += 1
-                            
+
                             print("Printing melody notes")
                             for note in temp_melody_notes:
-                                print(note[2]+str(note[4]), end=",")
+                                print(note[2] + str(note[4]), end=",")
                             print()
 
                             melody_notes.append(temp_melody_notes)
@@ -102,7 +103,7 @@ def parse_xml(xml_contents):
                                     measure_split.append(measure_num)
             if len(temp_harmony_notes) == 50:
                 for note in temp_harmony_notes:
-                    print(note[2]+str(note[4]), end=",")
+                    print(note[2] + str(note[4]), end=",")
                 print()
 
                 # double-checks for adding the same measure
@@ -111,10 +112,6 @@ def parse_xml(xml_contents):
                 temp_harmony_notes.clear()
 
         print("measure_split:", measure_split)
-        
-
-    
-
 
     """
     melody_df = pd.DataFrame(melody_notes, columns=[
