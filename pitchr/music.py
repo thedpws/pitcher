@@ -999,6 +999,11 @@ class Rest(Note):
 
 
 class _Pitch:
+
+    FLAT = 'b'
+    SHARP = '#'
+    DOUBLE_SHARP = 'x'
+
     def __init__(self, letter, accidentals=None, octave=4):
         self._letter = letter
         self._accidental_offset = sum(
@@ -1016,7 +1021,7 @@ class _Pitch:
                 return accidentals
             else:
                 for temp in pitch_string:
-                    if temp == "#" or temp == "b" or temp == 'x':
+                    if temp == _Pitch.SHARP or temp == _Pitch.FLAT or temp == _Pitch.DOUBLE_SHARP:
                         accidentals += temp
                 return accidentals
 
@@ -1045,22 +1050,22 @@ class _Pitch:
         if self._accidental_offset == 0:
             return ''
         elif self._accidental_offset < 0:
-            return 'b' * abs(self._accidental_offset)
+            return _Pitch.FLAT * abs(self._accidental_offset)
         else:
-            return 'x' * (self._accidental_offset // 2) + '#' * (self._accidental_offset % 2)
+            return _Pitch.DOUBLE_SHARP * (self._accidental_offset // 2) + _Pitch.SHARP * (self._accidental_offset % 2)
 
     @accidentals.setter
     def accidentals(self, accidentals):
         self._accidental_offset = sum(
             [offset * (sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in
-             {'b': -1, '#': +1, 'x': +2}.items()])
+             {_Pitch.FLAT: -1, _Pitch.SHARP: +1, _Pitch.DOUBLE_SHARP: +2}.items()])
 
         if self._accidental_offset == 0:
             return ''
         elif self._accidental_offset < 0:
-            return 'b' * abs(self._accidental_offset)
+            return _Pitch.FLAT * abs(self._accidental_offset)
         else:
-            return 'x' * (self._accidental_offset // 2) + '#' * (self._accidental_offset % 2)
+            return _Pitch.DOUBLE_SHARP * (self._accidental_offset // 2) + _Pitch.SHARP * (self._accidental_offset % 2)
 
     @property
     def octave(self):

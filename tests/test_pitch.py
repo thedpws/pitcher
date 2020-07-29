@@ -1,6 +1,6 @@
 import unittest
 
-from music import _Pitch
+from pitchr.music import _Pitch
 
 
 class TestPitch(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestPitch(unittest.TestCase):
         i = int(p)
 
         # assert
-        self.assertEqual(i, -5)
+        self.assertEqual(i, 7)
 
     def test_accidental_offset_flats(self):
         # arrange
@@ -57,4 +57,4 @@ class TestPitch(unittest.TestCase):
         accidentals = p.accidentals
 
         # assert
-        self.assertEqual(accidentals, 'X')
+        self.assertEqual(accidentals, _Pitch.DOUBLE_SHARP)
