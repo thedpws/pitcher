@@ -20,10 +20,9 @@ def parse_xml(xml_contents):
     """
     melody_notes = []
     harmony_notes = []
-    temp_harmony_notes = []
     temp_melody_notes = []
+    temp_harmony_notes = []
     measure_split_position = 0
-    another_temp_melody_notes = []
     soup = BeautifulSoup(xml_contents, 'xml')
     parts = soup.find_all('part')
     if soup.find("work-title"):
@@ -33,8 +32,8 @@ def parse_xml(xml_contents):
 
     # list of measure indexes of 50 notes of harmony
     measure_split = []
-    for part in reversed(parts):
-        measure_num = -1
+    for part in parts:
+        measure_num = 0
         part_number = int(part.get('id')[-1])
         print("Part_number:", part_number)
         sign = part.find("sign").get_text()
@@ -74,42 +73,47 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[
-                            measure_split_position]):
-                            temp_melody_notes.append((key, sign, step, octave, accidental, duration))
-                        else:
-                            measure_split_position += 1
-
-                            print("Printing melody notes")
-                            for note in temp_melody_notes:
-                                print(note[2] + str(note[4]), end=",")
-                            print()
-
-                            melody_notes.append(temp_melody_notes)
-                            temp_melody_notes.clear()
-
-                    # harmony part
-                    elif part_number == 2:
                         # only add the harmony note if we have less than 50 notes.
                         # If we have more, the rest of the measure is obsolete
-                        if len(temp_harmony_notes) < 50:
-                            temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
+                        if len(temp_melody_notes) < 50:
+                            temp_melody_notes.append((key, sign, step, octave, accidental, duration))
                         else:
-                            harmony_notes.append(temp_harmony_notes)
+                            melody_notes.append(temp_melody_notes)
                             if len(measure_split) == 0:
                                 measure_split.append(measure_num)
                             else:
                                 if measure_split[-1] != measure_num:
                                     measure_split.append(measure_num)
-            if len(temp_harmony_notes) == 50:
-                for note in temp_harmony_notes:
+
+                    # harmony part
+                    elif part_number == 2:
+                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[
+                            measure_split_position]):
+                            temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
+                        else:
+                            print("Printing harmony notes:")
+                            for n in temp_harmony_notes:
+                                print(n[2] + str(n[4]), end=",")
+                            print()
+                            harmony_notes.append(temp_harmony_notes)
+                            temp_harmony_notes.clear()
+                            temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
+                            measure_split_position += 1
+
+
+
+
+
+            if len(temp_melody_notes) == 50:
+                for note in temp_melody_notes:
                     print(note[2] + str(note[4]), end=",")
                 print()
-
                 # double-checks for adding the same measure
                 if measure_split[-1] != measure_num:
                     measure_split.append(measure_num)
-                temp_harmony_notes.clear()
+                temp_melody_notes.clear()
+
+            #measure_num += 1
 
         print("measure_split:", measure_split)
 

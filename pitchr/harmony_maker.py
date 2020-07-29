@@ -69,22 +69,21 @@ def prepare_data(test_size, validation_size):
 def build_model():
     """Builds RNN-LSTM model
 
-        :param input_shape (tuple): Shape of input set.
         :return model: RNN-LSTM model
     """
     model = Sequential()
 
     # 2 LSTM layers
-    # model.add(LSTM(128, input_shape=(50, 3), return_sequences=True))
-    model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
-    model.add(LSTM(64))
+    model.add(LSTM(512, input_shape=(None, 3), return_sequences=True))
+    # model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
+    model.add(LSTM(512))
 
     # Dense layers
     model.add(Dense(64, activation="relu"))
     model.add(Dropout(0.3))
 
     # Output Layer
-    model.add(Dense(50, activation="softmax"))
+    model.add(Dense(3, activation="softmax"))
     model.summary()
     return model
 
