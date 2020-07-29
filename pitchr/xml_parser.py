@@ -73,8 +73,17 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        another_temp_melody_notes.append((key, sign, step, octave, accidental, duration))
-                        # appending to temporary array to be later added to final array
+                        for ms in measure_split:
+                            if measure_num <= ms:
+                                temp_melody_notes.append((key, sign, step, octave, accidental, duration))
+                            else:
+                                
+                                for note in temp_melody_notes:
+                                    print(note[2]+str(note[4]), end=",")
+                                print()
+
+                                melody_notes.append(temp_melody_notes)
+                                temp_melody_notes.clear()
 
                     # harmony part
                     elif part_number == 2:
@@ -100,21 +109,8 @@ def parse_xml(xml_contents):
                 temp_harmony_notes.clear()
 
         print("measure_split:", measure_split)
+        
 
-        # now adding to melody_notes final
-        for ms in measure_split:
-            for n in range(ms):
-                temp_melody_notes.append(another_temp_melody_notes[n])
-            melody_notes.append(temp_melody_notes)
-            temp_melody_notes.clear()
-            
-        this_note = 0    
-        for note in melody_notes:
-                print(note[this_note][2]+str(note[this_note][4]), end=",")
-                this_note += 1
-        print()
-
-            #melody_notes.append((key, sign, step, octave, accidental, duration))
     
 
 
