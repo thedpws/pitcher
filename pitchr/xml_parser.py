@@ -22,6 +22,7 @@ def parse_xml(xml_contents):
     harmony_notes = []
     temp_harmony_notes = []
     temp_melody_notes = []
+    measure_split_position = 0
     another_temp_melody_notes = []
     soup = BeautifulSoup(xml_contents, 'xml')
     parts = soup.find_all('part')
@@ -73,17 +74,18 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        for ms in measure_split:
-                            if measure_num <= ms:
-                                temp_melody_notes.append((key, sign, step, octave, accidental, duration))
-                            else:
-                                
-                                for note in temp_melody_notes:
-                                    print(note[2]+str(note[4]), end=",")
-                                print()
+                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[measure_split_position]):
+                            temp_melody_notes.append((key, sign, step, octave, accidental, duration))
+                        else:
+                            measure_split_position += 1
+                            
+                            print("Printing melody notes")
+                            for note in temp_melody_notes:
+                                print(note[2]+str(note[4]), end=",")
+                            print()
 
-                                melody_notes.append(temp_melody_notes)
-                                temp_melody_notes.clear()
+                            melody_notes.append(temp_melody_notes)
+                            temp_melody_notes.clear()
 
                     # harmony part
                     elif part_number == 2:
