@@ -1,4 +1,5 @@
 import setuptools
+import sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -11,7 +12,13 @@ with open("requirements.txt", "r") as fh:
     requirements = fh.read().split('\n')
 
 print(requirements)
-input('Do these requirements look okay?')
+response = input('Do these requirements look okay?')
+
+response = response.lower()
+
+if response != 'y' and response != 'yes':
+    sys.exit(1)
+
 
 setuptools.setup(
     name="pitchr",
