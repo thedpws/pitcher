@@ -72,7 +72,8 @@ def build_model():
     model = Sequential()
 
     # 2 LSTM layers
-    model.add(LSTM(128, input_shape=(None, 3), return_sequences=True))
+    #model.add(LSTM(128, input_shape=(50, 3), return_sequences=True))
+    model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
     model.add(LSTM(64))
 
     # Dense layers
@@ -80,7 +81,7 @@ def build_model():
     model.add(Dropout(0.3))
 
     # Output Layer
-    model.add(Dense(32, activation="softmax"))
+    model.add(Dense(50, activation="softmax"))
     model.summary()
     return model
 
