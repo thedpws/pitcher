@@ -6,6 +6,7 @@ import numpy as np
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
 from timidity import Parser, play_notes
 
+from pitchr.utils import suppress_stdout_stderr
 
 class EventType(Enum):
     KEY_ON = 'note_on'
@@ -102,8 +103,9 @@ def play_score(score):
     with TemporaryDirectory() as tmpdirname:
         midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
         mid.save(midi_filepath)
-        ps = Parser(midi_filepath)
-        play_notes(*ps.parse(), np.sin)
+        with suppress_stdout_stderr():
+            ps = Parser(midi_filepath)
+            play_notes(*ps.parse(), np.sin)
 
     return True
 
