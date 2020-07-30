@@ -113,10 +113,11 @@ m.save('MySong.pdf')
 * `ln -s /usr/bin/python3.8 /usr/bin/python3`
 * To create the virtual environment, `cd` into the project directory and `python3 -m venv env`
 * To install dependencies to the virtual environment, `source env/bin/activate && pip3 install -r requirements.txt`
-* Install these dependencies using your local package manager (ex. `sudo apt install python3-dev`):
+* Install these dependencies using your local package manager (ex. `sudo apt install python3-dev python3-venv libasound2 libasound2-dev lilypond`):
   * `python3-dev`
   * `python3-venv`
   * `libasound2`
+  * `libasound2-dev`
   * `lilypond`
 
 ### Working on the project
