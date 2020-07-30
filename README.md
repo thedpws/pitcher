@@ -38,12 +38,7 @@ m = Measure([
     Note('C', 1.0),
     Note('D', 1.0),
     Note('E', 1.0),
-    Note('F', 1.0),
-    Note('G', 1.0),
-    Note('F', 1.0),
-    Note('E', 1.0),
     Note('D', 1.0),
-    Note('C', 4.0),
 ])
 
 # See what you've written
