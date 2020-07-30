@@ -107,6 +107,11 @@ m.save('MySong.pdf')
     score1.get_title() # "My Song"
     score1.add_part(part1)
 
+## Running all Pitchr tests
+```bash
+./run_pitchr_tests.sh
+```
+
 # Contributing
 ### Setting up dependencies
 * python3.8 is required for pitchr and python3 should link to python3.8 to run the tests
