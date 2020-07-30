@@ -74,7 +74,7 @@ def build_model():
     model = Sequential()
 
     # 2 LSTM layers
-    model.add(LSTM(512, input_shape=(None, 3), return_sequences=True))
+    model.add(LSTM(512, batch_input_shape=(210, 50, 3), return_sequences=True))
     # model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
     model.add(LSTM(512))
 
