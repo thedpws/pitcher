@@ -6,6 +6,15 @@ import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 from mingus.extra.lilypond import to_png, to_pdf
 
+from contextlib import contextmanager,redirect_stderr,redirect_stdout
+from os import devnull
+
+@contextmanager
+def suppress_stdout_stderr():
+    """A context manager that redirects stdout and stderr to devnull"""
+    with open(devnull, 'w') as fnull:
+        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
+            yield (err, out)
 
 def to_ly(score):
     ly_staffs = []
@@ -169,12 +178,14 @@ def to_ly(score):
 
 def write_to_pdf(score, output_file):
     lilypond_string = to_ly(score)
-    to_pdf(lilypond_string, output_file)
+    with suppress_stdout_stderr():
+        to_pdf(lilypond_string, output_file)
 
 
 def write_to_png(score, output_file):
     lilypond_string = to_ly(score)
-    to_png(lilypond_string, output_file)
+    with suppress_stdout_stderr():
+        to_png(lilypond_string, output_file)
 
 
 def show_score_png(score):
@@ -182,7 +193,8 @@ def show_score_png(score):
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
 
         lilypond_string = to_ly(score)
-        to_png(lilypond_string, png_filepath)
+        with suppress_stdout_stderr():
+            to_png(lilypond_string, png_filepath)
 
         # im = Image.open(png_filepath)
         im = mpimg.imread(png_filepath)
