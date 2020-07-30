@@ -812,8 +812,8 @@ class Note(_Music):
         """
         return self._tie
 
-    @articulation.setter
-    def articulation(self, tie):
+    @tie.setter
+    def tie(self, tie):
         """Set the tie status of a Note
 
         :param tie: boolean
