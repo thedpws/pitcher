@@ -81,8 +81,8 @@ class TestRest(unittest.TestCase):
 
     def test_duration_is_settable(self):
         r = Rest(1.5)
-        r.duratior = 1.0
-        self.assertEqual(r.duration, 1.5)
+        r.duration = 1.0
+        self.assertEqual(r.duration, 1.0)
 
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):
