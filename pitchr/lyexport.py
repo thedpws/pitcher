@@ -4,7 +4,46 @@ from threading import get_ident
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-from mingus.extra.lilypond import to_png, to_pdf
+
+import subprocess
+import os
+
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
+from os import devnull
+
+
+@contextmanager
+def suppress_stdout_stderr():
+    """A context manager that redirects stdout and stderr to devnull"""
+    with open(devnull, 'w') as fnull:
+        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
+            yield (err, out)
+
+
+def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
+    """A helper function for to_png and to_pdf. Should not be used directly."""
+    ly_string = '\\version "2.10.33"\n' + ly_string
+    if filename[-4:] in [".pdf", ".png"]:
+        filename = filename[:-4]
+    try:
+        f = open(filename + ".ly", "w")
+        f.write(ly_string)
+        f.close()
+    except:
+        return False
+    command = 'lilypond %s -o "%s" "%s.ly" 2>/dev/null 1>&2' % (command, filename, filename)
+    # print("Executing: %s" % command)
+    p = subprocess.Popen(command, shell=True).wait()
+    os.remove(filename + ".ly")
+    return True
+
+
+def to_png(ly_string, filename):
+    return save_string_and_execute_LilyPond_silent(ly_string, filename, "-fpng")
+
+
+def to_pdf(ly_string, filename):
+    return save_string_and_execute_LilyPond_silent(ly_string, filename, "-fpdf")
 
 
 def to_ly(score):
@@ -251,4 +290,5 @@ def show_score_png(score):
 
         plt.axis('off')
         plt.imshow(im)
-        plt.show()
+        with suppress_stdout_stderr():
+            plt.show()
