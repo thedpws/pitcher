@@ -23,6 +23,7 @@ def parse_xml(xml_contents):
     temp_melody_notes = []
     temp_harmony_notes = []
     measure_split_position = 0
+    passed_measure = False
     soup = BeautifulSoup(xml_contents, 'xml')
     parts = soup.find_all('part')
     if soup.find("work-title"):
@@ -35,7 +36,6 @@ def parse_xml(xml_contents):
     for part in parts:
         measure_num = 0
         part_number = int(part.get('id')[-1])
-        print("Part_number:", part_number)
         sign = part.find("sign").get_text()
         line = part.find("line").get_text()
         fifths = part.find("fifths").get_text()
@@ -73,49 +73,60 @@ def parse_xml(xml_contents):
 
                     # melody part
                     if part_number == 1:
-                        # only add the harmony note if we have less than 50 notes.
+                        # only add the melody note if we have less than 50 notes.
                         # If we have more, the rest of the measure is obsolete
                         if len(temp_melody_notes) < 50:
                             temp_melody_notes.append((key, sign, step, octave, accidental, duration))
                         else:
                             melody_notes.append(temp_melody_notes)
+                            print("temp_melody_notes.length:", len(temp_melody_notes))
+                            print("last thing in melody_notes", len(melody_notes[-1]))
+                            temp_melody_notes.clear()
                             if len(measure_split) == 0:
                                 measure_split.append(measure_num)
+                                break
                             else:
                                 if measure_split[-1] != measure_num:
                                     measure_split.append(measure_num)
+                                break
+
 
                     # harmony part
                     elif part_number == 2:
-                        if (measure_split_position < len(measure_split) and measure_num <= measure_split[
-                            measure_split_position]):
-                            temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
-                        else:
-                            print("Printing harmony notes:")
-                            for n in temp_harmony_notes:
-                                print(n[2] + str(n[4]), end=",")
-                            print()
+                        if measure_num <= measure_split[-1]:
+                            if (measure_split_position < len(measure_split) and measure_num <= measure_split[
+                                measure_split_position]):
+                                temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
+                            else:
+                                harmony_notes.append(temp_harmony_notes)
+                                print("temp_harmony_notes.length:", len(temp_harmony_notes))
+                                temp_harmony_notes.clear()
+                                temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
+                                measure_split_position += 1
+                        elif measure_num == measure_split[-1] + 1 and passed_measure == False:
+                            passed_measure = True
                             harmony_notes.append(temp_harmony_notes)
-                            temp_harmony_notes.clear()
-                            temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
-                            measure_split_position += 1
-
-
-
 
 
             if len(temp_melody_notes) == 50:
-                for note in temp_melody_notes:
-                    print(note[2] + str(note[4]), end=",")
-                print()
                 # double-checks for adding the same measure
+                melody_notes.append(temp_melody_notes)
                 if measure_split[-1] != measure_num:
                     measure_split.append(measure_num)
                 temp_melody_notes.clear()
 
-            #measure_num += 1
 
-        print("measure_split:", measure_split)
+
+    print("measure_split:", measure_split)
+    print(type(melody_notes), len(melody_notes))
+    print(type(harmony_notes), len(harmony_notes))
+    for thing in melody_notes:
+        print(len(thing))
+    for thing in harmony_notes:
+        print(len(thing))
+    #melody_notes = np.reshape(melody_notes, (-1, 6))
+    #harmony_notes = np.reshape(harmony_notes, (-1, 6))
+
 
     """
     melody_df = pd.DataFrame(melody_notes, columns=[
