@@ -11,14 +11,7 @@ import os
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from os import devnull
 
-
-@contextmanager
-def suppress_stdout_stderr():
-    """A context manager that redirects stdout and stderr to devnull"""
-    with open(devnull, 'w') as fnull:
-        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
-            yield (err, out)
-
+from pitchr.utils import suppress_stdout_stderr
 
 def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
     """A helper function for to_png and to_pdf. Should not be used directly."""
