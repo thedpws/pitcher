@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
 from pitchr.predict import tag_predictability
+import numpy as np
 
 
 circle_of_fifths = [
@@ -15,6 +16,28 @@ circle_of_fifths = [
 def tag_df(df):
     tag_pitch(df)
     tag_predictability(df)
+
+
+def prepare_harmony(all_harmony_np):
+    """Normalize harmony sizes to fit the model
+
+        :input all_harmony_np: normalizes list of numpy arrays to size 50
+        :return all_harmony_np: harmony numpy array at size 50
+    """
+    for i in range(0, 210):
+        difference = all_harmony_np[i].shape[0] - 50
+        # harmony is too small
+        if difference < 0:
+            while difference != 0:
+                all_harmony_np[i] = np.append(all_harmony_np[i], [[-50, 0, 0]], axis=0)
+                difference += 1
+        # harmony is too large
+        elif difference > 0:
+            while difference != 0:
+                all_harmony_np[i] = all_harmony_np[i][:-1]
+                difference -= 1
+
+    return all_harmony_np
 
 
 def parse_xml(xml_contents):

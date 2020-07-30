@@ -66,6 +66,8 @@ def prepare_data(test_size, validation_size):
     return melody_train, melody_validation, melody_test, harmony_train, harmony_validation, harmony_test
 
 
+
+
 def build_model():
     """Builds RNN-LSTM model
 
@@ -74,7 +76,7 @@ def build_model():
     model = Sequential()
 
     # 2 LSTM layers
-    model.add(LSTM(512, batch_input_shape=(210, 50, 3), return_sequences=True))
+    model.add(LSTM(512, input_shape=(50, 3), return_sequences=True))
     # model.add(LSTM(128, batch_input_shape=(None, None, 3), return_sequences=True))
     model.add(LSTM(512))
 
@@ -83,7 +85,7 @@ def build_model():
     model.add(Dropout(0.3))
 
     # Output Layer
-    model.add(Dense(3, activation="softmax"))
+    model.add(Dense(50, activation="softmax"))
     model.summary()
     return model
 
