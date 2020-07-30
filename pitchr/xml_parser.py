@@ -4,24 +4,33 @@ from bs4 import BeautifulSoup
 import os
 import pandas as pd
 from pitchr.pitch_tagger import tag_pitch
+from pitchr.predict import tag_predictability
+
 
 circle_of_fifths = [
     'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
     'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'
 ]
 
+def tag_df(df):
+    tag_pitch(df)
+    tag_predictability(df)
+
 
 def parse_xml(xml_contents):
-    """Parses the contents of an XML file
+    """Parses the contents of an XML file and tags Dataframes with predictability
+        and other values
 
         :input xml_contents: XML contents of the file we want to parse
-        :return melody_df: Dataframe of the melody notes
-        :return harmony_df: Dataframe of the harmony notes
+        :return melody_dfs: list of dataframes of melody notes
+        :return harmony_dfs: list of dataframes of harmony notes
     """
     melody_notes = []
     harmony_notes = []
     temp_melody_notes = []
     temp_harmony_notes = []
+    melody_dfs = []
+    harmony_dfs = []
     measure_split_position = 0
     passed_measure = False
     soup = BeautifulSoup(xml_contents, 'xml')
@@ -79,8 +88,10 @@ def parse_xml(xml_contents):
                             temp_melody_notes.append((key, sign, step, octave, accidental, duration))
                         else:
                             melody_notes.append(temp_melody_notes)
-                            print("temp_melody_notes.length:", len(temp_melody_notes))
-                            print("last thing in melody_notes", len(melody_notes[-1]))
+                            temp_melody_df = pd.DataFrame(temp_melody_notes, columns=[
+                                            "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+                            #tag_df(temp_melody_df)
+                            melody_dfs.append(temp_melody_df)
                             temp_melody_notes.clear()
                             if len(measure_split) == 0:
                                 measure_split.append(measure_num)
@@ -93,48 +104,85 @@ def parse_xml(xml_contents):
 
                     # harmony part
                     elif part_number == 2:
-                        if measure_num <= measure_split[-1]:
+                        if len(measure_split) != 0 and measure_num <= measure_split[-1]:
                             if (measure_split_position < len(measure_split) and measure_num <= measure_split[
                                 measure_split_position]):
                                 temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
                             else:
                                 harmony_notes.append(temp_harmony_notes)
-                                print("temp_harmony_notes.length:", len(temp_harmony_notes))
+                                temp_harmony_df = pd.DataFrame(temp_harmony_notes, columns=[
+                                    "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+                                #tag_df(temp_harmony_df)
+                                harmony_dfs.append(temp_harmony_df)
                                 temp_harmony_notes.clear()
                                 temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
                                 measure_split_position += 1
-                        elif measure_num == measure_split[-1] + 1 and passed_measure == False:
+                        elif len(measure_split) != 0 and measure_num == measure_split[-1] + 1 and passed_measure == False:
                             passed_measure = True
                             harmony_notes.append(temp_harmony_notes)
+                            temp_harmony_df = pd.DataFrame(temp_harmony_notes, columns=[
+                                "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+                            #tag_df(temp_harmony_df)
+                            harmony_dfs.append(temp_harmony_df)
 
 
             if len(temp_melody_notes) == 50:
                 # double-checks for adding the same measure
                 melody_notes.append(temp_melody_notes)
-                if measure_split[-1] != measure_num:
+                temp_melody_df = pd.DataFrame(temp_melody_notes, columns=[
+                    "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+                #tag_df(temp_melody_df)
+                melody_dfs.append(temp_melody_df)
+                if len(measure_split) != 0 and measure_split[-1] != measure_num:
                     measure_split.append(measure_num)
                 temp_melody_notes.clear()
 
 
-
-    print("measure_split:", measure_split)
-    print(type(melody_notes), len(melody_notes))
-    print(type(harmony_notes), len(harmony_notes))
-    for thing in melody_notes:
-        print(len(thing))
-    for thing in harmony_notes:
-        print(len(thing))
-    #melody_notes = np.reshape(melody_notes, (-1, 6))
-    #harmony_notes = np.reshape(harmony_notes, (-1, 6))
+    return melody_dfs, harmony_dfs
 
 
+def get_all_data():
+    """Cycles through all data
+
+        :return all_melody_dfs: list of all melody dataframes
+        :return all_harmony_dfs: list of all harmony dataframes
     """
-    melody_df = pd.DataFrame(melody_notes, columns=[
-        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
-    ])
-    harmony_df = pd.DataFrame(harmony_notes, columns=[
-        "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"
-    ])
-    
-    return melody_df, harmony_df
-    """
+    all_melody_dfs = []
+    all_harmony_dfs = []
+    path = "../dataset/_xml_scores"
+    score_files = os.listdir(path)
+    melody_count = 0
+    harmony_count = 0
+    while ".DS_Store" in score_files:
+        score_files.remove(".DS_Store")
+
+    for score_name in score_files:
+        file_name = "score.xml"
+        target = (f"{path}/{score_name}/{file_name}")
+        infile = open(target, 'r', encoding='utf-8')
+        contents = infile.read()
+        infile.close()
+        melody_dfs, harmony_dfs = parse_xml(contents)
+
+        difference = len(melody_dfs) - len(harmony_dfs)
+        if difference < 0:
+            while difference != 0:
+                del harmony_dfs[-1]
+                difference += 1
+        elif difference > 0:
+            while difference != 0:
+                del melody_dfs[-1]
+                difference -= 1
+
+        for df in melody_dfs:
+            tag_df(df)
+            df['Score Name'] = score_name
+            all_melody_dfs.append(df)
+
+        for df in harmony_dfs:
+            tag_df(df)
+            df['Score Name'] = score_name
+            all_harmony_dfs.append(df)
+
+
+    return all_melody_dfs, all_harmony_dfs
