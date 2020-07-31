@@ -53,8 +53,14 @@ def play_score(score):
 
     events = []
 
+
     for part in score:
-        tempo = 700 - part.tempo
+        bpm = part.tempo
+
+        ticks = lambda beats: int(beats * bpm2tempo(bpm)) / 1000
+        #ticks = lambda beats: 500 * beats
+
+
         # print("tempo:", str(tempo))
         for i_staff, staff in enumerate(part):
             for i_measure, measure in enumerate(staff):
@@ -79,10 +85,11 @@ def play_score(score):
                         # print("midi_seconds:", str(midi_seconds))
                         # print("midi_ticks:", str(midi_ticks))
 
-                        time_keyon = beat_keyon * tempo
-                        time_keyoff = beat_keyoff * tempo
+                        time_keyon = ticks(beat_keyon)
+                        time_keyoff = ticks(beat_keyoff)
                         # time_delay = (time_keyoff - time_keyon)/15
-                        time_delay = 80
+                        #time_delay = ticks(part.time_signature.beat_definition // 2)
+                        time_delay = 0
                         time_keyoff = time_keyoff - time_delay
 
                         # print("beat_keyon:", str(beat_keyon))

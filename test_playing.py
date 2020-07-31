@@ -1,4 +1,5 @@
 # from playing import *
+#from pitchr.music import *
 from pitchr.music import *
 
 key(Key.C_MAJOR)
