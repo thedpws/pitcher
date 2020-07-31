@@ -53,8 +53,9 @@ def play_score(score):
     events = []
 
     for part in score:
-        tempo = 700 - part.tempo
-        #print("tempo:", str(tempo))
+        bpm = part.tempo
+        ticks = lambda beats: int(beats * bpm2tempo(bpm)) / 1000
+
         for i_staff, staff in enumerate(part):
             for i_measure, measure in enumerate(staff):
                 measure_beat_offset = part.time_signature.beats_per_measure * i_measure
@@ -79,21 +80,13 @@ def play_score(score):
                         beat_keyon = measure_beat_offset + start
                         beat_keyoff = beat_keyon + duration
 
-                        #midi_seconds = 60000 / (1120 * tempo)
-                        #midi_ticks = 5000*tempo/60000
-                        #print("midi_seconds:", str(midi_seconds))
-                        #print("midi_ticks:", str(midi_ticks))
+                        time_keyon = ticks(beat_keyon)
+                        time_keyoff = ticks(beat_keyoff)
 
-                        time_keyon = beat_keyon * tempo
-                        time_keyoff = beat_keyoff * tempo
-                        #time_delay = (time_keyoff - time_keyon)/15
-                        # time_delay = 80
-                        # time_keyoff = time_keyoff - time_delay
+                        time_delay = ticks(part.time_signature.beat_definition) // (2 ** 5)
 
-                        #print("beat_keyon:", str(beat_keyon))
-                        #print("beat_keyoff:", str(beat_keyoff))
-                        #print("time_keyon:", str(time_keyon))
-                        #print("time_keyoff:", str(time_keyoff))
+                        time_keyoff = time_keyoff - time_delay
+
                         events.extend([
                            Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
                            Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
@@ -116,64 +109,3 @@ def play_score(score):
 
 
     
-
-
-"""
-def measure_to_midi(measure):
-
-    tempo = 600
-
-
-    mid = MidiFile()
-
-    track = MidiTrack()
-
-    mid.tracks.append(track)
-
-    track.append(Message('program_change', program=12, time=0))
-
-
-    note_pitches = ['C4', 'D4', 'E4', 'F4', 'G4', 'A5', 'B5']
-    note_pitch_nums = [60, 62, 64, 65, 67, 70, 72]
-
-
-    pitch_dict = dict(zip(note_pitches, note_pitch_nums))
-
-
-    events = []
-
-    for start, item in sorted(measure._notes.items()):
-
-        if isinstance(item, Note):
-            notes = [item]
-        elif isinstance(item, Chord):
-            notes = item.notes
-
-        for note in notes:
-
-            pitch_number = pitch_dict[note.pitch]
-
-            on_beat, off_beat = (start), (start + note.duration)
-
-            on_time, off_time = (on_beat * tempo), (off_beat * tempo)
-            
-            events.extend([
-               Event(EventType.KEY_ON, pitch_number, 127, on_time),
-               Event(EventType.KEY_OFF, pitch_number, 127, off_time),
-            ])
-
-    curr_time = 0
-    for e in sorted(events):
-        delta_time = e.time - curr_time
-        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity, time=int(round(delta_time))))
-        curr_time += delta_time
-
-
-    return mid
-
-
-
-
-def play(midi_file):
-    print('AZ DONE')
-"""
