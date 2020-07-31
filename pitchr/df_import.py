@@ -18,20 +18,13 @@ def measures_from_dataframe(harmony_df, durations, time_signature):
 
     time(Time(time_signature))
 
-    measures = []
-
-    m = Measure()
+    measures = [Measure()]
 
     while notes:
         try:
-            print(notes[0])
-            m.append(notes[0])
+            measures[-1].append(notes[0])
             notes.pop(0)
         except Exception:
-            measures.append(m)
-            m = Measure()
-
-    measures.append(m)
-
+            measures.append(Measure())
 
     return measures
