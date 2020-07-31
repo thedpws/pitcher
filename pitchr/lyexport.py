@@ -204,20 +204,24 @@ def to_ly(score):
 
     return ly
 
-
-def write_to_pdf(score, output_file):
+def _lilypond_in_path():
     if shutil.which(LILYPOND) is None:
         print(LILYPOND_MISSING_ERROR, file=sys.stderr)
-        return None
+        return False
+    return True
+
+def write_to_pdf(score, output_file):
+    if _lilypond_in_path() is False:
+        return
 
     lilypond_string = to_ly(score)
     to_pdf(lilypond_string, output_file)
 
 
+
 def write_to_png(score, output_file):
-    if shutil.which(LILYPOND) is None:
-        print(LILYPOND_MISSING_ERROR, file=sys.stderr)
-        return None
+    if _lilypond_in_path() is False:
+        return
 
     lilypond_string = to_ly(score)
     to_png(lilypond_string, output_file)
@@ -225,9 +229,8 @@ def write_to_png(score, output_file):
 
 def show_score_png(score):
 
-    if shutil.which(LILYPOND) is None:
-        print(LILYPOND_MISSING_ERROR, file=sys.stderr)
-        return None
+    if _lilypond_in_path() is False:
+        return
 
     with TemporaryDirectory() as tmpdirname:
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
