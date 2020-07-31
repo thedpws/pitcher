@@ -17,7 +17,24 @@ def tag_accidentals(notes_df):
     return
 
 
+def tag_pitch_interval(notes_df):
+    curr_pitch = 0
+
+    def pitch_interval_fn(row):
+        nonlocal curr_pitch
+
+        interval = int(row['Pitch Number'] or '0') - curr_pitch
+        curr_pitch += interval
+        return interval
+
+    notes_df['Pitch Interval'] = notes_df.apply(pitch_interval_fn, axis=1)
+
+
 def tag_pitch(notes_df):
+    """Tags pitch information to a dataframe of notes
+
+        :param notes_df: dataframe of notes
+    """
     tag_accidentals(notes_df)
 
     def pitch_fn(row):

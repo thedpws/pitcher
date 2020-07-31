@@ -198,6 +198,11 @@ def get_all_data():
             tag_df(df)
             df['Score Name'] = score_name
             all_melody_dfs.append(df)
+
+            for i, row in df.iterrows():
+                if row['Letter'] == "REST":
+                    df.at[i, 'Duration'] = -1
+
             all_melody_durations.append(df['Duration'])
 
         for df in harmony_dfs:
