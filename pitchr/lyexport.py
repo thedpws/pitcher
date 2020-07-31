@@ -7,17 +7,9 @@ import matplotlib.pyplot as plt
 
 import subprocess
 import os
-import sys
 
-from contextlib import contextmanager, redirect_stderr, redirect_stdout
-from os import devnull
-
-from pitchr.utils import suppress_stdout_stderr
-
-import shutil
-
-LILYPOND = "lilypond"
-LILYPOND_MISSING_ERROR = "Error. You need lilypond in your PATH to export."
+from pitchr.utils import _suppress_stdout_stderr
+from pitchr.utils import _verify_lilypond_in_path
 
 def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
     """A helper function for to_png and to_pdf. Should not be used directly."""
@@ -204,15 +196,9 @@ def to_ly(score):
 
     return ly
 
-def _lilypond_in_path():
-    if shutil.which(LILYPOND) is None:
-        print(LILYPOND_MISSING_ERROR, file=sys.stderr)
-        return False
-    return True
 
 def write_to_pdf(score, output_file):
-    if _lilypond_in_path() is False:
-        return
+    _verify_lilypond_in_path()
 
     lilypond_string = to_ly(score)
     to_pdf(lilypond_string, output_file)
@@ -220,8 +206,7 @@ def write_to_pdf(score, output_file):
 
 
 def write_to_png(score, output_file):
-    if _lilypond_in_path() is False:
-        return
+    _verify_lilypond_in_path()
 
     lilypond_string = to_ly(score)
     to_png(lilypond_string, output_file)
@@ -229,8 +214,7 @@ def write_to_png(score, output_file):
 
 def show_score_png(score):
 
-    if _lilypond_in_path() is False:
-        return
+    _verify_lilypond_in_path()
 
     with TemporaryDirectory() as tmpdirname:
         png_filepath = tmpdirname + '/' + str(get_ident()) + '.png'
@@ -305,5 +289,5 @@ def show_score_png(score):
 
         plt.axis('off')
         plt.imshow(im)
-        with suppress_stdout_stderr():
+        with _suppress_stdout_stderr():
             plt.show()
