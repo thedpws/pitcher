@@ -87,9 +87,8 @@ def play_score(score):
 
                         time_keyon = ticks(beat_keyon)
                         time_keyoff = ticks(beat_keyoff)
-                        # time_delay = (time_keyoff - time_keyon)/15
-                        #time_delay = ticks(part.time_signature.beat_definition // 2)
-                        time_delay = 0
+
+                        time_delay = ticks(part.time_signature.beat_definition) // (2 ** 5)
                         time_keyoff = time_keyoff - time_delay
 
                         # print("beat_keyon:", str(beat_keyon))
