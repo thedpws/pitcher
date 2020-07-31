@@ -95,6 +95,7 @@ def to_ly(score):
             except Exception:
                 letter = 'r'
                 octave_suffix = ''
+                accidentals_suffix = ''
 
             try:
                 duration_suffix = durations[note.duration]
