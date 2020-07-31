@@ -1,5 +1,5 @@
 # from showing import *
-from music import *
+from pitchr import *
 
 key(Key.C_MAJOR)
 time(Time.COMMON_TIME)
@@ -28,7 +28,7 @@ n[2] = Chord([
     Note('G4', 2),
 ])
 
-# m.show()
+m.show()
 
 s = Staff(measures=[m, n])
 
