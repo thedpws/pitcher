@@ -53,8 +53,9 @@ def play_score(score):
     events = []
 
     for part in score:
-        tempo = 700 - part.tempo
-        #print("tempo:", str(tempo))
+        bpm = part.tempo
+        ticks = lambda beats: int(beats * bpm2tempo(bpm)) / 1000
+
         for i_staff, staff in enumerate(part):
             for i_measure, measure in enumerate(staff):
                 measure_beat_offset = part.time_signature.beats_per_measure * i_measure
@@ -78,16 +79,13 @@ def play_score(score):
                         #print("midi_seconds:", str(midi_seconds))
                         #print("midi_ticks:", str(midi_ticks))
 
-                        time_keyon = beat_keyon * tempo
-                        time_keyoff = beat_keyoff * tempo
-                        #time_delay = (time_keyoff - time_keyon)/15
-                        time_delay = 80
+                        time_keyon = ticks(beat_keyon)
+                        time_keyoff = ticks(beat_keyoff)
+
+                        time_delay = ticks(part.time_signature.beat_definition) // (2 ** 5)
+
                         time_keyoff = time_keyoff - time_delay
 
-                        #print("beat_keyon:", str(beat_keyon))
-                        #print("beat_keyoff:", str(beat_keyoff))
-                        #print("time_keyon:", str(time_keyon))
-                        #print("time_keyoff:", str(time_keyoff))
                         events.extend([
                            Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
                            Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
