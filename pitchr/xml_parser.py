@@ -169,13 +169,13 @@ def get_all_data():
 
         :return all_melody_dfs: list of all melody dataframes
         :return all_harmony_dfs: list of all harmony dataframes
+        :return all_melody_durations: list of all melody durations
     """
     all_melody_dfs = []
     all_harmony_dfs = []
+    all_melody_durations = []
     path = "../dataset/_xml_scores"
     score_files = os.listdir(path)
-    melody_count = 0
-    harmony_count = 0
     while ".DS_Store" in score_files:
         score_files.remove(".DS_Store")
 
@@ -201,11 +201,20 @@ def get_all_data():
             tag_df(df)
             df['Score Name'] = score_name
             all_melody_dfs.append(df)
+            #print(df['Duration'])
+            all_melody_durations.append(df['Duration'])
 
         for df in harmony_dfs:
             tag_df(df)
             df['Score Name'] = score_name
             all_harmony_dfs.append(df)
 
+    return all_melody_dfs, all_harmony_dfs, all_melody_durations
 
-    return all_melody_dfs, all_harmony_dfs
+
+all_melody_dfs, all_harmony_dfs, all_melody_durations = get_all_data()
+print(type(all_melody_durations))
+print(len(all_melody_durations))
+print(all_melody_durations[0])
+print()
+print(all_melody_durations[209])
