@@ -213,6 +213,8 @@ def to_ly(score):
     composer = "%s"
 }
 
+#(set-global-staff-size 30)
+
 %s
 ''' % (score.title or '', score.author or '', '%s')
 
@@ -257,10 +259,13 @@ def show_score_png(score):
         # im = Image.open(png_filepath)
         im = mpimg.imread(png_filepath)
 
+        #plt.imshow(im, cmap=plt.cm.binary)
+        #plt.show()
+
         height, width, _ = im.shape
 
         # account for lilypond default text at bottom
-        height -= 40
+        height -= 60
 
         # Crop
         text_start_row = None
@@ -268,58 +273,35 @@ def show_score_png(score):
         text_start_col = None
         text_end_col = None
 
-        found_text = False
-
         padding = 10
 
-        # This could be a lot more performant. However, The best possible algorithm will have runtime O(n), n is number of pixels
-        for row in range(height):
-            found_text = False
-            for col in range(width):
-                p = im[row][col]
-                if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_start_row = max(row - padding, 0)
-                    found_text = True
-                    break
-            if found_text:
+
+        for i, p in [(i,p) for i,row in enumerate(im) for p in row]:
+            if not p[0]:
+                text_start_row = max(i - padding, 0)
                 break
 
-        for row in reversed(range(height)):
-            found_text = False
-            for col in reversed(range(width)):
-                p = im[row][col]
-                if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_end_row = min(row + padding, height - 1)
-                    found_text = True
-                    break
-            if found_text:
+        for i, p in [(i,p) for i,row in enumerate(im[-60::-1,:]) for p in row]:
+            if not p[0]:
+                i = height - 1 - i
+                text_end_row = min(i + padding, height-1)
                 break
 
-        for col in range(width):
-            found_text = False
-            for row in range(height):
-                p = im[row][col]
-                if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_start_col = max(col - padding, 0)
-                    found_text = True
-                    break
-            if found_text:
+        for i, p in [(i,p) for i,col in enumerate(im.transpose(1,0,2)) for p in col]:
+            if not p[0]:
+                text_start_col = max(i - padding, 0)
                 break
 
-        for col in reversed(range(width)):
-            found_text = False
-            for row in reversed(range(height)):
-                p = im[row][col]
-                if [p[0], p[1], p[2]] != [1., 1., 1.]:
-                    text_end_col = min(col + padding, width)
-                    found_text = True
-                    break
-            if found_text:
+        for i, p in [(i,p) for i,col in enumerate(im.transpose(1,0,2)[::-1,:-60]) for p in col]:
+            if not p[0]:
+                i = width - 1 - i
+                text_end_col = min(i + padding, width-1)
                 break
 
-        im = im[text_start_row:text_end_row, text_start_col:text_end_col]
 
-        plt.axis('off')
-        plt.imshow(im)
+        im_cropped = im[text_start_row:text_end_row, text_start_col:text_end_col]
+
         with _suppress_stdout_stderr():
+            plt.axis('off')
+            plt.imshow(im_cropped, cmap=plt.cm.binary)
             plt.show()
