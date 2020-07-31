@@ -131,6 +131,8 @@ def run_gui(stdscr):
         elif (chr(ch) == 'e' or chr(ch) == 'E'):
             export_sample_song(stdscr)
         elif (chr(ch) == 'w' or chr(ch) == 'W'):
+            explanation("Playing song...", "", "", stdscr)
+            stdscr.refresh()
             key(Key.C_MAJOR)
             time(Time.COMMON_TIME)
             m = Measure()
