@@ -12,7 +12,13 @@ from pitchr.utils import _verify_lilypond_in_path
 
 
 def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
-    """A helper function for to_png and to_pdf. Should not be used directly."""
+    """A helper function for to_png and to_pdf. Should not be used directly.
+    :param ly_string:
+    :param filename:
+    :param command:
+    :return: true if export was successful, false if failed
+    :rtype: bool
+    """
     ly_string = '\\version "2.10.33"\n' + ly_string
     if filename[-4:] in [".pdf", ".png"]:
         filename = filename[:-4]
@@ -30,14 +36,31 @@ def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
 
 
 def to_png(ly_string, filename):
+    """ write lilypond string to PNG using lilypond executable
+    :param ly_string:
+    :param filename:
+    :return: whether export was successful
+    :rtype: bool
+    """
     return save_string_and_execute_LilyPond_silent(ly_string, filename, "-fpng")
 
 
 def to_pdf(ly_string, filename):
+    """ write lilypond string to PDF using lilypond executable
+    :param ly_string:
+    :param filename:
+    :return: whether export was successful
+    :rtype: bool
+    """
     return save_string_and_execute_LilyPond_silent(ly_string, filename, "-fpdf")
 
 
 def to_ly(score):
+    """ convert score to lilypond string
+    :param score:
+    :return: lilypond string
+    :rtype: string
+    """
     ly_staffs = []
     ly_parts = []
     for part in score:
@@ -199,6 +222,11 @@ def to_ly(score):
 
 
 def write_to_pdf(score, output_file):
+    """
+    write score to PDF
+    :param score:
+    :param output_file:
+    """
     _verify_lilypond_in_path()
 
     lilypond_string = to_ly(score)
@@ -206,6 +234,11 @@ def write_to_pdf(score, output_file):
 
 
 def write_to_png(score, output_file):
+    """
+    write score to PNG
+    :param score:
+    :param output_file:
+    """
     _verify_lilypond_in_path()
 
     lilypond_string = to_ly(score)

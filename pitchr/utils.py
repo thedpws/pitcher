@@ -16,5 +16,6 @@ def _suppress_stdout_stderr():
 
 
 def _verify_lilypond_in_path():
+    """A helper function to verify lilypond in PATH. Should not be used directly."""
     if shutil.which(LILYPOND) is None:
         raise pitchr.music.PitcherException(LILYPOND_MISSING_ERROR)
