@@ -14,15 +14,19 @@ circle_of_fifths = [
 ]
 
 def tag_df(df):
+    """Adds column information about Pitch and Pitch predictability to a dataframe
+
+        :param df: dataframe of notes
+    """
     tag_pitch(df)
     tag_predictability(df)
 
 
 def prepare_harmony(all_harmony_np):
-    """Normalize harmony sizes to fit the model
+    """Normalize harmony sizes to 50 notes
 
-        :input all_harmony_np: normalizes list of numpy arrays to size 50
-        :return all_harmony_np: harmony numpy array at size 50
+        :param all_harmony_np: list of harmony numpy arrays
+        :returns all_harmony_np: list of harmony numpy array at size 50
     """
     for i in range(0, 210):
         difference = all_harmony_np[i].shape[0] - 50
@@ -41,12 +45,11 @@ def prepare_harmony(all_harmony_np):
 
 
 def parse_xml(xml_contents):
-    """Parses the contents of an XML file and tags Dataframes with predictability
-        and other values
+    """Parses the contents of a musical XML file
 
-        :input xml_contents: XML contents of the file we want to parse
-        :return melody_dfs: list of dataframes of melody notes
-        :return harmony_dfs: list of dataframes of harmony notes
+        :param xml_contents: XML contents of file
+        :returns melody_dfs: list of dataframes of bins of 50 melody notes
+        :returns harmony_dfs: list of dataframes of bins of corresponding harmony notes
     """
     melody_notes = []
     harmony_notes = []
@@ -63,8 +66,8 @@ def parse_xml(xml_contents):
     else:
         title = ""
 
-    # list of measure indexes of 50 notes of harmony
-    measure_split = []
+    measure_split = []  # list of measure indexes of 50 melody notes
+
     for part in parts:
         measure_num = 0
         part_number = int(part.get('id')[-1])
@@ -103,9 +106,9 @@ def parse_xml(xml_contents):
 
                     duration = int(duration) / int(divisions)
 
-                    # melody part
+                    # melody
                     if part_number == 1:
-                        # only add the melody note if we have less than 50 notes.
+                        # only add the note if we have less than 50
                         # If we have more, the rest of the measure is obsolete
                         if len(temp_melody_notes) < 50:
                             temp_melody_notes.append((key, sign, step, octave, accidental, duration))
@@ -113,7 +116,6 @@ def parse_xml(xml_contents):
                             melody_notes.append(temp_melody_notes)
                             temp_melody_df = pd.DataFrame(temp_melody_notes, columns=[
                                             "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-                            #tag_df(temp_melody_df)
                             melody_dfs.append(temp_melody_df)
                             temp_melody_notes.clear()
                             if len(measure_split) == 0:
@@ -124,9 +126,9 @@ def parse_xml(xml_contents):
                                     measure_split.append(measure_num)
                                 break
 
-
-                    # harmony part
+                    # harmony
                     elif part_number == 2:
+                        # add all corresponding harmony until 50th melody note
                         if len(measure_split) != 0 and measure_num <= measure_split[-1]:
                             if (measure_split_position < len(measure_split) and measure_num <= measure_split[
                                 measure_split_position]):
@@ -135,41 +137,38 @@ def parse_xml(xml_contents):
                                 harmony_notes.append(temp_harmony_notes)
                                 temp_harmony_df = pd.DataFrame(temp_harmony_notes, columns=[
                                     "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-                                #tag_df(temp_harmony_df)
                                 harmony_dfs.append(temp_harmony_df)
                                 temp_harmony_notes.clear()
                                 temp_harmony_notes.append((key, sign, step, octave, accidental, duration))
                                 measure_split_position += 1
+
+                        # reached end of last interval of 50 melody notes
                         elif len(measure_split) != 0 and measure_num == measure_split[-1] + 1 and passed_measure == False:
                             passed_measure = True
                             harmony_notes.append(temp_harmony_notes)
                             temp_harmony_df = pd.DataFrame(temp_harmony_notes, columns=[
                                 "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-                            #tag_df(temp_harmony_df)
                             harmony_dfs.append(temp_harmony_df)
 
-
+            # For edge cases where last note in measure adds to 50
             if len(temp_melody_notes) == 50:
-                # double-checks for adding the same measure
                 melody_notes.append(temp_melody_notes)
                 temp_melody_df = pd.DataFrame(temp_melody_notes, columns=[
                     "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
-                #tag_df(temp_melody_df)
                 melody_dfs.append(temp_melody_df)
                 if len(measure_split) != 0 and measure_split[-1] != measure_num:
                     measure_split.append(measure_num)
                 temp_melody_notes.clear()
 
-
     return melody_dfs, harmony_dfs
 
 
 def get_all_data():
-    """Cycles through all data
+    """Retrieves all data of songs to train from
 
-        :return all_melody_dfs: list of all melody dataframes
-        :return all_harmony_dfs: list of all harmony dataframes
-        :return all_melody_durations: list of all melody durations
+        :returns all_melody_dfs: list of all melody dataframes
+        :returns all_harmony_dfs: list of all harmony dataframes
+        :returns all_melody_durations: list of all melody durations
     """
     all_melody_dfs = []
     all_harmony_dfs = []
@@ -185,8 +184,8 @@ def get_all_data():
         infile = open(target, 'r', encoding='utf-8')
         contents = infile.read()
         infile.close()
-        melody_dfs, harmony_dfs = parse_xml(contents)
 
+        melody_dfs, harmony_dfs = parse_xml(contents)
         difference = len(melody_dfs) - len(harmony_dfs)
         if difference < 0:
             while difference != 0:
@@ -201,7 +200,6 @@ def get_all_data():
             tag_df(df)
             df['Score Name'] = score_name
             all_melody_dfs.append(df)
-            #print(df['Duration'])
             all_melody_durations.append(df['Duration'])
 
         for df in harmony_dfs:
@@ -210,11 +208,3 @@ def get_all_data():
             all_harmony_dfs.append(df)
 
     return all_melody_dfs, all_harmony_dfs, all_melody_durations
-
-
-all_melody_dfs, all_harmony_dfs, all_melody_durations = get_all_data()
-print(type(all_melody_durations))
-print(len(all_melody_durations))
-print(all_melody_durations[0])
-print()
-print(all_melody_durations[209])
