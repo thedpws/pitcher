@@ -1,9 +1,9 @@
-
-
 import unittest
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
+
 from pitchr import *
+
 
 class TestStaff(unittest.TestCase):
 
@@ -18,9 +18,9 @@ class TestStaff(unittest.TestCase):
         self.assertEqual(s[0], m)
 
     def test_init_measures_passed_are_added(self):
-       s = Staff(measures=[m := Measure()])
+        s = Staff(measures=[m := Measure()])
 
-       self.assertEqual(s[0], m)
+        self.assertEqual(s[0], m)
 
     def test_large_measure_index_appends_new_measures(self):
         s = Staff()
@@ -35,8 +35,10 @@ class TestStaff(unittest.TestCase):
 
     def test_voice_is_gettable(self):
         s = Staff()
+
         def act():
             _ = s.voice
+
         try:
             act()
         except Exception:
@@ -44,8 +46,10 @@ class TestStaff(unittest.TestCase):
 
     def test_voice_is_settable(self):
         s = Staff()
+
         def act():
             s.voice = Voice.PIANO
+
         try:
             act()
         except Exception:
@@ -53,8 +57,10 @@ class TestStaff(unittest.TestCase):
 
     def test_clef_is_gettable(self):
         s = Staff()
+
         def act():
             _ = s.clef
+
         try:
             act()
         except Exception:
@@ -62,13 +68,14 @@ class TestStaff(unittest.TestCase):
 
     def test_clef_is_settable(self):
         s = Staff()
+
         def act():
             s.clef = Clef.BASS
+
         try:
             act()
         except Exception:
             self.fail()
-
 
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):
@@ -90,5 +97,3 @@ class TestStaff(unittest.TestCase):
             Staff().save(filepath)
 
         self.assertTrue(write_to_pdf.called)
-
-
