@@ -30,8 +30,8 @@ n[2] = Chord([
 
 # m.play()
 
-s = Staff(measures=[m, n])
-s.play()
+p = Part(staffs=[Staff(measures=[m, n])], tempo=96)
+p.play()
 
 
 class N2(Note):
@@ -41,7 +41,7 @@ class N2(Note):
 
 sc = Score()
 
-p = Part(tempo=150)
+p = Part(tempo=86)
 sc.add_part(p)
 
 melody = Staff(clef=Clef.TREBLE)
