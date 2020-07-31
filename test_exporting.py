@@ -1,5 +1,5 @@
-# from playing import *
-from pitchr.music import *
+# from showing import *
+from pitchr import *
 
 key(Key.C_MAJOR)
 time(Time.COMMON_TIME)
@@ -17,7 +17,7 @@ n[0] = Chord([
     Note('G5', 1),
     Note('D5', 2),
     Note('G4', 2),
-    Note('B4', 2),
+    Note('B5', 2),
 ])
 
 n[1] = Note('F5', 1)
@@ -28,10 +28,12 @@ n[2] = Chord([
     Note('G4', 2),
 ])
 
-# m.play()
+m.show()
 
-p = Part(staffs=[Staff(measures=[m, n])], tempo=96)
-p.play()
+s = Staff(measures=[m, n])
+
+
+# s.show()
 
 
 class N2(Note):
@@ -41,7 +43,7 @@ class N2(Note):
 
 sc = Score()
 
-p = Part(tempo=86)
+p = Part(tempo=100)
 sc.add_part(p)
 
 melody = Staff(clef=Clef.TREBLE)
@@ -52,7 +54,7 @@ p.add_staff(harmony)
 p.add_staff(bass)
 
 melody[0].extend([Rest(2.0), Rest(1 / 2), Note('Eb', 1 / 2), Note('G', 1 / 2), Note('Ab4', 1 / 2)])
-melody[1].extend([Note('Bb4', 3 / 2), Note('Bb4', 1 / 2), Note('Bb4', 1 / 2), Note('C5', 1 / 2), Note('Bb4', 1 / 2),
+melody[1].extend([Note('Bb4', 3 / 2), Note('Bb4', 1 / 2), Note('Bb4', 1 / 2), Note('C4', 1 / 2), Note('Bb4', 1 / 2),
                   Note('Ab4', 1 / 2)])
 melody[2].extend([Note('G', 1), Note('F', 2.0), Note('F', 0.5), Note('E', 1 / 2)])
 melody[3].extend(
@@ -71,7 +73,6 @@ bass[2].append(Note('Bb2', 2.0))
 bass[2].append(Note('Bb2', 0.5))
 bass[2].append(Rest(1.5))
 bass[3].append(Note('Bb2', 4))
-bass[4].append(Note('Eb3', 2.0))
-bass[4].append(Note('Eb3', 1 / 2))
+bass[4].append(Chord(notes=[Note('Eb3', 1 / 2), Note('F', 1), Note('G', 2)]))
 
-p.play()
+p.show()

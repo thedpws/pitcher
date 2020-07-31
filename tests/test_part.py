@@ -1,15 +1,13 @@
-
-
 import unittest
-from unittest.mock import patch
-import os
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
+
 from pitchr import *
 
-class TestPart(unittest.TestCase):
-    
-    def test_part_init_keysig_defaults_to_global(self):
 
+class TestPart(unittest.TestCase):
+
+    def test_part_init_keysig_defaults_to_global(self):
         key(Key.F_MAJOR)
 
         p = Part()
@@ -17,7 +15,6 @@ class TestPart(unittest.TestCase):
         self.assertEqual(p.key_signature, Key.F_MAJOR)
 
     def test_part_init_keysig_sets(self):
-
         p = Part(key_signature=Key.G_MAJOR)
 
         self.assertEqual(p.key_signature, Key.G_MAJOR)
@@ -29,7 +26,6 @@ class TestPart(unittest.TestCase):
         self.assertEqual(p.key_signature, Key(sharps=1))
 
     def test_part_init_timesig_defaults_to_global(self):
-
         time(Time.CUT_TIME)
 
         p = Part()

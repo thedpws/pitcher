@@ -1,12 +1,14 @@
-
-from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
-from timidity import Parser, play_notes
+from enum import Enum
 from tempfile import TemporaryDirectory
 from threading import get_ident
+
 import numpy as np
+from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
+from timidity import Parser, play_notes
+
+from pitchr.utils import _suppress_stdout_stderr
 
 
-from enum import Enum
 class EventType(Enum):
     KEY_ON = 'note_on'
     KEY_OFF = 'note_off'
@@ -37,7 +39,6 @@ class Event:
 
     def __lt__(self, other):
         return self._time < other._time
-
 
 
 def play_score(score):
@@ -88,24 +89,22 @@ def play_score(score):
                         time_keyoff = time_keyoff - time_delay
 
                         events.extend([
-                           Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
-                           Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
+                            Event(EventType.KEY_ON, midi_pitch, 127, time_keyon),
+                            Event(EventType.KEY_OFF, midi_pitch, 127, time_keyoff),
                         ])
 
     curr_time = 0
     for e in sorted(events):
         delta_time = e.time - curr_time
-        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity, time=int(round(delta_time))))
+        track.append(Message(e.event_type.value, channel=2, note=e.pitch_number, velocity=e.velocity,
+                             time=int(round(delta_time))))
         curr_time += delta_time
-
 
     with TemporaryDirectory() as tmpdirname:
         midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
         mid.save(midi_filepath)
-        ps = Parser(midi_filepath)
-        play_notes(*ps.parse(), np.sin)
+        with _suppress_stdout_stderr():
+            ps = Parser(midi_filepath)
+            play_notes(*ps.parse(), np.sin)
 
     return True
-
-
-    
