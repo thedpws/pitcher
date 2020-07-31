@@ -1,15 +1,15 @@
+import os
 import re
+import subprocess
 from tempfile import TemporaryDirectory
 from threading import get_ident
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 
-import subprocess
-import os
-
 from pitchr.utils import _suppress_stdout_stderr
 from pitchr.utils import _verify_lilypond_in_path
+
 
 def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
     """A helper function for to_png and to_pdf. Should not be used directly."""
@@ -204,7 +204,6 @@ def write_to_pdf(score, output_file):
     to_pdf(lilypond_string, output_file)
 
 
-
 def write_to_png(score, output_file):
     _verify_lilypond_in_path()
 
@@ -213,7 +212,6 @@ def write_to_png(score, output_file):
 
 
 def show_score_png(score):
-
     _verify_lilypond_in_path()
 
     with TemporaryDirectory() as tmpdirname:

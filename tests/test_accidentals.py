@@ -56,5 +56,3 @@ class TestAccidentals(unittest.TestCase):
         print('Do you see 3 flats in the key signature? [y/N]')
         m.show()
         # self.assertTrue(input() == 'y')
-
-

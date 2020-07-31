@@ -1,7 +1,8 @@
 from unittest import TestCase
 
-from pitchr import *
 import pitchr.music as ptr
+from pitchr import *
+
 
 class TestGlobals(TestCase):
     def test_key_signature_sets_globally(self):

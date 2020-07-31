@@ -3,12 +3,12 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from pitchr import *
-
 from pitchr.music import _Pitch
 
 FLAT = _Pitch.FLAT
 SHARP = _Pitch.SHARP
 DOUBLE_SHARP = _Pitch.DOUBLE_SHARP
+
 
 class TestNote(unittest.TestCase):
 

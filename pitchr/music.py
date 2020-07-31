@@ -999,7 +999,6 @@ class Rest(Note):
 
 
 class _Pitch:
-
     FLAT = 'b'
     SHARP = '#'
     DOUBLE_SHARP = 'x'
