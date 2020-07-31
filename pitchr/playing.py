@@ -71,8 +71,14 @@ def play_score(score):
                             continue
                         midi_pitch = note.pitch_number + 60
 
+                        # test for note tie, create space between notes if not tied.
+                        duration = note.duration
+                        if duration > 0:
+                            if not note.tie:
+                                duration = duration - 0.05
+
                         beat_keyon = measure_beat_offset + start
-                        beat_keyoff = beat_keyon + note.duration
+                        beat_keyoff = beat_keyon + duration
 
                         # midi_seconds = 60000 / (1120 * tempo)
                         # midi_ticks = 5000*tempo/60000
@@ -81,9 +87,9 @@ def play_score(score):
 
                         time_keyon = beat_keyon * tempo
                         time_keyoff = beat_keyoff * tempo
-                        # time_delay = (time_keyoff - time_keyon)/15
-                        time_delay = 80
-                        time_keyoff = time_keyoff - time_delay
+                        #time_delay = (time_keyoff - time_keyon)/15
+                        # time_delay = 80
+                        # time_keyoff = time_keyoff - time_delay
 
                         # print("beat_keyon:", str(beat_keyon))
                         # print("beat_keyoff:", str(beat_keyoff))
