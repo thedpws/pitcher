@@ -29,7 +29,7 @@ def prepare_harmony(all_harmony_np):
         # harmony is too small
         if difference < 0:
             while difference != 0:
-                all_harmony_np[i] = np.append(all_harmony_np[i], [[-50, 0, 0]], axis=0)
+                all_harmony_np[i] = np.append(all_harmony_np[i], [[-50, 0]], axis=0)
                 difference += 1
         # harmony is too large
         elif difference > 0:
