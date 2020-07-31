@@ -10,8 +10,6 @@ import matplotlib.pyplot as plt
 from pitchr.utils import _suppress_stdout_stderr
 from pitchr.utils import _verify_lilypond_in_path
 
-import numpy as np
-
 
 def save_string_and_execute_LilyPond_silent(ly_string, filename, command):
     """A helper function for to_png and to_pdf. Should not be used directly.
