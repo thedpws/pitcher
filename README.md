@@ -52,6 +52,9 @@ m.show()
 # Export to PDF
 m.save('MySong.pdf')
 ```
+## Helper UI
+
+To access the helper UI, run from the command line: `python3 helper.py`
 
 ## More Detailed Notes
 
