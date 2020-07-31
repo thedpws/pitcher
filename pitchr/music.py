@@ -742,6 +742,8 @@ class Note(_Music):
             self._pitch = _Pitch.from_string(pitch)
         elif type(pitch) in [int, float]:
             self._pitch = _Pitch.from_int(int(pitch))
+        elif pitch is None:
+            self._pitch = None
         else:
             raise PitcherException(f'Bad pitch type: {pitch} of type {type(pitch)}')
         self._duration = duration
