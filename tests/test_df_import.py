@@ -7,22 +7,17 @@ class TestDFImport(unittest.TestCase):
 
     def test_creates_score(self):
 
-        harmony_df = pd.DataFrame([
-            #   Pitch Number, Pitch Interval, Pitch Predictability
-            [0, 0],
-            [2, 2],
-            [4, 2],
-            [5, 1],
-            [7, 2],
-            [9, 2],
-            [11, 2],
-            [12, 1],
-        ], columns=['Pitch Number', 'Pitch Interval'])
+        pitches = [0, 2, 4, 5, 7, 9, 11, 12]
 
-        durations = [1.0] * len(harmony_df)
+        durations = [1.0] * len(pitches)
 
         time_signature = '4/4'
 
+
+        # Act
+        harmony_measures = measures_from_dataframe(pitches, durations, time_signature)
+
+        # Assert
         measures = [
             Measure([
                 Note(0, 1.0),
@@ -38,7 +33,5 @@ class TestDFImport(unittest.TestCase):
                 Note(12, 1.0),
             ]),
         ]
-
-        harmony_measures = measures_from_dataframe(harmony_df, durations, time_signature)
 
         self.assertEqual([n for measure in harmony_measures for n in measure], [n for measure in measures for n in measure])

@@ -1,10 +1,10 @@
 
 from pitchr.music import Score, Part, Measure, Note, time, Time
 
-def measures_from_dataframe(harmony_df, durations, time_signature):
+def measures_from_dataframe(pitches, durations, time_signature):
     """Transform a dataframe of Pitch Numbers into a list of measures
 
-    :param harmony_df: Dataframe with column 'Pitch Number'
+    :param pitches: Numpy.array of int32
     :param durations: a list of float detailing corresponding durations of each row in harmony_df
     :param time_signature: string. Example: '4/4'
 
@@ -12,9 +12,10 @@ def measures_from_dataframe(harmony_df, durations, time_signature):
 
     time(Time(time_signature))
 
-    harmony_df['Duration'] = durations
+    pitches = list(map(int, pitches))
 
-    notes = list(harmony_df.apply(lambda row: Note(int(row['Pitch Number']), float(row['Duration'])), axis=1))
+
+    notes = [Note(pitch, duration) for (pitch,duration) in zip(pitches, durations)]
 
     time(Time(time_signature))
 
