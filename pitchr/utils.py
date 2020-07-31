@@ -1,7 +1,7 @@
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from os import devnull
 import shutil
-from pitchr import *
+import pitchr.music
 
 
 LILYPOND = "lilypond"
@@ -17,4 +17,4 @@ def _suppress_stdout_stderr():
 
 def _verify_lilypond_in_path():
     if shutil.which(LILYPOND) is None:
-        raise PitcherException(LILYPOND_MISSING_ERROR)
+        raise pitchr.music.PitcherException(LILYPOND_MISSING_ERROR)
