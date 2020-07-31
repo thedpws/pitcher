@@ -6,10 +6,6 @@ from pitchr.music import *
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
 import sys
 
-save_stdout = sys.stdout
-sys.stdout = open('trash', 'w')
-
-
 def window_border():
     window = curses.newwin(24, 80)
     window.border()
@@ -45,6 +41,7 @@ def dialog1_box(prompt):
     return dialog1
 
 def explanation(title, text1, text2, stdscr):
+    curses.flash()
     textkey = curses.newwin(10, 76, 12, 2)
     textkey.border()
     textkey.refresh()
@@ -113,9 +110,58 @@ def run_gui(stdscr):
             ])
 
             s = Staff(measures=[m, n])
+            save_stdout = sys.stdout
+            sys.stdout = open('trash', 'w')
+            
             s.play()
             sys.stdout = save_stdout
+
+            f = open("sample_song.py","w+")
+
+            f.write("from pitchr.music import *")
+            f.write("\n")
+            f.write("from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick")
+            f.write("\n")
+            f.write("\n")
+
+            f.write("key(Key.C_MAJOR)")
+            f.write("\n")
+            f.write("time(Time.COMMON_TIME)")
+            f.write("\n")
+            f.write("\n")
+
+            f.write("m = Measure()")
+            f.write("\n")
+            f.write("m[0] = Note('C5', 3/2)")
+            f.write("\n")
+            f.write("m[1.5] = Note('D5', 1/2)")
+            f.write("\n")
+            f.write("m[2] = Note('E5', 3/2)")
+            f.write("\n")
+            f.write("m[3.5] = Note('C5', 1/2)")
+            f.write("\n")
+            f.write("\n")
+
+            f.write("n = Measure()")
+            f.write("\n")
+            f.write("n[0] = Chord([Note('G5', 1), Note('D5', 2), Note('G4', 2), Note('B4', 2)])")
+            f.write("\n")
+            f.write("n[1] = Note('F5', 1)")
+            f.write("\n")
+            f.write("n[2] = Chord([Note('C4', 2), Note('E5', 2), Note('G4', 2)])")
+            f.write("\n")
+            f.write("\n")
+
+            f.write("s = Staff(measures=[m, n])")
+            f.write("\n")
+            f.write("\n")
+
+            f.write("s.play()")
+            explanation("This song have been exported to Python code to the current folder.", "It contains the exact data structures from this song.", 
+            "To play, run from the terminal: python3 sample_song.py", stdscr)
+
         elif (chr(ch) == 'q' or chr(ch) == 'Q'):
+            curses.beep()
             break
 
 def main():
