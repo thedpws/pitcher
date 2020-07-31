@@ -78,27 +78,24 @@ class Keyboard:
     @staticmethod
     def key(i, sharps=True):
         return {
-            0: ['C', 'C'],
-            1: ['Db', 'C#'],
-            2: ['D', 'D'],
-            3: ['Eb', 'D#'],
-            4: ['E', 'E'],
-            5: ['F', 'F'],
-            6: ['Gb', 'F#'],
-            7: ['G', 'G'],
-            8: ['Ab', 'G#'],
-            9: ['A', 'A'],
-            10: ['Bb', 'A#'],
-            11: ['B', 'B'],
+                0: ['C', 'C'],
+                1: ['Db', 'C#'],
+                2: ['D', 'D'],
+                3: ['Eb', 'D#'],
+                4: ['E', 'E'],
+                5: ['F', 'F'],
+                6: ['Gb', 'F#'],
+                7: ['G', 'G'],
+                8: ['Ab', 'G#'],
+                9: ['A', 'A'],
+                10: ['Bb', 'A#'],
+                11: ['B', 'B'],
         }[i % 12][sharps]
-
 
 class Interval:
     pass
-
-
 for halfsteps, attr in enumerate(['m2', 'M2', 'm3', 'M3', 'M4', 'm5', 'M5', 'm6', 'M6', 'm7', 'M7', 'M8']):
-    setattr(Interval, attr, halfsteps + 1)
+    setattr(Interval, attr, halfsteps+1)
 
 
 class Key:
@@ -135,8 +132,7 @@ class Key:
     @property
     def major_scale(self):
         intvs = [0, 2, 2, 1, 2, 2, 2, 1]
-        return [Keyboard.key(intv + sum(intvs[:i]) + self.major_tonic_offset, self.sharp) for i, intv in
-                enumerate(intvs)]
+        return [Keyboard.key(intv + sum(intvs[:i]) + self.major_tonic_offset, self.sharp) for i,intv in enumerate(intvs)]
 
     @property
     def ly(self):
@@ -164,7 +160,7 @@ class Key:
         if isinstance(pitch, Note):
             pitch = pitch.pitch
 
-        pitch = _re.sub('\\d', '', pitch)
+        pitch = _re.sub('\\d','', pitch)
 
         return pitch in self.major_scale
 
@@ -728,6 +724,7 @@ class Note(_Music):
        :param duration: note duration
        :param dynamic: dynamic, such as piano, forte, crescendo, etc
        :param articulation: articulation, such as staccato, accent, fermata, etc
+       :param tie: when true will play this note continuously into the next note
     """
 
     def __str__(self):
@@ -747,11 +744,16 @@ class Note(_Music):
         result = Note(mingus_note + note.accidentals + str(note.octave), note.duration, note.dynamic, note.articulation)
         return result
 
-    def __init__(self, pitch, duration, dynamic=None, articulation=None):
-        self._pitch = _Pitch.from_string(pitch)
+    def __init__(self, pitch, duration, dynamic=None, articulation=None, tie=False):
+        if type(pitch) == str:
+            self._pitch = _Pitch.from_string(pitch)
+        elif type(pitch) == int:
+            self._pitch = _Pitch.from_int(pitch)
+
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
+        self._tie = tie     # if True, no audible break between this note into next note
 
         if self.pitch_number != None:
             self._mingus_note = _MingusNote(self.letter, self.octave)
@@ -815,6 +817,10 @@ class Note(_Music):
     def pitch_number(self):
         return int(self._pitch)
 
+    @pitch_number.setter
+    def pitch_number(self, pitch):
+        self._pitch = _Pitch.from_int(pitch)
+
     @property
     def duration(self):
         """Get the duration of a Note
@@ -870,6 +876,22 @@ class Note(_Music):
         :param articulation: string
         """
         self._articulation = articulation
+
+    @property
+    def tie(self):
+        """Get the tie status of a Note
+
+        :returns: tie
+        """
+        return self._tie
+
+    @tie.setter
+    def tie(self, tie):
+        """Set the tie status of a Note
+
+        :param tie: boolean
+        """
+        self._tie = tie
 
     def __eq__(self, other):
         if not isinstance(other, Note):
@@ -1011,6 +1033,13 @@ class _Pitch:
         self._octave = octave
 
     @staticmethod
+    def from_int(pitch):
+        octave = pitch // 12 + 4
+        return _Pitch.from_string(''.join([Keyboard.key(pitch), str(octave)]))
+
+
+
+    @staticmethod
     def from_string(pitch):
         if pitch == None: return None
 
@@ -1104,6 +1133,7 @@ class _Pitch:
     def int_to_pitch(cls, pitch_number):
         if pitch_number == None: return None
         raise NotImplementedError('TODO')
+
 
 # class Song(Note, Score, _Music, Chord, Part):
 #     def __init__(self, title, subtitle, author, author_email):

@@ -77,8 +77,14 @@ def play_score(score):
                             continue
                         midi_pitch = note.pitch_number + 60
 
+                        # test for note tie, create space between notes if not tied.
+                        duration = note.duration
+                        if duration > 0:
+                            if not note.tie:
+                                duration = duration - 0.05
+
                         beat_keyon = measure_beat_offset + start
-                        beat_keyoff = beat_keyon + note.duration
+                        beat_keyoff = beat_keyon + duration
 
                         # midi_seconds = 60000 / (1120 * tempo)
                         # midi_ticks = 5000*tempo/60000
@@ -120,7 +126,7 @@ def play_score(score):
 """
 def measure_to_midi(measure):
 
-    tempo = 600
+    tempo = 600Fix awkward tempo
 
 
     mid = MidiFile()
