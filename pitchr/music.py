@@ -740,8 +740,10 @@ class Note(_Music):
     def __init__(self, pitch, duration, dynamic=None, articulation=None):
         if type(pitch) == str:
             self._pitch = _Pitch.from_string(pitch)
-        elif type(pitch) == int:
-            self._pitch = _Pitch.from_int(pitch)
+        elif type(pitch) in [int, float]:
+            self._pitch = _Pitch.from_int(int(pitch))
+        else:
+            raise PitcherException(f'Bad pitch type: {pitch} of type {type(pitch)}')
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
@@ -805,7 +807,7 @@ class Note(_Music):
 
     @property
     def pitch_number(self):
-        return int(self._pitch)
+        return int(self._pitch) if hasattr(self, '_pitch') else None
 
     @pitch_number.setter
     def pitch_number(self, pitch):
