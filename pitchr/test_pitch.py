@@ -26,9 +26,10 @@ class TestPitch(unittest.TestCase):
         i = int(p)
 
         # assert
-        self.assertEqual(i, 7)
+        self.assertEqual(i, -5)
 
     def test_accidental_offset_flats(self):
+
         # arrange
         p = _Pitch('C', 'bbbbbbbbbb', 4)
 
@@ -39,6 +40,7 @@ class TestPitch(unittest.TestCase):
         self.assertEqual(accidentals, 'bbbbbbbbbb')
 
     def test_accidental_offset_sharp(self):
+
         # arrange
         p = _Pitch('C', '#', 4)
 
@@ -49,6 +51,7 @@ class TestPitch(unittest.TestCase):
         self.assertEqual(accidentals, '#')
 
     def test_accidental_offset_double_sharp(self):
+
         # arrange
         p = _Pitch('C', '##', 4)
 
@@ -56,4 +59,4 @@ class TestPitch(unittest.TestCase):
         accidentals = p.accidentals
 
         # assert
-        self.assertEqual(accidentals, _Pitch.DOUBLE_SHARP)
+        self.assertEqual(accidentals, 'X')

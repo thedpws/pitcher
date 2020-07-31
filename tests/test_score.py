@@ -1,47 +1,43 @@
-import os
-import tempfile
-import unittest
-from unittest.mock import patch
 
+
+import unittest
+import tempfile, os
+from unittest.mock import patch
 from pitchr import *
 
-
 class TestScore(unittest.TestCase):
-
+    
     def test_composer_is_property(self):
         s = Score(author='AZ Vasquez')
-
+        
         composer = s.composer
 
         self.assertEqual(composer, 'AZ Vasquez')
 
         def act():
             s.composer = 'AZ Velasquez'
-
         self.assertRaises(Exception, act)
 
     def test_author_is_property(self):
         s = Score(author='AZ Vasquez')
-
+        
         author = s.author
 
         self.assertEqual(author, 'AZ Vasquez')
 
         def act():
             s.author = 'AZ Velasquez'
-
         self.assertRaises(Exception, act)
 
     def test_title_is_property(self):
         s = Score(title='AZ Vasquez')
-
+        
         title = s.title
 
         self.assertEqual(title, 'AZ Vasquez')
 
         def act():
             s.title = 'AZ Velasquez'
-
         self.assertRaises(Exception, act)
 
     def test_add_parts_adds_part(self):
@@ -76,3 +72,4 @@ class TestScore(unittest.TestCase):
             filepath = tempdirname + '/export.pdf'
             s.save(filepath)
             self.assertTrue(os.path.exists(filepath))
+
