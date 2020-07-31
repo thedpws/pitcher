@@ -738,7 +738,10 @@ class Note(_Music):
         return result
 
     def __init__(self, pitch, duration, dynamic=None, articulation=None):
-        self._pitch = _Pitch.from_string(pitch)
+        if type(pitch) == str:
+            self._pitch = _Pitch.from_string(pitch)
+        elif type(pitch) == int:
+            self._pitch = _Pitch.from_int(pitch)
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
@@ -803,6 +806,10 @@ class Note(_Music):
     @property
     def pitch_number(self):
         return int(self._pitch)
+
+    @pitch_number.setter
+    def pitch_number(self, pitch):
+        self._pitch = _Pitch.from_int(pitch)
 
     @property
     def duration(self):
@@ -992,6 +999,13 @@ class _Pitch:
         self._letter = letter
         self._accidental_offset = sum([offset*(sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in {'b':-1, '#':+1, 'x':+2}.items()])
         self._octave = octave
+
+    @staticmethod
+    def from_int(pitch):
+        octave = pitch // 12 + 4
+        return _Pitch.from_string(''.join([Keyboard.key(pitch), str(octave)]))
+
+
 
     @staticmethod
     def from_string(pitch):
