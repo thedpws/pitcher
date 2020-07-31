@@ -7,7 +7,7 @@ def measures_from_dataframe(harmony_df, durations, time_signature):
     :param harmony_df: Dataframe with column 'Pitch Number'
     :param durations: a list of float detailing corresponding durations of each row in harmony_df
     :param time_signature: string. Example: '4/4'
-
+    :returns measures: list of measures
     """
 
     time(Time(time_signature))
@@ -28,3 +28,4 @@ def measures_from_dataframe(harmony_df, durations, time_signature):
             measures.append(Measure())
 
     return measures
+

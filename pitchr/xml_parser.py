@@ -1,5 +1,3 @@
-# this script will traverse all files in dataset/_xml_scores
-
 from bs4 import BeautifulSoup
 import os
 import pandas as pd
