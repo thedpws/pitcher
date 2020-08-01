@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from pitchr import Note, Score, Part, Measure
-from pitchr.df_import import measures_from_dataframe
+from pitchr import Note, Score, Part, Measure, Rest
+from pitchr.df_import import measures_from_ml_output
 
 class TestDFImport(unittest.TestCase):
 
@@ -10,12 +10,13 @@ class TestDFImport(unittest.TestCase):
         pitches = [0, 2, 4, 5, 7, 9, 11, 12]
 
         durations = [1.0] * len(pitches)
+        durations[5] *= -1
 
         time_signature = '4/4'
 
 
         # Act
-        harmony_measures = measures_from_dataframe(pitches, durations, time_signature)
+        harmony_measures = measures_from_ml_output(pitches, durations, time_signature)
 
         # Assert
         measures = [
@@ -28,7 +29,7 @@ class TestDFImport(unittest.TestCase):
 
             Measure([
                 Note(7, 1.0),
-                Note(9, 1.0),
+                Rest(1.0),
                 Note(11, 1.0),
                 Note(12, 1.0),
             ]),

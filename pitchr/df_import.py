@@ -1,5 +1,5 @@
 
-from pitchr.music import Score, Part, Measure, Note, time, Time
+from pitchr.music import Score, Part, Measure, Note, time, Time, Rest
 
 def measures_from_ml_output(pitches, durations, time_signature):
     """Transform an array of Pitch Numbers into a list of measures
@@ -14,7 +14,7 @@ def measures_from_ml_output(pitches, durations, time_signature):
 
     pitches = list(map(int, pitches))
 
-    notes = [Note(pitch, duration) for (pitch,duration) in zip(pitches, durations)]
+    notes = [Note(pitch, duration) if duration > 0 else  Rest(-1*duration) for (pitch,duration) in zip(pitches, durations)]
     print(len(notes))
     print(type(notes))
     print(notes)
