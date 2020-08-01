@@ -77,29 +77,32 @@ def time(time_signature):
     _time_signature = time_signature
 
 
-
 class Keyboard:
     @staticmethod
     def key(i, sharps=True):
         return {
-                0: ['C', 'C'],
-                1: ['Db', 'C#'],
-                2: ['D', 'D'],
-                3: ['Eb', 'D#'],
-                4: ['E', 'E'],
-                5: ['F', 'F'],
-                6: ['Gb', 'F#'],
-                7: ['G', 'G'],
-                8: ['Ab', 'G#'],
-                9: ['A', 'A'],
-                10: ['Bb', 'A#'],
-                11: ['B', 'B'],
+            0: ['C', 'C'],
+            1: ['Db', 'C#'],
+            2: ['D', 'D'],
+            3: ['Eb', 'D#'],
+            4: ['E', 'E'],
+            5: ['F', 'F'],
+            6: ['Gb', 'F#'],
+            7: ['G', 'G'],
+            8: ['Ab', 'G#'],
+            9: ['A', 'A'],
+            10: ['Bb', 'A#'],
+            11: ['B', 'B'],
         }[i % 12][sharps]
+
 
 class Interval:
     pass
+
+
 for halfsteps, attr in enumerate(['m2', 'M2', 'm3', 'M3', 'M4', 'm5', 'M5', 'm6', 'M6', 'm7', 'M7', 'M8']):
-    setattr(Interval, attr, halfsteps+1)
+    setattr(Interval, attr, halfsteps + 1)
+
 
 class Key:
     """Class representing the Key the Score is played in
@@ -186,6 +189,7 @@ Key.F_SHARP_MAJOR = Key(sharps=6)
 Key.C_SHARP_MAJOR = Key(sharps=7)
 
 _key_signature = Key.C_MAJOR
+
 
 class Clef(_Enum):
     TREBLE = 0
@@ -686,6 +690,7 @@ class Chord(_Music):
         """Used to determine the type of chord"""
         mingus_chord = _MingusNoteContainer([n.letter for n in sorted(self.notes)])
         return mingus_chord.determine()
+
     # note is a string. This function returns the corresponding chord of notes
     # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
     """ These are recognized abbreviations:
@@ -712,7 +717,6 @@ class Chord(_Music):
         :param key: String
         """
         return Chord.triads(key)
-
 
     def play(self):
         return Measure(notes=[self]).play()
@@ -764,7 +768,7 @@ class Note(_Music):
         self._duration = duration
         self._dynamic = dynamic  # piano, forte, crescendo, etc
         self._articulation = articulation  # staccato, accent, fermata, etc
-        self._tie = tie     # if True, no audible break between this note into next note
+        self._tie = tie  # if True, no audible break between this note into next note
 
         if self.pitch_number != None:
             self._mingus_note = _MingusNote(self.letter, self.octave)
@@ -1047,8 +1051,6 @@ class _Pitch:
     def from_int(pitch):
         octave = pitch // 12 + 4
         return _Pitch.from_string(''.join([Keyboard.key(pitch), str(octave)]))
-
-
 
     @staticmethod
     def from_string(pitch):

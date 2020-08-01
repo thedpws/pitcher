@@ -5,11 +5,11 @@ from pitchr.pitch_tagger import tag_pitch
 from pitchr.predict import tag_predictability
 import numpy as np
 
-
 circle_of_fifths = [
     'C', 'G', 'D', 'A', 'E', 'B', 'F#', 'C#',
     'Cb', 'Gb', 'Db', 'Ab', 'Eb', 'Bb', 'F'
 ]
+
 
 def tag_df(df):
     """Adds column information about Pitch and Pitch predictability to a dataframe
@@ -113,7 +113,7 @@ def parse_xml(xml_contents):
                         else:
                             melody_notes.append(temp_melody_notes)
                             temp_melody_df = pd.DataFrame(temp_melody_notes, columns=[
-                                            "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
+                                "Key", "Clef", "Letter", "Octave", "Accidental", "Duration"])
                             melody_dfs.append(temp_melody_df)
                             temp_melody_notes.clear()
                             if len(measure_split) == 0:
@@ -141,7 +141,8 @@ def parse_xml(xml_contents):
                                 measure_split_position += 1
 
                         # reached end of last interval of 50 melody notes
-                        elif len(measure_split) != 0 and measure_num == measure_split[-1] + 1 and passed_measure == False:
+                        elif len(measure_split) != 0 and measure_num == measure_split[
+                            -1] + 1 and passed_measure == False:
                             passed_measure = True
                             harmony_notes.append(temp_harmony_notes)
                             temp_harmony_df = pd.DataFrame(temp_harmony_notes, columns=[

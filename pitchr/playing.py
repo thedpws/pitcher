@@ -8,7 +8,6 @@ from timidity import Parser, play_notes
 
 from pitchr.utils import _suppress_stdout_stderr
 
-
 class EventType(Enum):
     KEY_ON = 'note_on'
     KEY_OFF = 'note_off'
@@ -42,7 +41,6 @@ class Event:
 
 
 def play_score(score):
-
     mid = MidiFile()
 
     track = MidiTrack()

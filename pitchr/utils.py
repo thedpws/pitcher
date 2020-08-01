@@ -1,11 +1,12 @@
+import shutil
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from os import devnull
-import shutil
-import pitchr.music
 
+import pitchr.music
 
 LILYPOND = "lilypond"
 LILYPOND_MISSING_ERROR = "Error. You need lilypond in your PATH to export."
+
 
 @contextmanager
 def _suppress_stdout_stderr():

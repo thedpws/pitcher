@@ -260,8 +260,8 @@ def show_score_png(score):
         # im = Image.open(png_filepath)
         im = mpimg.imread(png_filepath)
 
-        #plt.imshow(im, cmap=plt.cm.binary)
-        #plt.show()
+        # plt.imshow(im, cmap=plt.cm.binary)
+        # plt.show()
 
         height, width, _ = im.shape
 
@@ -276,29 +276,27 @@ def show_score_png(score):
 
         padding = 10
 
-
-        for i, p in [(i,p) for i,row in enumerate(im) for p in row]:
+        for i, p in [(i, p) for i, row in enumerate(im) for p in row]:
             if not p[0]:
                 text_start_row = max(i - padding, 0)
                 break
 
-        for i, p in [(i,p) for i,row in enumerate(im[-60::-1,:]) for p in row]:
+        for i, p in [(i, p) for i, row in enumerate(im[-60::-1, :]) for p in row]:
             if not p[0]:
                 i = height - 1 - i
-                text_end_row = min(i + padding, height-1)
+                text_end_row = min(i + padding, height - 1)
                 break
 
-        for i, p in [(i,p) for i,col in enumerate(im.transpose(1,0,2)) for p in col]:
+        for i, p in [(i, p) for i, col in enumerate(im.transpose(1, 0, 2)) for p in col]:
             if not p[0]:
                 text_start_col = max(i - padding, 0)
                 break
 
-        for i, p in [(i,p) for i,col in enumerate(im.transpose(1,0,2)[::-1,:-60]) for p in col]:
+        for i, p in [(i, p) for i, col in enumerate(im.transpose(1, 0, 2)[::-1, :-60]) for p in col]:
             if not p[0]:
                 i = width - 1 - i
-                text_end_col = min(i + padding, width-1)
+                text_end_col = min(i + padding, width - 1)
                 break
-
 
         im_cropped = im[text_start_row:text_end_row, text_start_col:text_end_col]
 
