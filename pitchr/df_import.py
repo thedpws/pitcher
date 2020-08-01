@@ -1,4 +1,4 @@
-from pitchr.music import Score, Part, Measure, Note, time, Time, Rest
+from pitchr.music import Measure, Note, time, Time, Rest
 
 def measures_from_ml_output(pitches, durations, time_signature):
     """Transform an array of Pitch Numbers into a list of measures

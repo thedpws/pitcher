@@ -1,9 +1,11 @@
 # tensorflow requires 64-bit python
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, LSTM, Dropout
-import numpy as np
-from pitchr import xml_parser
 import matplotlib.pyplot as plt
+import numpy as np
+from tensorflow.keras.layers import Dense, LSTM, Dropout
+from tensorflow.keras.models import Sequential
+
+from pitchr import xml_parser
+
 
 def load_data():
     """Loads data for training model

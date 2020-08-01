@@ -1,11 +1,13 @@
-from pitchr import df_import
-from pitchr import pitch_tagger
+import numpy as np
+import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
-import numpy as np
-from pitchr.music import *
-import pandas as pd
+
+from pitchr import df_import
+from pitchr import pitch_tagger
 from pitchr import xml_parser
+from pitchr.music import *
+
 
 def prepare_np(melody_np):
     """Converts and normalizes numpy array for prediction in model
@@ -26,7 +28,7 @@ def prepare_np(melody_np):
             difference -= 1
     melody_np = melody_np.reshape(1, 50, 2)
     melody_tf = tf.convert_to_tensor(melody_np, dtype=tf.float32)
-    melody_tf = melody_tf/50
+    melody_tf = melody_tf / 50
 
     return melody_tf
 
@@ -77,6 +79,7 @@ def _get_durations(melody_staff):
                 durations.append(note.duration)
     return durations
 
+
 def build_harmony(melody_staff):
     """Builds Harmony
 
@@ -103,8 +106,9 @@ def build_harmony(melody_staff):
                 measure[start_count] = Note(previous_note.pitch, rest.duration)
 
     melody_df = pd.DataFrame(
-            columns=['Key', 'Clef', 'Letter', 'Octave', 'Accidental', 'Duration'],
-            data=[['C', 'G', n.letter, str(n.octave), n.accidentals, n.duration] for measure in melody_staff for n in measure],
+        columns=['Key', 'Clef', 'Letter', 'Octave', 'Accidental', 'Duration'],
+        data=[['C', 'G', n.letter, str(n.octave), n.accidentals, n.duration] for measure in melody_staff for n in
+              measure],
     )
 
     # Tag with more columns
@@ -118,17 +122,16 @@ def build_harmony(melody_staff):
     zeros = np.zeros((50, 2))
     zeros[:len(melody_np)] = melody_np
 
-
     model = keras.models.load_model('pitchr/saved_model/my_model')
     input = prepare_np(zeros)
     output = model.predict(input, verbose=0)
-    output = output*50
+    output = output * 50
     output = output.reshape(50, 2)
 
     harmony_measures = df_import.measures_from_ml_output(
-            pitches=output.T[0],
-            durations=durations,
-            time_signature=str(melody_staff[0].time_signature)
+        pitches=output.T[0],
+        durations=durations,
+        time_signature=str(melody_staff[0].time_signature)
     )
 
     harmony_staff = Staff(harmony_measures)
