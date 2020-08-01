@@ -1,5 +1,8 @@
 # Pitchr
 A python library and framework for composing music.
+[Pitchr on PyPI](https://pypi.org/project/pitchr/)
+
+Targets most Linux environments.
 
 ## Features
 
@@ -15,8 +18,11 @@ A python library and framework for composing music.
 7. Enables interactive development in Jupyter Notebook
 
 ## Installation
-`pip install pitchr`.  Make sure pip points to pip3 not pip2. [Pitchr on PyPI](https://pypi.org/project/pitchr/)
-`lilypond` is required for listening.
+To install: `pip3 install pitchr`.
+Other dependencies that must be installed (available via your package manager):
+  * python3-dev
+  * libasound2
+  * lilypond
 
 ## Documentation
 Documentation is hosted on Github Pages [here](https://thedpws.github.io/pitcher/)
