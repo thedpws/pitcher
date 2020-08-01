@@ -12,12 +12,11 @@ def measures_from_ml_output(pitches, durations, time_signature):
 
     time(Time(time_signature))
 
-    pitches = list(map(int, pitches))
+    pitches = map(int, pitches)
 
-    notes = [Note(pitch, duration) if duration > 0 else  Rest(-1*duration) for (pitch,duration) in zip(pitches, durations)]
-    print(len(notes))
-    print(type(notes))
-    print(notes)
+
+    notes = [Note(pitch_number, duration) if duration > 0 else  Rest(-1*duration) for (pitch_number,duration) in zip(pitches, durations)]
+
     count = 0
     time(Time(time_signature))
 

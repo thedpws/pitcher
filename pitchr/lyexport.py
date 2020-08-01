@@ -72,6 +72,7 @@ def to_ly(score):
                     octave_suffix = ''
             except Exception:
                 letter = 'r'
+                accidentals_suffix = ''
                 octave_suffix = ''
 
             try:

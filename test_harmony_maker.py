@@ -30,3 +30,6 @@ from pitchr import harmony_maker
 
 harmony = harmony_maker.build_harmony(melody)
 harmony.show()
+harmony.play()
+for n in [n for measure in harmony for n in measure]:
+    print(n.pitch_number)

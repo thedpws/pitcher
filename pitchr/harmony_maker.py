@@ -137,7 +137,7 @@ def build_harmony(melody_staff):
     print(output)
 
     harmony_measures = df_import.measures_from_ml_output(
-            pitches=output[0],
+            pitches=output.T[0],
             durations=durations,
             time_signature=str(melody_staff[0].time_signature)
     )
