@@ -2,6 +2,7 @@ import numpy as np
 
 
 class Predict():
+    """Class representation of a bigram model"""
 
     def __init__(self, measure):
         self._measure = measure
@@ -64,6 +65,7 @@ def novelty(measure):
 
 
 class PredictDF(Predict):
+    """A version of the bigram modeller that consumes dataframes"""
     def __init__(self, dataframe):
         self._measure = dataframe
 

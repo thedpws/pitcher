@@ -249,6 +249,11 @@ def write_to_png(score, output_file):
 
 
 def show_score_png(score):
+    """Reveals the score in an image form.
+    Image will block the current process until it is closed in non-interactive scripts.
+
+    :param score:
+    """
     _verify_lilypond_in_path()
 
     with TemporaryDirectory() as tmpdirname:

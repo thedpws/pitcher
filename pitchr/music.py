@@ -23,6 +23,9 @@ import pitchr.playing as _playing
 
 
 class PitcherException(Exception):
+    """Exceptions related to Pitcher issues
+    """
+
     pass
 
 
@@ -68,18 +71,37 @@ _time_signature = Time('4/4')
 
 
 def key(key_signature):
+    """Sets the global key signature
+
+    :param key_signature: Key Signature object
+    """
     global _key_signature
     _key_signature = key_signature
 
 
 def time(time_signature):
+    """Sets the global time signature
+
+    :param key_signature: Time Signature object
+    """
     global _time_signature
     _time_signature = time_signature
 
 
 class Keyboard:
+    """Simulates a piano keyboard. Useful for calculating scales.
+    """
+
     @staticmethod
     def key(i, sharps=True):
+        """Given a number, returns the letter of an associated key on the keyboard.
+        Middle C is defined to be 0.
+
+        :param i: index of key on keyboard
+        :param sharps: if True, gives accidentals in sharp form rather than flat form.
+
+        :returns: letter note of associated key
+        """
         return {
             0: ['C', 'C'],
             1: ['Db', 'C#'],
@@ -97,6 +119,7 @@ class Keyboard:
 
 
 class Interval:
+    """Stores Pitch Intervals."""
     pass
 
 
@@ -123,24 +146,42 @@ class Key:
 
     @property
     def fifths(self):
+        """Returns number of fifths that defines this key signature.
+
+        :returns: number of fifths that defines this key signature.
+        """
         return self._sharps - self._flats
 
     @property
     def major_tonic(self):
+        """Returns the tonic/root of this key signature, assuming a major key.
+
+        :returns: returns the letter of the key signature's tonic
+        """
         return Keyboard.key(self.major_tonic_offset, sharps=self.sharp)
 
     @property
     def major_tonic_offset(self):
+        """Returns the index of the tonic of this key signature.
+
+        :returns: the related offset (in half steps) of this tonic from middle C"""
         return (Interval.M5 * self.fifths) % 12
 
     @property
     def major_scale(self):
+        """Returns the index of the tonic of this key signature.
+
+        :returns: list of strings of the 8 letters representing the major scale associated with this major key"""
         intvs = [0, 2, 2, 1, 2, 2, 2, 1]
         return [Keyboard.key(intv + sum(intvs[:i]) + self.major_tonic_offset, self.sharp) for i, intv in
                 enumerate(intvs)]
 
     @property
     def ly(self):
+        """Returns a lilypond string representation of this key signature.
+        Consists of the tonic in lowercase with "-is" or "-es" if sharp or flat respectively, and then "\\major".
+        :returns: lilypond string representation of this key signature
+        """
         tonic = self.major_tonic
 
         tonic = _re.sub('#', 'is', tonic)
@@ -151,16 +192,28 @@ class Key:
 
     @property
     def sharp(self):
+        """Returns True if this key signature contains sharps
+        :returns: this key signature contains sharps
+        """
         return self._sharps > 0
 
     @property
     def flat(self):
+        """Returns True if this key signature contains flats
+        :returns: this key signature contains flats
+        """
         return self._flats > 0
 
     def __eq__(self, other):
+        """Returns True if key signatures share the same definition"""
         return self._sharps == other._sharps and self._flats == other._flats
 
     def __contains__(self, pitch):
+        """Returns True if this key signature has this pitch or Note in its notes
+
+        :param pitch: Note or pitch
+        :returns: returns True if this key signature contains this note or pitch
+        """
 
         if isinstance(pitch, Note):
             pitch = pitch.pitch
@@ -234,6 +287,7 @@ class Score(_Music):
 
     @property
     def composer(self):
+        """Alias for author of the score"""
         return self._composition.author
 
     @property
@@ -1050,6 +1104,12 @@ class Rest(Note):
 
 
 class _Pitch:
+    """Represents a pitch. Contains utilities for transforming pitch.
+
+    :param letter: letter of pitch
+    :param accidentals: default None, string representation of accidentals
+    :param octave: default 4, octave number
+    """
     FLAT = 'b'
     SHARP = '#'
     DOUBLE_SHARP = 'x'
@@ -1063,11 +1123,17 @@ class _Pitch:
 
     @staticmethod
     def from_int(pitch):
+        """Returns a _Pitch calculated from an integer representation.
+        :returns: instance of _Pitch
+        """
         octave = pitch // 12 + 4
         return _Pitch.from_string(''.join([Keyboard.key(pitch), str(octave)]))
 
     @staticmethod
     def from_string(pitch):
+        """Returns a _Pitch calculated from a string representation
+        :returns: instance of _Pitch
+        """
         if pitch == None: return None
 
         def get_accidentals(pitch_string):
@@ -1098,10 +1164,17 @@ class _Pitch:
 
     @property
     def letter(self):
+        """?Returns the letter of this pitch.
+        :returns: letter
+        """
         return self._letter
 
     @property
     def accidentals(self):
+        """Returns the accidentals of this pitch
+
+        :returns: string of "x", "#", and "b" characters
+        """
         if self._accidental_offset == 0:
             return ''
         elif self._accidental_offset < 0:
@@ -1111,6 +1184,10 @@ class _Pitch:
 
     @accidentals.setter
     def accidentals(self, accidentals):
+        """Sets the accidentals of this pitch
+
+        :param accidentals: string of "x", "#", and "b" characters
+        """
         self._accidental_offset = sum(
             [offset * (sum(map(lambda c: c == accidental, accidentals))) for accidental, offset in
              {_Pitch.FLAT: -1, _Pitch.SHARP: +1, _Pitch.DOUBLE_SHARP: +2}.items()])
@@ -1124,10 +1201,16 @@ class _Pitch:
 
     @property
     def octave(self):
+        """Returns the octave of this pitch
+        :returns: pitch octave
+        """
         return self._octave
 
     @octave.setter
     def octave(self, octave):
+        """Sets the octave of this pitch
+        :param octave: int
+        """
         self._octave = octave
         return True
 

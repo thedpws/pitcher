@@ -9,11 +9,19 @@ from timidity import Parser, play_notes
 from pitchr.utils import _suppress_stdout_stderr
 
 class EventType(Enum):
+    """Enumeration of Event types"""
     KEY_ON = 'note_on'
     KEY_OFF = 'note_off'
 
 
 class Event:
+    """Represents a MIDI keyon/keyoff event.
+
+    :param event_type: a MIDI message type of "note_on" or "note_off"
+    :param pitch_number: int representing the pitch of the key"
+    :param velocity: int representing the velocity of keypress
+    :param time: number of ticks after the previous event
+    """
     def __init__(self, event_type, pitch_number, velocity, time):
         self._type = event_type
         self._pitch_number = pitch_number
@@ -41,6 +49,9 @@ class Event:
 
 
 def play_score(score):
+    """Plays a score.
+    :param score: instance of Pitchr.Score
+    :returns: True"""
     mid = MidiFile()
 
     track = MidiTrack()
