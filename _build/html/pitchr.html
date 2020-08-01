@@ -1,0 +1,1620 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr package &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="pitchr-package">
+<h1>pitchr package<a class="headerlink" href="#pitchr-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pitchr.df_import">
+<span id="pitchr-df-import-module"></span><h2>pitchr.df_import module<a class="headerlink" href="#module-pitchr.df_import" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pitchr.df_import.measures_from_ml_output">
+<code class="sig-prename descclassname">pitchr.df_import.</code><code class="sig-name descname">measures_from_ml_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitches</span></em>, <em class="sig-param"><span class="n">durations</span></em>, <em class="sig-param"><span class="n">time_signature</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/df_import.html#measures_from_ml_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.df_import.measures_from_ml_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform an array of Pitch Numbers into a list of measures</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitches</strong> – Numpy.array of int32</p></li>
+<li><p><strong>durations</strong> – a list of float detailing corresponding durations of each row in harmony_df</p></li>
+<li><p><strong>time_signature</strong> – string. Example: ‘4/4’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns measures</dt>
+<dd class="field-even"><p>list of measures</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="pitchr-harmony-maker-module">
+<h2>pitchr.harmony_maker module<a class="headerlink" href="#pitchr-harmony-maker-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pitchr.helper">
+<span id="pitchr-helper-module"></span><h2>pitchr.helper module<a class="headerlink" href="#module-pitchr.helper" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pitchr.helper.center_txt">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">center_txt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">row</span></em>, <em class="sig-param"><span class="n">window</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#center_txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.center_txt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.dialog1_box">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">dialog1_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prompt</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#dialog1_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.dialog1_box" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.explanation">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">explanation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span></em>, <em class="sig-param"><span class="n">text1</span></em>, <em class="sig-param"><span class="n">text2</span></em>, <em class="sig-param"><span class="n">stdscr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#explanation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.explanation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs explanation of a specific data structure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> – title of DS</p></li>
+<li><p><strong>text</strong> – explanation</p></li>
+<li><p><strong>stdscr</strong> – curses background</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.export_sample_song">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">export_sample_song</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stdscr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#export_sample_song"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.export_sample_song" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports sample song to Python code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stdscr</strong> – curses background</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.main">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.run_gui">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">run_gui</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stdscr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#run_gui"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.run_gui" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs curses GUI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stdscr</strong> – curses background</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.show_menu">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">show_menu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stdscr</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#show_menu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.show_menu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows menu of options</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stdscr</strong> – curses background</p>
+</dd>
+<dt class="field-even">Returns menu</dt>
+<dd class="field-even"><p>curses window</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.helper.window_border">
+<code class="sig-prename descclassname">pitchr.helper.</code><code class="sig-name descname">window_border</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/helper.html#window_border"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.helper.window_border" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws border around windows
+:returns window: curses window</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pitchr.lyexport">
+<span id="pitchr-lyexport-module"></span><h2>pitchr.lyexport module<a class="headerlink" href="#module-pitchr.lyexport" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pitchr.lyexport.save_string_and_execute_LilyPond_silent">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">save_string_and_execute_LilyPond_silent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ly_string</span></em>, <em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">command</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#save_string_and_execute_LilyPond_silent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.save_string_and_execute_LilyPond_silent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A helper function for to_png and to_pdf. Should not be used directly.
+:param ly_string:
+:param filename:
+:param command:
+:return: true if export was successful, false if failed
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.show_score_png">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">show_score_png</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#show_score_png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.show_score_png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reveals the score in an image form.
+Image will block the current process until it is closed in non-interactive scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>score</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.to_ly">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">to_ly</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#to_ly"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.to_ly" title="Permalink to this definition">¶</a></dt>
+<dd><p>convert score to lilypond string
+:param score:
+:return: lilypond string
+:rtype: string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.to_pdf">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">to_pdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ly_string</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#to_pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.to_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>write lilypond string to PDF using lilypond executable
+:param ly_string:
+:param filename:
+:return: whether export was successful
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.to_png">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">to_png</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ly_string</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#to_png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.to_png" title="Permalink to this definition">¶</a></dt>
+<dd><p>write lilypond string to PNG using lilypond executable
+:param ly_string:
+:param filename:
+:return: whether export was successful
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.write_to_pdf">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">write_to_pdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score</span></em>, <em class="sig-param"><span class="n">output_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#write_to_pdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.write_to_pdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>write score to PDF
+:param score:
+:param output_file:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.lyexport.write_to_png">
+<code class="sig-prename descclassname">pitchr.lyexport.</code><code class="sig-name descname">write_to_png</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score</span></em>, <em class="sig-param"><span class="n">output_file</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/lyexport.html#write_to_png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.lyexport.write_to_png" title="Permalink to this definition">¶</a></dt>
+<dd><p>write score to PNG
+:param score:
+:param output_file:</p>
+</dd></dl>
+
+</div>
+<div class="section" id="pitchr-model-maker-module">
+<h2>pitchr.model_maker module<a class="headerlink" href="#pitchr-model-maker-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pitchr.music">
+<span id="pitchr-music-module"></span><h2>pitchr.music module<a class="headerlink" href="#module-pitchr.music" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pitchr.music.Chord">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Chord</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing an organized group of notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes</strong> – [Note]</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Chord.accidentals">
+<em class="property">property </em><code class="sig-name descname">accidentals</code><a class="headerlink" href="#pitchr.music.Chord.accidentals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the accidentals of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>accidentals (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a note to a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.augmented_triad">
+<em class="property">static </em><code class="sig-name descname">augmented_triad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.augmented_triad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.augmented_triad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the augmented triad of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Chord</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears all notes from a Chord</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.determine">
+<code class="sig-name descname">determine</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.determine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.determine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to determine the type of chord</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.diminished_triad">
+<em class="property">static </em><code class="sig-name descname">diminished_triad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.diminished_triad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.diminished_triad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the diminished triad of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Chord</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.duration">
+<em class="property">property </em><code class="sig-name descname">duration</code><a class="headerlink" href="#pitchr.music.Chord.duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the duration of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>duration</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.get_chord">
+<em class="property">static </em><code class="sig-name descname">get_chord</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.get_chord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.get_chord" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.get_triads">
+<em class="property">static </em><code class="sig-name descname">get_triads</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.get_triads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.get_triads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all triads in a given key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> – String</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.letter">
+<em class="property">property </em><code class="sig-name descname">letter</code><a class="headerlink" href="#pitchr.music.Chord.letter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the letter of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>letter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.major_triad">
+<em class="property">static </em><code class="sig-name descname">major_triad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.major_triad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.major_triad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the major triad of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Chord</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.mingusChord_to_chord">
+<em class="property">static </em><code class="sig-name descname">mingusChord_to_chord</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mingus_chord</span></em>, <em class="sig-param"><span class="n">root</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.mingusChord_to_chord"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.mingusChord_to_chord" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.minor_triad">
+<em class="property">static </em><code class="sig-name descname">minor_triad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.minor_triad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.minor_triad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the minor triad of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Chord</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.notes">
+<em class="property">property </em><code class="sig-name descname">notes</code><a class="headerlink" href="#pitchr.music.Chord.notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the notes of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[Note]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.octave">
+<em class="property">property </em><code class="sig-name descname">octave</code><a class="headerlink" href="#pitchr.music.Chord.octave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the octave of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.pitch">
+<em class="property">property </em><code class="sig-name descname">pitch</code><a class="headerlink" href="#pitchr.music.Chord.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the pitch of a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>String of letter-note, accidentals, and octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.remove">
+<code class="sig-name descname">remove</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a note from a Chord</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Chord.suspended_triad">
+<em class="property">static </em><code class="sig-name descname">suspended_triad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Chord.suspended_triad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Chord.suspended_triad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the suspended triad of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>note</strong> – Note</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Chord</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Clef">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Clef</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Clef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Clef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="pitchr.music.Clef.BASS">
+<code class="sig-name descname">BASS</code><em class="property"> = 1</em><a class="headerlink" href="#pitchr.music.Clef.BASS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Clef.TREBLE">
+<code class="sig-name descname">TREBLE</code><em class="property"> = 0</em><a class="headerlink" href="#pitchr.music.Clef.TREBLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Interval">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Interval</code><a class="reference internal" href="_modules/pitchr/music.html#Interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Stores Pitch Intervals.</p>
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M2">
+<code class="sig-name descname">M2</code><em class="property"> = 2</em><a class="headerlink" href="#pitchr.music.Interval.M2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M3">
+<code class="sig-name descname">M3</code><em class="property"> = 4</em><a class="headerlink" href="#pitchr.music.Interval.M3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M4">
+<code class="sig-name descname">M4</code><em class="property"> = 5</em><a class="headerlink" href="#pitchr.music.Interval.M4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M5">
+<code class="sig-name descname">M5</code><em class="property"> = 7</em><a class="headerlink" href="#pitchr.music.Interval.M5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M6">
+<code class="sig-name descname">M6</code><em class="property"> = 9</em><a class="headerlink" href="#pitchr.music.Interval.M6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M7">
+<code class="sig-name descname">M7</code><em class="property"> = 11</em><a class="headerlink" href="#pitchr.music.Interval.M7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.M8">
+<code class="sig-name descname">M8</code><em class="property"> = 12</em><a class="headerlink" href="#pitchr.music.Interval.M8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.m2">
+<code class="sig-name descname">m2</code><em class="property"> = 1</em><a class="headerlink" href="#pitchr.music.Interval.m2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.m3">
+<code class="sig-name descname">m3</code><em class="property"> = 3</em><a class="headerlink" href="#pitchr.music.Interval.m3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.m5">
+<code class="sig-name descname">m5</code><em class="property"> = 6</em><a class="headerlink" href="#pitchr.music.Interval.m5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.m6">
+<code class="sig-name descname">m6</code><em class="property"> = 8</em><a class="headerlink" href="#pitchr.music.Interval.m6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Interval.m7">
+<code class="sig-name descname">m7</code><em class="property"> = 10</em><a class="headerlink" href="#pitchr.music.Interval.m7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Key">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">flats</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">sharps</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing the Key the Score is played in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flats</strong> – number of flats in the Key</p></li>
+<li><p><strong>sharps</strong> – number of sharps in the Key</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="pitchr.music.Key.A_MAJOR">
+<code class="sig-name descname">A_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.A_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.A_MINOR">
+<code class="sig-name descname">A_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.A_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Ab_MAJOR">
+<code class="sig-name descname">Ab_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Ab_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.B_MAJOR">
+<code class="sig-name descname">B_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.B_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.B_MINOR">
+<code class="sig-name descname">B_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.B_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Bb_MAJOR">
+<code class="sig-name descname">Bb_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Bb_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Bb_MINOR">
+<code class="sig-name descname">Bb_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Bb_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.C_MAJOR">
+<code class="sig-name descname">C_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.C_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.C_MINOR">
+<code class="sig-name descname">C_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.C_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.C_SHARP_MAJOR">
+<code class="sig-name descname">C_SHARP_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.C_SHARP_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.C_SHARP_MINOR">
+<code class="sig-name descname">C_SHARP_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.C_SHARP_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Cb_MAJOR">
+<code class="sig-name descname">Cb_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Cb_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.D_MAJOR">
+<code class="sig-name descname">D_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.D_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.D_MINOR">
+<code class="sig-name descname">D_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.D_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Db_MAJOR">
+<code class="sig-name descname">Db_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Db_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.E_MAJOR">
+<code class="sig-name descname">E_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.E_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.E_MINOR">
+<code class="sig-name descname">E_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.E_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Eb_MAJOR">
+<code class="sig-name descname">Eb_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Eb_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Eb_MINOR">
+<code class="sig-name descname">Eb_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Eb_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.F_MAJOR">
+<code class="sig-name descname">F_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.F_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.F_MINOR">
+<code class="sig-name descname">F_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.F_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.F_SHARP_MAJOR">
+<code class="sig-name descname">F_SHARP_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.F_SHARP_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.F_SHARP_MINOR">
+<code class="sig-name descname">F_SHARP_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.F_SHARP_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.G_MAJOR">
+<code class="sig-name descname">G_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.G_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.G_MINOR">
+<code class="sig-name descname">G_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.G_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.G_SHARP_MINOR">
+<code class="sig-name descname">G_SHARP_MINOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.G_SHARP_MINOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Key.Gb_MAJOR">
+<code class="sig-name descname">Gb_MAJOR</code><em class="property"> = &lt;pitchr.music.Key object&gt;</em><a class="headerlink" href="#pitchr.music.Key.Gb_MAJOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.fifths">
+<em class="property">property </em><code class="sig-name descname">fifths</code><a class="headerlink" href="#pitchr.music.Key.fifths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns number of fifths that defines this key signature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>number of fifths that defines this key signature.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.flat">
+<em class="property">property </em><code class="sig-name descname">flat</code><a class="headerlink" href="#pitchr.music.Key.flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this key signature contains flats
+:returns: this key signature contains flats</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.ly">
+<em class="property">property </em><code class="sig-name descname">ly</code><a class="headerlink" href="#pitchr.music.Key.ly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lilypond string representation of this key signature.
+Consists of the tonic in lowercase with “-is” or “-es” if sharp or flat respectively, and then “major”.
+:returns: lilypond string representation of this key signature</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.major_scale">
+<em class="property">property </em><code class="sig-name descname">major_scale</code><a class="headerlink" href="#pitchr.music.Key.major_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index of the tonic of this key signature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of strings of the 8 letters representing the major scale associated with this major key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.major_tonic">
+<em class="property">property </em><code class="sig-name descname">major_tonic</code><a class="headerlink" href="#pitchr.music.Key.major_tonic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the tonic/root of this key signature, assuming a major key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>returns the letter of the key signature’s tonic</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.major_tonic_offset">
+<em class="property">property </em><code class="sig-name descname">major_tonic_offset</code><a class="headerlink" href="#pitchr.music.Key.major_tonic_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index of the tonic of this key signature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the related offset (in half steps) of this tonic from middle C</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Key.sharp">
+<em class="property">property </em><code class="sig-name descname">sharp</code><a class="headerlink" href="#pitchr.music.Key.sharp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this key signature contains sharps
+:returns: this key signature contains sharps</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Keyboard">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Keyboard</code><a class="reference internal" href="_modules/pitchr/music.html#Keyboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Keyboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Simulates a piano keyboard. Useful for calculating scales.</p>
+<dl class="py method">
+<dt id="pitchr.music.Keyboard.key">
+<em class="property">static </em><code class="sig-name descname">key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">i</span></em>, <em class="sig-param"><span class="n">sharps</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Keyboard.key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Keyboard.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a number, returns the letter of an associated key on the keyboard.
+Middle C is defined to be 0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i</strong> – index of key on keyboard</p></li>
+<li><p><strong>sharps</strong> – if True, gives accidentals in sharp form rather than flat form.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>letter note of associated key</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Measure">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Measure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">time_signature</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing a collection of notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes</strong> – []</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Measure.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">item</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds new note to current measure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>item</strong> – Note</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.duration">
+<em class="property">property </em><code class="sig-name descname">duration</code><a class="headerlink" href="#pitchr.music.Measure.duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the total duration of notes in this measure</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.extend">
+<code class="sig-name descname">extend</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure.extend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure.extend" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Measure.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Measure.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Measure.time_signature">
+<em class="property">property </em><code class="sig-name descname">time_signature</code><a class="headerlink" href="#pitchr.music.Measure.time_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get time signature of the Measure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>time signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Note">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Note</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitch</span></em>, <em class="sig-param"><span class="n">duration</span></em>, <em class="sig-param"><span class="n">dynamic</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">articulation</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tie</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing the smallest unit for the Pitcher.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pitch</strong> – string with letter name, accidentals, and octave, such as ‘A#4’</p></li>
+<li><p><strong>duration</strong> – note duration</p></li>
+<li><p><strong>dynamic</strong> – dynamic, such as piano, forte, crescendo, etc</p></li>
+<li><p><strong>articulation</strong> – articulation, such as staccato, accent, fermata, etc</p></li>
+<li><p><strong>tie</strong> – when true will play this note continuously into the next note</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Note.accidentals">
+<em class="property">property </em><code class="sig-name descname">accidentals</code><a class="headerlink" href="#pitchr.music.Note.accidentals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the accidentals of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>accidentals (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.articulation">
+<em class="property">property </em><code class="sig-name descname">articulation</code><a class="headerlink" href="#pitchr.music.Note.articulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the articulation of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>duration</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.augment">
+<code class="sig-name descname">augment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.augment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises the note by a half step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.diminish">
+<code class="sig-name descname">diminish</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.diminish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.diminish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the note by a half step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.duration">
+<em class="property">property </em><code class="sig-name descname">duration</code><a class="headerlink" href="#pitchr.music.Note.duration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the duration of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>duration</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.dynamic">
+<em class="property">property </em><code class="sig-name descname">dynamic</code><a class="headerlink" href="#pitchr.music.Note.dynamic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the dynamic of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dynamic</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.get_accidentals_wrt_key">
+<code class="sig-name descname">get_accidentals_wrt_key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.get_accidentals_wrt_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.get_accidentals_wrt_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.letter">
+<em class="property">property </em><code class="sig-name descname">letter</code><a class="headerlink" href="#pitchr.music.Note.letter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the letter of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>letter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.mingusNote_to_note">
+<em class="property">static </em><code class="sig-name descname">mingusNote_to_note</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mingus_note</span></em>, <em class="sig-param"><span class="n">note</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.mingusNote_to_note"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.mingusNote_to_note" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.mingus_note">
+<em class="property">property </em><code class="sig-name descname">mingus_note</code><a class="headerlink" href="#pitchr.music.Note.mingus_note" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns mingus note</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.octave">
+<em class="property">property </em><code class="sig-name descname">octave</code><a class="headerlink" href="#pitchr.music.Note.octave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the octave of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.octave_down">
+<code class="sig-name descname">octave_down</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.octave_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.octave_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the Note an octave</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.octave_up">
+<code class="sig-name descname">octave_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.octave_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.octave_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises the Note an octave</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.pitch">
+<em class="property">property </em><code class="sig-name descname">pitch</code><a class="headerlink" href="#pitchr.music.Note.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the pitch of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>String of letter-note, accidentals, and octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.pitch_number">
+<em class="property">property </em><code class="sig-name descname">pitch_number</code><a class="headerlink" href="#pitchr.music.Note.pitch_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.tie">
+<em class="property">property </em><code class="sig-name descname">tie</code><a class="headerlink" href="#pitchr.music.Note.tie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the tie status of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>tie</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Note.transpose">
+<code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">half_steps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Note.transpose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Note.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transpose the Note by half_steps</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>half_steps</strong> – string of +/- and number of half-steps, ex: ‘+11’ or ‘-4’</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Part">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">staffs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tempo</span><span class="o">=</span><span class="default_value">60</span></em>, <em class="sig-param"><span class="n">time_signature</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">key_signature</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>staffs</strong> – from Staff()</p></li>
+<li><p><strong>tempo</strong> – int</p></li>
+<li><p><strong>time_signature</strong> – instance of Time</p></li>
+<li><p><strong>key_signature</strong> – instance of Key</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Part.add_staff">
+<code class="sig-name descname">add_staff</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">staff</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Part.add_staff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Part.add_staff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a staff to the current Part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>staff</strong> – Staff</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.key_signature">
+<em class="property">property </em><code class="sig-name descname">key_signature</code><a class="headerlink" href="#pitchr.music.Part.key_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the key signature of the current Part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Part.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Part.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Part.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Part.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Part.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Part.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.tempo">
+<em class="property">property </em><code class="sig-name descname">tempo</code><a class="headerlink" href="#pitchr.music.Part.tempo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Part.time_signature">
+<em class="property">property </em><code class="sig-name descname">time_signature</code><a class="headerlink" href="#pitchr.music.Part.time_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the time signature of the current Part</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>time signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt id="pitchr.music.PitcherException">
+<em class="property">exception </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">PitcherException</code><a class="reference internal" href="_modules/pitchr/music.html#PitcherException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.PitcherException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exceptions related to Pitcher issues</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Rest">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Rest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">duration</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pitchr.music.Note" title="pitchr.music.Note"><code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music.Note</span></code></a></p>
+<p>Class representing a Rest Note. Has no pitch. Only duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>duration</strong> – float</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Rest.accidentals">
+<em class="property">property </em><code class="sig-name descname">accidentals</code><a class="headerlink" href="#pitchr.music.Rest.accidentals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the accidentals of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>accidentals (string)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.augment">
+<code class="sig-name descname">augment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest.augment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest.augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises the note by a half step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.diminish">
+<code class="sig-name descname">diminish</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest.diminish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest.diminish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the note by a half step</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.letter">
+<em class="property">property </em><code class="sig-name descname">letter</code><a class="headerlink" href="#pitchr.music.Rest.letter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the letter of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>letter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.octave">
+<em class="property">property </em><code class="sig-name descname">octave</code><a class="headerlink" href="#pitchr.music.Rest.octave" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the octave of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.octave_down">
+<code class="sig-name descname">octave_down</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest.octave_down"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest.octave_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lowers the Note an octave</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.octave_up">
+<code class="sig-name descname">octave_up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest.octave_up"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest.octave_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raises the Note an octave</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.pitch">
+<em class="property">property </em><code class="sig-name descname">pitch</code><a class="headerlink" href="#pitchr.music.Rest.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the pitch of a Note</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>String of letter-note, accidentals, and octave</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.pitch_number">
+<em class="property">property </em><code class="sig-name descname">pitch_number</code><a class="headerlink" href="#pitchr.music.Rest.pitch_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Rest.transpose">
+<code class="sig-name descname">transpose</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">half_steps</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Rest.transpose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Rest.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transpose the Note by half_steps</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>half_steps</strong> – string of +/- and number of half-steps, ex: ‘+11’ or ‘-4’</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Score">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parts</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">subtitle</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">author</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">author_email</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing a collection of parts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parts</strong> – [Part]</p></li>
+<li><p><strong>title</strong> – str</p></li>
+<li><p><strong>subtitle</strong> – str</p></li>
+<li><p><strong>author</strong> – str</p></li>
+<li><p><strong>author_email</strong> – str</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Score.add_part">
+<code class="sig-name descname">add_part</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Score.add_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Score.add_part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new Part to the current Score</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>part</strong> – Part</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.author">
+<em class="property">property </em><code class="sig-name descname">author</code><a class="headerlink" href="#pitchr.music.Score.author" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the author of the current Score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Author</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.composer">
+<em class="property">property </em><code class="sig-name descname">composer</code><a class="headerlink" href="#pitchr.music.Score.composer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for author of the score</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Score.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Score.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Score.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Score.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Score.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Score.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Score.title">
+<em class="property">property </em><code class="sig-name descname">title</code><a class="headerlink" href="#pitchr.music.Score.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the title of the current Score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>title</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Staff">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Staff</code><span class="sig-paren">(</span><em class="sig-param">measures=None</em>, <em class="sig-param">clef=&lt;Clef.TREBLE: 0&gt;</em>, <em class="sig-param">voice=&lt;Voice.PIANO: 0&gt;</em>, <em class="sig-param">time_signature=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Staff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Staff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.music._Music</span></code></p>
+<p>Class representing a collection of measures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clef</strong> – from Clef()</p></li>
+<li><p><strong>voice</strong> – from Voice()</p></li>
+<li><p><strong>measures</strong> – Measure()</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.music.Staff.clef">
+<em class="property">property </em><code class="sig-name descname">clef</code><a class="headerlink" href="#pitchr.music.Staff.clef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get clef of the Staff</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>clef</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Staff.play">
+<code class="sig-name descname">play</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Staff.play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Staff.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Staff.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Staff.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Staff.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves music to a PDF</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Staff.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Staff.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Staff.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows a graphic of music</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Staff.time_signature">
+<em class="property">property </em><code class="sig-name descname">time_signature</code><a class="headerlink" href="#pitchr.music.Staff.time_signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get time signature of the Staff</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>time signature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Staff.voice">
+<em class="property">property </em><code class="sig-name descname">voice</code><a class="headerlink" href="#pitchr.music.Staff.voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get voice of the Staff</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>voice</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Time">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representing the Time signature the Score is played in</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> – String representing the time signature</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="pitchr.music.Time.COMMON_TIME">
+<code class="sig-name descname">COMMON_TIME</code><em class="property"> = &lt;pitchr.music.Time object&gt;</em><a class="headerlink" href="#pitchr.music.Time.COMMON_TIME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.music.Time.CUT_TIME">
+<code class="sig-name descname">CUT_TIME</code><em class="property"> = &lt;pitchr.music.Time object&gt;</em><a class="headerlink" href="#pitchr.music.Time.CUT_TIME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Time.beat_definition">
+<em class="property">property </em><code class="sig-name descname">beat_definition</code><a class="headerlink" href="#pitchr.music.Time.beat_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the beat definition of the Score</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>beat definition</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.music.Time.beats_per_measure">
+<em class="property">property </em><code class="sig-name descname">beats_per_measure</code><a class="headerlink" href="#pitchr.music.Time.beats_per_measure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the beats per measure of the Score</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>beats per measure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.music.Voice">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">Voice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#Voice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.Voice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="pitchr.music.Voice.PIANO">
+<code class="sig-name descname">PIANO</code><em class="property"> = 0</em><a class="headerlink" href="#pitchr.music.Voice.PIANO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.music.key">
+<code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">key</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_signature</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the global key signature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key_signature</strong> – Key Signature object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.music.time">
+<code class="sig-prename descclassname">pitchr.music.</code><code class="sig-name descname">time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time_signature</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/music.html#time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.music.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the global time signature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key_signature</strong> – Time Signature object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pitchr.pitch_tagger">
+<span id="pitchr-pitch-tagger-module"></span><h2>pitchr.pitch_tagger module<a class="headerlink" href="#module-pitchr.pitch_tagger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="pitchr.pitch_tagger.tag_accidentals">
+<code class="sig-prename descclassname">pitchr.pitch_tagger.</code><code class="sig-name descname">tag_accidentals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/pitch_tagger.html#tag_accidentals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.pitch_tagger.tag_accidentals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tag accidentals to a dataframe of notes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes_df</strong> – dataframe of notes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.pitch_tagger.tag_pitch">
+<code class="sig-prename descclassname">pitchr.pitch_tagger.</code><code class="sig-name descname">tag_pitch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/pitch_tagger.html#tag_pitch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.pitch_tagger.tag_pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tags pitch information to a dataframe of notes from XML file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes_df</strong> – dataframe of notes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.pitch_tagger.tag_pitch_interval">
+<code class="sig-prename descclassname">pitchr.pitch_tagger.</code><code class="sig-name descname">tag_pitch_interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/pitch_tagger.html#tag_pitch_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.pitch_tagger.tag_pitch_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tag pitch intervals to a dataframe of notes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>notes_df</strong> – dataframe of notes</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pitchr.playing">
+<span id="pitchr-playing-module"></span><h2>pitchr.playing module<a class="headerlink" href="#module-pitchr.playing" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pitchr.playing.Event">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.playing.</code><code class="sig-name descname">Event</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event_type</span></em>, <em class="sig-param"><span class="n">pitch_number</span></em>, <em class="sig-param"><span class="n">velocity</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/playing.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.playing.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a MIDI keyon/keyoff event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event_type</strong> – a MIDI message type of “note_on” or “note_off”</p></li>
+<li><p><strong>pitch_number</strong> – int representing the pitch of the key”</p></li>
+<li><p><strong>velocity</strong> – int representing the velocity of keypress</p></li>
+<li><p><strong>time</strong> – number of ticks after the previous event</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pitchr.playing.Event.event_type">
+<em class="property">property </em><code class="sig-name descname">event_type</code><a class="headerlink" href="#pitchr.playing.Event.event_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.playing.Event.pitch_number">
+<em class="property">property </em><code class="sig-name descname">pitch_number</code><a class="headerlink" href="#pitchr.playing.Event.pitch_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.playing.Event.time">
+<em class="property">property </em><code class="sig-name descname">time</code><a class="headerlink" href="#pitchr.playing.Event.time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.playing.Event.velocity">
+<em class="property">property </em><code class="sig-name descname">velocity</code><a class="headerlink" href="#pitchr.playing.Event.velocity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.playing.EventType">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.playing.</code><code class="sig-name descname">EventType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/playing.html#EventType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.playing.EventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Enumeration of Event types</p>
+<dl class="py attribute">
+<dt id="pitchr.playing.EventType.KEY_OFF">
+<code class="sig-name descname">KEY_OFF</code><em class="property"> = 'note_off'</em><a class="headerlink" href="#pitchr.playing.EventType.KEY_OFF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="pitchr.playing.EventType.KEY_ON">
+<code class="sig-name descname">KEY_ON</code><em class="property"> = 'note_on'</em><a class="headerlink" href="#pitchr.playing.EventType.KEY_ON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.playing.play_score">
+<code class="sig-prename descclassname">pitchr.playing.</code><code class="sig-name descname">play_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/playing.html#play_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.playing.play_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays a score.
+:param score: instance of Pitchr.Score
+:returns: True</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pitchr.predict">
+<span id="pitchr-predict-module"></span><h2>pitchr.predict module<a class="headerlink" href="#module-pitchr.predict" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="pitchr.predict.Predict">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.predict.</code><code class="sig-name descname">Predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">measure</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#Predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.Predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class representation of a bigram model</p>
+<dl class="py method">
+<dt id="pitchr.predict.Predict.find_in_tuples">
+<code class="sig-name descname">find_in_tuples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note_tuple</span></em>, <em class="sig-param"><span class="n">tuples</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#Predict.find_in_tuples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.Predict.find_in_tuples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.predict.Predict.novel">
+<code class="sig-name descname">novel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#Predict.novel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.Predict.novel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines how novel a sequence of notes is
+:returns novelty: value from 0 to 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pitchr.predict.Predict.qtd_in_tuples">
+<code class="sig-name descname">qtd_in_tuples</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">note_tuple</span></em>, <em class="sig-param"><span class="n">tuples</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#Predict.qtd_in_tuples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.Predict.qtd_in_tuples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="pitchr.predict.PredictDF">
+<em class="property">class </em><code class="sig-prename descclassname">pitchr.predict.</code><code class="sig-name descname">PredictDF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataframe</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#PredictDF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.PredictDF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pitchr.predict.Predict" title="pitchr.predict.Predict"><code class="xref py py-class docutils literal notranslate"><span class="pre">pitchr.predict.Predict</span></code></a></p>
+<p>A version of the bigram modeller that consumes dataframes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.predict.novelty">
+<code class="sig-prename descclassname">pitchr.predict.</code><code class="sig-name descname">novelty</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">measure</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#novelty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.novelty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="pitchr.predict.tag_predictability">
+<code class="sig-prename descclassname">pitchr.predict.</code><code class="sig-name descname">tag_predictability</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">notes_df</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pitchr/predict.html#tag_predictability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pitchr.predict.tag_predictability" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pitchr.utils">
+<span id="pitchr-utils-module"></span><h2>pitchr.utils module<a class="headerlink" href="#module-pitchr.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="pitchr-xml-parser-module">
+<h2>pitchr.xml_parser module<a class="headerlink" href="#pitchr-xml-parser-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pitchr">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pitchr" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/pitchr.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

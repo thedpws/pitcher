@@ -36,6 +36,9 @@ class Predict():
         return (found_single, found_pair)
 
     def novel(self):
+        """Determines how novel a sequence of notes is
+        :returns novelty: value from 0 to 1
+        """
         base = self._get_base(self._measure)
         tuples = []
         novelty = []

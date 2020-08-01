@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.helper &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.helper</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">curses</span>
+<span class="kn">from</span> <span class="nn">curses.textpad</span> <span class="kn">import</span> <span class="n">Textbox</span><span class="p">,</span> <span class="n">rectangle</span>
+<span class="kn">from</span> <span class="nn">curses</span> <span class="kn">import</span> <span class="n">wrapper</span>
+<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pitchr.music</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">MidiFile</span><span class="p">,</span> <span class="n">MidiTrack</span><span class="p">,</span> <span class="n">bpm2tempo</span><span class="p">,</span> <span class="n">tempo2bpm</span><span class="p">,</span> <span class="n">tick2second</span><span class="p">,</span> <span class="n">second2tick</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: Helper UI</span>
+<span class="sd">.. moduleauthor:: Quarantine Quintet</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="window_border"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.window_border">[docs]</a><span class="k">def</span> <span class="nf">window_border</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Draws border around windows</span>
+<span class="sd">    :returns window: curses window</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">newwin</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">80</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">border</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">window</span></div>
+
+
+<div class="viewcode-block" id="show_menu"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.show_menu">[docs]</a><span class="k">def</span> <span class="nf">show_menu</span><span class="p">(</span><span class="n">stdscr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Shows menu of options</span>
+
+<span class="sd">    :param stdscr: curses background</span>
+<span class="sd">    :returns menu: curses window</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">newwin</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">border</span><span class="p">()</span>
+
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[N] How to create a note?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[M] How to create a measure?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[S] How to create a staff?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[P] How to create a part?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[C] How to create a score?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[Y] How to play a song?&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[W] Play a sample song!&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[E] Export sample song.&quot;</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="s2">&quot;[Q] Quit this helper.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">menu</span></div>
+
+
+<div class="viewcode-block" id="center_txt"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.center_txt">[docs]</a><span class="k">def</span> <span class="nf">center_txt</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+    <span class="n">num_rows</span><span class="p">,</span> <span class="n">num_cols</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">getmaxyx</span><span class="p">()</span>
+    <span class="n">middle_column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_cols</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">half_msg</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">x_pos</span> <span class="o">=</span> <span class="n">middle_column</span> <span class="o">-</span> <span class="n">half_msg</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">x_pos</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dialog1_box"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.dialog1_box">[docs]</a><span class="k">def</span> <span class="nf">dialog1_box</span><span class="p">(</span><span class="n">prompt</span><span class="p">):</span>
+    <span class="n">dialog1</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">newwin</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">78</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">dialog1</span><span class="o">.</span><span class="n">border</span><span class="p">()</span>
+    <span class="n">center_txt</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dialog1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dialog1</span></div>
+
+
+<div class="viewcode-block" id="explanation"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.explanation">[docs]</a><span class="k">def</span> <span class="nf">explanation</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">text1</span><span class="p">,</span> <span class="n">text2</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Outputs explanation of a specific data structure</span>
+
+<span class="sd">    :param title: title of DS</span>
+<span class="sd">    :param text: explanation</span>
+<span class="sd">    :param stdscr: curses background</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curses</span><span class="o">.</span><span class="n">flash</span><span class="p">()</span>
+    <span class="n">textkey</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">newwin</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">76</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">textkey</span><span class="o">.</span><span class="n">border</span><span class="p">()</span>
+    <span class="n">textkey</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">text1</span><span class="p">)</span>
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">text2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="export_sample_song"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.export_sample_song">[docs]</a><span class="k">def</span> <span class="nf">export_sample_song</span><span class="p">(</span><span class="n">stdscr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exports sample song to Python code</span>
+
+<span class="sd">    :param stdscr: curses background</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;example.py&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from pitchr.music import *&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;key(Key.C_MAJOR)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;time(Time.COMMON_TIME)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;m = Measure()&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;m[0] = Note(&#39;C5&#39;, 3/2)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;m[1.5] = Note(&#39;D5&#39;, 1/2)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;m[2] = Note(&#39;E5&#39;, 3/2)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;m[3.5] = Note(&#39;C5&#39;, 1/2)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;n = Measure()&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;n[0] = Chord([Note(&#39;G5&#39;, 1), Note(&#39;D5&#39;, 2), Note(&#39;G4&#39;, 2), Note(&#39;B4&#39;, 2)])&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;n[1] = Note(&#39;F5&#39;, 1)&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;n[2] = Chord([Note(&#39;C4&#39;, 2), Note(&#39;E5&#39;, 2), Note(&#39;G4&#39;, 2)])&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;s = Staff(measures=[m, n])&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;s.play()&quot;</span><span class="p">)</span>
+    <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;This song have been exported to Python code to the current folder.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;It contains the exact data structures from this song.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;To play, run from the terminal: python3 example.py&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="run_gui"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.run_gui">[docs]</a><span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">stdscr</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runs curses GUI</span>
+
+<span class="sd">    :param stdscr: curses background</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stdscr</span> <span class="o">=</span> <span class="n">curses</span><span class="o">.</span><span class="n">initscr</span><span class="p">()</span>
+    <span class="n">curses</span><span class="o">.</span><span class="n">noecho</span><span class="p">()</span>
+    <span class="n">curses</span><span class="o">.</span><span class="n">cbreak</span><span class="p">()</span>
+    <span class="n">curses</span><span class="o">.</span><span class="n">curs_set</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">window</span> <span class="o">=</span> <span class="n">window_border</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">addstr</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="s2">&quot;Welcome to the Pitchr Framework!&quot;</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="n">menu</span> <span class="o">=</span> <span class="n">show_menu</span><span class="p">(</span><span class="n">stdscr</span><span class="p">)</span>
+    <span class="n">menu</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+
+    <span class="n">stdscr</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">stdscr</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;n&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;N&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;To create a note:&quot;</span><span class="p">,</span> <span class="s2">&quot;note = Note(pitch=&#39;C4&#39;, duration=1.0).&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;You can also add dynamics, such as Note(&#39;C4&#39;, 1.0, &#39;forte&#39;)&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;m&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;To create a measure:&quot;</span><span class="p">,</span> <span class="s2">&quot;m1 = Measure(Note(&#39;C4&#39;, 1/2))&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;To add a second note, you cal also do: m1[0.5] = Note(&#39;E5&#39;, 3/2)&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;To create a staff:&quot;</span><span class="p">,</span> <span class="s2">&quot;m1 = Measure(Note(&#39;C4&#39;, 1/2))&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;Staff(m1, Clef.TREBLE, Voice.PIANO)&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;P&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;To create a part:&quot;</span><span class="p">,</span> <span class="s2">&quot;A part is a collection of Staff()&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;part = Part(Staff(), tempo, time_signature, key_signature)&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;To create a score:&quot;</span><span class="p">,</span> <span class="s2">&quot;A score has only informational value.&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;s = Score(&#39;My Song&#39;, &#39;Wonderful Subtitle&#39;, &#39;Author Me&#39;, &#39;me@email.com&#39;)&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;y&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;First initialize: time(Time.COMMON_TIME)&quot;</span><span class="p">,</span> <span class="s2">&quot;Play an entire staff: Staff([measures]).play()&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;To play a single note: Note(&#39;C4&#39;, 1.0).play()&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;e&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;E&#39;</span><span class="p">):</span>
+            <span class="n">export_sample_song</span><span class="p">(</span><span class="n">stdscr</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;W&#39;</span><span class="p">):</span>
+            <span class="n">explanation</span><span class="p">(</span><span class="s2">&quot;Playing song...&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">stdscr</span><span class="p">)</span>
+            <span class="n">stdscr</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="n">key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span>
+            <span class="n">time</span><span class="p">(</span><span class="n">Time</span><span class="o">.</span><span class="n">COMMON_TIME</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">()</span>
+            <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">[</span><span class="mf">1.5</span><span class="p">]</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;D5&#39;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">m</span><span class="p">[</span><span class="mf">3.5</span><span class="p">]</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="n">Measure</span><span class="p">()</span>
+
+            <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">([</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;G5&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;D5&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;G4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;B4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">])</span>
+
+            <span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;F5&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">([</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;G4&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">])</span>
+
+            <span class="n">s</span> <span class="o">=</span> <span class="n">Staff</span><span class="p">(</span><span class="n">measures</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">])</span>
+            <span class="n">save_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;.trash&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+            <span class="n">s</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">save_stdout</span>
+
+        <span class="k">elif</span> <span class="p">(</span><span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;q&#39;</span> <span class="ow">or</span> <span class="nb">chr</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;Q&#39;</span><span class="p">):</span>
+            <span class="n">curses</span><span class="o">.</span><span class="n">beep</span><span class="p">()</span>
+            <span class="k">break</span></div>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../pitchr.html#pitchr.helper.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">wrapper</span><span class="p">(</span><span class="n">run_gui</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

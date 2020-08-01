@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.lyexport &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.lyexport</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">get_ident</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">pitchr.utils</span> <span class="kn">import</span> <span class="n">_suppress_stdout_stderr</span>
+<span class="kn">from</span> <span class="nn">pitchr.utils</span> <span class="kn">import</span> <span class="n">_verify_lilypond_in_path</span>
+
+
+<div class="viewcode-block" id="save_string_and_execute_LilyPond_silent"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.save_string_and_execute_LilyPond_silent">[docs]</a><span class="k">def</span> <span class="nf">save_string_and_execute_LilyPond_silent</span><span class="p">(</span><span class="n">ly_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A helper function for to_png and to_pdf. Should not be used directly.</span>
+<span class="sd">    :param ly_string:</span>
+<span class="sd">    :param filename:</span>
+<span class="sd">    :param command:</span>
+<span class="sd">    :return: true if export was successful, false if failed</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ly_string</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">version &quot;2.10.33&quot;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">ly_string</span>
+    <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span> <span class="s2">&quot;.png&quot;</span><span class="p">]:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.ly&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ly_string</span><span class="p">)</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;lilypond </span><span class="si">%s</span><span class="s1"> -o &quot;</span><span class="si">%s</span><span class="s1">&quot; &quot;</span><span class="si">%s</span><span class="s1">.ly&quot; 2&gt;/dev/null 1&gt;&amp;2&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="c1"># print(&quot;Executing: %s&quot; % command)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.ly&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="to_png"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.to_png">[docs]</a><span class="k">def</span> <span class="nf">to_png</span><span class="p">(</span><span class="n">ly_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; write lilypond string to PNG using lilypond executable</span>
+<span class="sd">    :param ly_string:</span>
+<span class="sd">    :param filename:</span>
+<span class="sd">    :return: whether export was successful</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">save_string_and_execute_LilyPond_silent</span><span class="p">(</span><span class="n">ly_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;-fpng&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_pdf"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.to_pdf">[docs]</a><span class="k">def</span> <span class="nf">to_pdf</span><span class="p">(</span><span class="n">ly_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; write lilypond string to PDF using lilypond executable</span>
+<span class="sd">    :param ly_string:</span>
+<span class="sd">    :param filename:</span>
+<span class="sd">    :return: whether export was successful</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">save_string_and_execute_LilyPond_silent</span><span class="p">(</span><span class="n">ly_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;-fpdf&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_ly"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.to_ly">[docs]</a><span class="k">def</span> <span class="nf">to_ly</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; convert score to lilypond string</span>
+<span class="sd">    :param score:</span>
+<span class="sd">    :return: lilypond string</span>
+<span class="sd">    :rtype: string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ly_staffs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">ly_parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">score</span><span class="p">:</span>
+
+        <span class="n">time_sig</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">time_signature</span>
+        <span class="n">tempo</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">tempo</span>
+
+        <span class="n">durations</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">64</span><span class="p">:</span> <span class="s1">&#39;64&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">32</span><span class="p">:</span> <span class="s1">&#39;32&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">64</span><span class="p">:</span> <span class="s1">&#39;32.&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;16&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">32</span><span class="p">:</span> <span class="s1">&#39;16.&#39;</span><span class="p">,</span>
+            <span class="mi">9</span> <span class="o">/</span> <span class="mi">64</span><span class="p">:</span> <span class="s1">&#39;16..&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;8&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;8.&#39;</span><span class="p">,</span>
+            <span class="mi">9</span> <span class="o">/</span> <span class="mi">32</span><span class="p">:</span> <span class="s1">&#39;8..&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;4&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;4.&#39;</span><span class="p">,</span>
+            <span class="mi">9</span> <span class="o">/</span> <span class="mi">16</span><span class="p">:</span> <span class="s1">&#39;4..&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;2.&#39;</span><span class="p">,</span>
+            <span class="mi">9</span> <span class="o">/</span> <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;2..&#39;</span><span class="p">,</span>
+
+            <span class="mi">1</span> <span class="o">/</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+            <span class="mi">3</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;1.&#39;</span><span class="p">,</span>
+            <span class="mi">9</span> <span class="o">/</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;1..&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">base</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">time_signature</span><span class="o">.</span><span class="n">beat_definition</span>
+        <span class="n">durations</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span> <span class="o">*</span> <span class="n">base</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">durations</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="k">def</span> <span class="nf">ly_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+
+            <span class="n">MIDDLE</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">letter</span> <span class="o">=</span> <span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+                <span class="n">accidentals</span> <span class="o">=</span> <span class="n">note</span><span class="o">.</span><span class="n">accidentals</span>
+                <span class="n">accidentals</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">)</span>
+                <span class="n">accidentals</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;es&#39;</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">)</span>
+                <span class="n">accidentals_suffix</span> <span class="o">=</span> <span class="n">accidentals</span>
+
+                <span class="k">if</span> <span class="n">note</span><span class="o">.</span><span class="n">octave</span> <span class="o">&gt;</span> <span class="n">MIDDLE</span><span class="p">:</span>
+                    <span class="n">octave_suffix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">octave</span> <span class="o">-</span> <span class="n">MIDDLE</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">note</span><span class="o">.</span><span class="n">octave</span> <span class="o">&lt;</span> <span class="n">MIDDLE</span><span class="p">:</span>
+                    <span class="n">octave_suffix</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">MIDDLE</span> <span class="o">-</span> <span class="n">note</span><span class="o">.</span><span class="n">octave</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">octave_suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">letter</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span>
+                <span class="n">accidentals_suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">octave_suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">accidentals_suffix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">duration_suffix</span> <span class="o">=</span> <span class="n">durations</span><span class="p">[</span><span class="n">note</span><span class="o">.</span><span class="n">duration</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># TODO: make PitcherException</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Duration not representable by a note: </span><span class="si">{</span><span class="n">note</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">letter</span> <span class="o">+</span> <span class="n">accidentals_suffix</span> <span class="o">+</span> <span class="n">octave_suffix</span> <span class="o">+</span> <span class="n">duration_suffix</span>
+
+        <span class="n">ly_staffs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">staff</span> <span class="ow">in</span> <span class="n">part</span><span class="p">:</span>
+
+            <span class="n">voice_i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">ly_voices</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">some_notes_are_unwritten</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">some_notes_are_unwritten</span><span class="p">:</span>
+                <span class="n">some_notes_are_unwritten</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">def</span> <span class="nf">ly_from_item</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="nb">iter</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+                        <span class="c1"># Is a chord</span>
+                        <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">notes</span><span class="p">]</span>
+                        <span class="n">note</span> <span class="o">=</span> <span class="n">notes</span><span class="p">[</span><span class="n">voice_i</span><span class="p">]</span>
+
+                        <span class="c1"># No index error -&gt; some notes are unwritten</span>
+                        <span class="k">nonlocal</span> <span class="n">some_notes_are_unwritten</span>
+                        <span class="n">some_notes_are_unwritten</span> <span class="o">=</span> <span class="kc">True</span>
+
+                        <span class="k">return</span> <span class="n">ly_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="c1"># Chord&#39;s notes are all written. write hidden rest.</span>
+                        <span class="k">return</span> <span class="s1">&#39;s&#39;</span> <span class="o">+</span> <span class="n">durations</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">duration</span><span class="p">]</span>
+
+                    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                        <span class="c1"># Is a Note</span>
+
+                        <span class="c1"># If note already written</span>
+                        <span class="k">if</span> <span class="n">voice_i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># fill with hidden rest</span>
+                            <span class="k">return</span> <span class="s1">&#39;s&#39;</span> <span class="o">+</span> <span class="n">durations</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">duration</span><span class="p">]</span>
+
+                        <span class="n">note</span> <span class="o">=</span> <span class="n">item</span>
+                        <span class="k">return</span> <span class="n">ly_from_note</span><span class="p">(</span><span class="n">note</span><span class="p">)</span>
+
+                <span class="n">ly_voice_format</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">new Voice {</span><span class="si">%s</span><span class="s1">}&#39;</span>
+
+                <span class="n">ly_voice</span> <span class="o">=</span> <span class="n">ly_voice_format</span> <span class="o">%</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">ly_from_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="n">staff</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">measure</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">ly_voice</span> <span class="o">==</span> <span class="p">(</span><span class="n">ly_voice_format</span> <span class="o">%</span> <span class="s1">&#39;&#39;</span><span class="p">)):</span>
+                    <span class="n">ly_voices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ly_voice</span><span class="p">)</span>
+                <span class="n">voice_i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">ly_staff_format</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="se">\\</span><span class="s1">new Staff &lt;&lt;</span>
+<span class="s1">    </span><span class="se">\\</span><span class="s1">numericTimeSignature</span>
+<span class="s1">    </span><span class="se">\\</span><span class="s1">time </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">    </span><span class="se">\\</span><span class="s1">key </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">    </span><span class="se">\\</span><span class="s1">clef </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">&gt;&gt;</span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">time_signature</span><span class="p">,</span> <span class="n">part</span><span class="o">.</span><span class="n">key_signature</span><span class="o">.</span><span class="n">ly</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;treble&#39;</span><span class="p">,</span> <span class="s1">&#39;bass&#39;</span><span class="p">][</span><span class="n">staff</span><span class="o">.</span><span class="n">clef</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ly_voices</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">ly_staff</span> <span class="o">=</span> <span class="n">ly_staff_format</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ly_voices</span><span class="p">)</span>
+
+            <span class="n">ly_staffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ly_staff</span><span class="p">)</span>
+
+        <span class="n">ly_part_format</span> <span class="o">=</span> <span class="s1">&#39;&lt;&lt;</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&gt;&gt;&#39;</span>
+
+        <span class="n">ly_part</span> <span class="o">=</span> <span class="n">ly_part_format</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ly_staffs</span><span class="p">)</span>
+
+        <span class="n">ly_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ly_part</span><span class="p">)</span>
+
+    <span class="n">ly_staffs</span> <span class="o">=</span> <span class="n">ly_staffs</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">ly_score</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="se">\\</span><span class="s1">score {</span>
+<span class="s1">    &lt;&lt;</span>
+<span class="s1">    </span><span class="si">%s</span><span class="s1"></span>
+<span class="s1">    &gt;&gt;</span>
+<span class="s1">}</span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ly_staffs</span><span class="p">)</span>
+
+    <span class="n">ly_book_format</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="se">\\</span><span class="s1">header {</span>
+<span class="s1">    title = &quot;</span><span class="si">%s</span><span class="s1">&quot;</span>
+<span class="s1">    composer = &quot;</span><span class="si">%s</span><span class="s1">&quot;</span>
+<span class="s1">}</span>
+
+<span class="s1">#(set-global-staff-size 30)</span>
+
+<span class="si">%s</span><span class="s1"></span>
+<span class="s1">&#39;&#39;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">score</span><span class="o">.</span><span class="n">title</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">score</span><span class="o">.</span><span class="n">author</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">ly</span> <span class="o">=</span> <span class="n">ly_book_format</span> <span class="o">%</span> <span class="n">ly_score</span>
+
+    <span class="k">return</span> <span class="n">ly</span></div>
+
+
+<div class="viewcode-block" id="write_to_pdf"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.write_to_pdf">[docs]</a><span class="k">def</span> <span class="nf">write_to_pdf</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    write score to PDF</span>
+<span class="sd">    :param score:</span>
+<span class="sd">    :param output_file:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_verify_lilypond_in_path</span><span class="p">()</span>
+
+    <span class="n">lilypond_string</span> <span class="o">=</span> <span class="n">to_ly</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    <span class="n">to_pdf</span><span class="p">(</span><span class="n">lilypond_string</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_to_png"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.write_to_png">[docs]</a><span class="k">def</span> <span class="nf">write_to_png</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    write score to PNG</span>
+<span class="sd">    :param score:</span>
+<span class="sd">    :param output_file:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_verify_lilypond_in_path</span><span class="p">()</span>
+
+    <span class="n">lilypond_string</span> <span class="o">=</span> <span class="n">to_ly</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    <span class="n">to_png</span><span class="p">(</span><span class="n">lilypond_string</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="show_score_png"><a class="viewcode-back" href="../../pitchr.html#pitchr.lyexport.show_score_png">[docs]</a><span class="k">def</span> <span class="nf">show_score_png</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Reveals the score in an image form.</span>
+<span class="sd">    Image will block the current process until it is closed in non-interactive scripts.</span>
+
+<span class="sd">    :param score:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_verify_lilypond_in_path</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdirname</span><span class="p">:</span>
+        <span class="n">png_filepath</span> <span class="o">=</span> <span class="n">tmpdirname</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ident</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+
+        <span class="n">lilypond_string</span> <span class="o">=</span> <span class="n">to_ly</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+        <span class="n">to_png</span><span class="p">(</span><span class="n">lilypond_string</span><span class="p">,</span> <span class="n">png_filepath</span><span class="p">)</span>
+
+        <span class="c1"># im = Image.open(png_filepath)</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">png_filepath</span><span class="p">)</span>
+
+        <span class="c1"># plt.imshow(im, cmap=plt.cm.binary)</span>
+        <span class="c1"># plt.show()</span>
+
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c1"># account for lilypond default text at bottom</span>
+        <span class="n">height</span> <span class="o">-=</span> <span class="mi">60</span>
+
+        <span class="c1"># Crop</span>
+        <span class="n">text_start_row</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">text_end_row</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">text_start_col</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">text_end_col</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">padding</span> <span class="o">=</span> <span class="mi">10</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">text_start_row</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="o">-</span><span class="mi">60</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">height</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span>
+                <span class="n">text_end_row</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">padding</span><span class="p">,</span> <span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">text_start_col</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">padding</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">60</span><span class="p">])</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span>
+                <span class="n">text_end_col</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">padding</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">break</span>
+
+        <span class="n">im_cropped</span> <span class="o">=</span> <span class="n">im</span><span class="p">[</span><span class="n">text_start_row</span><span class="p">:</span><span class="n">text_end_row</span><span class="p">,</span> <span class="n">text_start_col</span><span class="p">:</span><span class="n">text_end_col</span><span class="p">]</span>
+
+        <span class="k">with</span> <span class="n">_suppress_stdout_stderr</span><span class="p">():</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">im_cropped</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

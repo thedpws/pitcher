@@ -7,10 +7,14 @@ from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second
 import sys
 
 """
-Starter UI for learning Pitchr
+.. module:: Helper UI
+.. moduleauthor:: Quarantine Quintet
 """
 
 def window_border():
+    """Draws border around windows
+    :returns window: curses window
+    """
     window = curses.newwin(24, 80)
     window.border()
     window.refresh()
@@ -18,6 +22,11 @@ def window_border():
 
 
 def show_menu(stdscr):
+    """Shows menu of options
+
+    :param stdscr: curses background
+    :returns menu: curses window
+    """
     menu = curses.newwin(11, 40, 2, 20)
     menu.refresh()
     menu.border()
@@ -50,6 +59,12 @@ def dialog1_box(prompt):
 
 
 def explanation(title, text1, text2, stdscr):
+    """Outputs explanation of a specific data structure
+
+    :param title: title of DS
+    :param text: explanation
+    :param stdscr: curses background
+    """
     curses.flash()
     textkey = curses.newwin(10, 76, 13, 2)
     textkey.border()
@@ -60,6 +75,10 @@ def explanation(title, text1, text2, stdscr):
 
 
 def export_sample_song(stdscr):
+    """Exports sample song to Python code
+
+    :param stdscr: curses background
+    """
     f = open("example.py", "w+")
     f.write("from pitchr.music import *")
     f.write("\n")
@@ -106,6 +125,10 @@ def export_sample_song(stdscr):
 
 
 def run_gui(stdscr):
+    """Runs curses GUI
+
+    :param stdscr: curses background
+    """
     stdscr = curses.initscr()
     curses.noecho()
     curses.cbreak()

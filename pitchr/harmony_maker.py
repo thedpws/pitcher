@@ -8,6 +8,11 @@ from pitchr import pitch_tagger
 from pitchr import xml_parser
 from pitchr.music import *
 
+"""
+.. module:: Harmony Maker
+.. moduleauthor:: Quarantine Quintet
+"""
+
 
 def prepare_np(melody_np):
     """Converts and normalizes numpy array for prediction in model

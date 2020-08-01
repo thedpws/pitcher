@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tests.test_key &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_key</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">pitchr</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="TestKey"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey">[docs]</a><span class="k">class</span> <span class="nc">TestKey</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestKey.test_key_fails_on_bad_key_signature_both_flats_and_sharps"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_fails_on_bad_key_signature_both_flats_and_sharps">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_fails_on_bad_key_signature_both_flats_and_sharps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sharps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">PitcherException</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_fails_more_than_7_flats"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_fails_more_than_7_flats">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_fails_more_than_7_flats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">PitcherException</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_fails_more_than_7_sharps"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_fails_more_than_7_sharps">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_fails_more_than_7_sharps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">PitcherException</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_fails_on_less_than_0_flats"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_fails_on_less_than_0_flats">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_fails_on_less_than_0_flats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">PitcherException</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_fails_on_less_than_0_sharps"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_fails_on_less_than_0_sharps">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_fails_on_less_than_0_sharps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">act</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">PitcherException</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_allows_good_key_signatures"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_allows_good_key_signatures">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_allows_good_key_signatures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">acts</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span><span class="p">:</span> <span class="n">Key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="k">for</span> <span class="n">args</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]]</span>
+
+        <span class="k">for</span> <span class="n">act</span> <span class="ow">in</span> <span class="n">acts</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">act</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">act</span><span class="si">}</span><span class="s1"> raised an Exception&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_str_c_major"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_str_c_major">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_str_c_major</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;C major&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_str_no_minors"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_str_no_minors">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_str_no_minors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_MINOR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;Eb major&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_str_c_sharp_major"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_str_c_sharp_major">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_str_c_sharp_major</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_SHARP_MAJOR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;C# major&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_str_e_flat_major"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_str_e_flat_major">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_str_e_flat_major</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Eb_MAJOR</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;Eb major&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_key_equivalence"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_key_equivalence">[docs]</a>    <span class="k">def</span> <span class="nf">test_key_equivalence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestKey.test_major_scale"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_major_scale">[docs]</a>    <span class="k">def</span> <span class="nf">test_major_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">Eb_MAJOR</span><span class="o">.</span><span class="n">major_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Eb&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;Ab&#39;</span><span class="p">,</span> <span class="s1">&#39;Bb&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;Eb&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="TestKey.test_major_tonic"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_major_tonic">[docs]</a>    <span class="k">def</span> <span class="nf">test_major_tonic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="o">.</span><span class="n">major_tonic</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">D_MAJOR</span><span class="o">.</span><span class="n">major_tonic</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">Db_MAJOR</span><span class="o">.</span><span class="n">major_tonic</span><span class="p">,</span> <span class="s1">&#39;Db&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">G_MAJOR</span><span class="o">.</span><span class="n">major_tonic</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">A_MINOR</span><span class="o">.</span><span class="n">major_tonic</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_contains_letter"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_contains_letter">[docs]</a>    <span class="k">def</span> <span class="nf">test_contains_letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;E&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_contains_letter_with_octave"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_contains_letter_with_octave">[docs]</a>    <span class="k">def</span> <span class="nf">test_contains_letter_with_octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_contains_letter_with_accidental"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_contains_letter_with_accidental">[docs]</a>    <span class="k">def</span> <span class="nf">test_contains_letter_with_accidental</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="s1">&#39;C#&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;C#&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">A_MAJOR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_contains_letter_with_accidental_and_octave"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_contains_letter_with_accidental_and_octave">[docs]</a>    <span class="k">def</span> <span class="nf">test_contains_letter_with_accidental_and_octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">A_MAJOR</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestKey.test_contains_note"><a class="viewcode-back" href="../../tests.html#tests.test_key.TestKey.test_contains_note">[docs]</a>    <span class="k">def</span> <span class="nf">test_contains_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Key</span><span class="o">.</span><span class="n">A_MAJOR</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

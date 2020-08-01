@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tests.test_note &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_note</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span> <span class="nn">pitchr</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pitchr.music</span> <span class="kn">import</span> <span class="n">_Pitch</span>
+
+<span class="n">FLAT</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">FLAT</span>
+<span class="n">SHARP</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">SHARP</span>
+<span class="n">DOUBLE_SHARP</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">DOUBLE_SHARP</span>
+
+
+<div class="viewcode-block" id="TestNote"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote">[docs]</a><span class="k">class</span> <span class="nc">TestNote</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestNote.test_init_sets_pitch"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_init_sets_pitch">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_sets_pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pitch</span> <span class="o">=</span> <span class="s1">&#39;A4&#39;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="n">pitch</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_letter"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_letter">[docs]</a>    <span class="k">def</span> <span class="nf">test_letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">letter</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_octave"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_octave">[docs]</a>    <span class="k">def</span> <span class="nf">test_octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">octave</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;A</span><span class="si">{</span><span class="n">octave</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">octave</span><span class="p">,</span> <span class="n">octave</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_octave_is_settable"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_octave_is_settable">[docs]</a>    <span class="k">def</span> <span class="nf">test_octave_is_settable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">octave</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">octave</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_octave_defaults_to_4"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_octave_defaults_to_4">[docs]</a>    <span class="k">def</span> <span class="nf">test_octave_defaults_to_4</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">octave</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_none"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_none">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_none</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_sharp"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_sharp">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_sharp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;A</span><span class="si">{</span><span class="n">SHARP</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="n">SHARP</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_flats"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_flats">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_flats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">dblflat</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">FLAT</span><span class="si">}{</span><span class="n">FLAT</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;A</span><span class="si">{</span><span class="n">dblflat</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="n">dblflat</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_double_sharps"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_double_sharps">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_double_sharps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;F</span><span class="si">{</span><span class="n">DOUBLE_SHARP</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="n">DOUBLE_SHARP</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_simplify"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_simplify">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_simplify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;Fxbbxbbxbb&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_wrt_key_native_dont_return"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_wrt_key_native_dont_return">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_wrt_key_native_dont_return</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;F</span><span class="si">{</span><span class="n">SHARP</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">get_accidentals_wrt_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">D_MAJOR</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_accidentals_wrt_key_foreign_return"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_accidentals_wrt_key_foreign_return">[docs]</a>    <span class="k">def</span> <span class="nf">test_accidentals_wrt_key_foreign_return</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;F</span><span class="si">{</span><span class="n">SHARP</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">get_accidentals_wrt_key</span><span class="p">(</span><span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span><span class="p">),</span> <span class="n">SHARP</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_pitch_is_settable"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_pitch_is_settable">[docs]</a>    <span class="k">def</span> <span class="nf">test_pitch_is_settable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">pitch</span> <span class="o">=</span> <span class="s1">&#39;A5&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="s1">&#39;A5&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_duration"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_duration">[docs]</a>    <span class="k">def</span> <span class="nf">test_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A4&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_duration_is_settable"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_duration_is_settable">[docs]</a>    <span class="k">def</span> <span class="nf">test_duration_is_settable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A4&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_pitch_number_C4_is_0"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_pitch_number_C4_is_0">[docs]</a>    <span class="k">def</span> <span class="nf">test_pitch_number_C4_is_0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_pitch_number_C5_is_12"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_pitch_number_C5_is_12">[docs]</a>    <span class="k">def</span> <span class="nf">test_pitch_number_C5_is_12</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_augment"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_augment">[docs]</a>    <span class="k">def</span> <span class="nf">test_augment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">augment</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">SHARP</span><span class="si">}</span><span class="s1">4&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_diminish"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_diminish">[docs]</a>    <span class="k">def</span> <span class="nf">test_diminish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">diminish</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">FLAT</span><span class="si">}</span><span class="s1">4&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_transpose"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_transpose">[docs]</a>    <span class="k">def</span> <span class="nf">test_transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="s1">&#39;+12&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_octave_up"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_octave_up">[docs]</a>    <span class="k">def</span> <span class="nf">test_octave_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">octave_up</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="s1">&#39;C5&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_octave_down"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_octave_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_octave_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">octave_down</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="s1">&#39;C3&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_set_pitch_number_sets"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_set_pitch_number_sets">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_pitch_number_sets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;C4&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">))</span>
+        <span class="n">n</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;D#4&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestNote.test_constructor_pitch_number"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_constructor_pitch_number">[docs]</a>    <span class="k">def</span> <span class="nf">test_constructor_pitch_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">&#39;G#5&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pitch</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestNote.test_play_calls_play_score"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_play_calls_play_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.playing.play_score&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_play_calls_play_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play_score</span><span class="p">):</span>
+        <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">play_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_show_calls_show_score"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_show_calls_show_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.lyexport.show_score_png&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_show_calls_show_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_score</span><span class="p">):</span>
+        <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">show_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestNote.test_save_calls_save_score"><a class="viewcode-back" href="../../tests.html#tests.test_note.TestNote.test_save_calls_save_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.lyexport.write_to_pdf&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_save_calls_save_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_score</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tempdirname</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">tempdirname</span> <span class="o">+</span> <span class="s1">&#39;/export.pdf&#39;</span>
+            <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">save_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

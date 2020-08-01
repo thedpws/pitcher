@@ -1,0 +1,128 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.df_import &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.df_import</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pitchr.music</span> <span class="kn">import</span> <span class="n">Measure</span><span class="p">,</span> <span class="n">Note</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="n">Rest</span>
+
+<div class="viewcode-block" id="measures_from_ml_output"><a class="viewcode-back" href="../../pitchr.html#pitchr.df_import.measures_from_ml_output">[docs]</a><span class="k">def</span> <span class="nf">measures_from_ml_output</span><span class="p">(</span><span class="n">pitches</span><span class="p">,</span> <span class="n">durations</span><span class="p">,</span> <span class="n">time_signature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Transform an array of Pitch Numbers into a list of measures</span>
+
+<span class="sd">    :param pitches: Numpy.array of int32</span>
+<span class="sd">    :param durations: a list of float detailing corresponding durations of each row in harmony_df</span>
+<span class="sd">    :param time_signature: string. Example: &#39;4/4&#39;</span>
+<span class="sd">    :returns measures: list of measures</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">time</span><span class="p">(</span><span class="n">Time</span><span class="p">(</span><span class="n">time_signature</span><span class="p">))</span>
+
+    <span class="n">pitches</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">pitches</span><span class="p">)</span>
+
+    <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">Note</span><span class="p">(</span><span class="n">pitch_number</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span> <span class="k">if</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span>  <span class="n">Rest</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">duration</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">pitch_number</span><span class="p">,</span><span class="n">duration</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pitches</span><span class="p">,</span> <span class="n">durations</span><span class="p">)]</span>
+
+    <span class="n">time</span><span class="p">(</span><span class="n">Time</span><span class="p">(</span><span class="n">time_signature</span><span class="p">))</span>
+
+    <span class="n">measures</span> <span class="o">=</span> <span class="p">[</span><span class="n">Measure</span><span class="p">()]</span>
+
+    <span class="k">while</span> <span class="n">notes</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">measures</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">notes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">notes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">measures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Measure</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">measures</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
