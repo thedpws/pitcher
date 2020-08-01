@@ -57,7 +57,6 @@ Time.CUT_TIME = Time('2/4')
 
 global _time_signature, _key_signature
 _time_signature = Time('4/4')
-_key_signature = None
 
 
 def key(key_signature):
@@ -181,6 +180,7 @@ Key.B_MAJOR = Key.G_SHARP_MINOR = Key(sharps=5)
 Key.F_SHARP_MAJOR = Key(sharps=6)
 Key.C_SHARP_MAJOR = Key(sharps=7)
 
+_key_signature = Key.C_MAJOR
 class Clef(_Enum):
     TREBLE = 0
     BASS = 1

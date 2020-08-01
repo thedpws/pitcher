@@ -52,15 +52,15 @@ def prepare_staff(staff):
         while difference != 0:
             notes_np = notes_np[:-1]
             difference -= 1
-
     notes_np.reshape(50, 2)
+
     return notes_np
 
 
 
 def _get_durations(melody_staff):
     # Replace rest durations with its negative
-    durations = [n.duration * bool(n.pitch) for measure in melody_staff for n in measure]
+    durations = [n.duration if bool(n.pitch) else -n.duration for measure in melody_staff for n in measure]
     return durations
 
 def build_harmony(melody_staff):
@@ -102,19 +102,33 @@ def build_harmony(melody_staff):
 
 
     # Turn into NumPy arrays of the predictors
-    melody_np = np.array(melody_df['Pitch Number'], melody_df['Pitch Interval'])
+    melody_np = np.array(
+        melody_df[['Pitch Number', 'Pitch Interval']]
+    )
+
+    zeros = np.zeros((50, 2))
+    zeros[:len(melody_np)] = melody_np
 
 
-    model = keras.models.load_model('saved_model/my_model')
-    input = prepare_np(melody_np)
+
+
+
+    print(zeros)
+    print(zeros.shape)
+
+
+    model = keras.models.load_model('pitchr/saved_model/my_model')
+    input = prepare_np(zeros)
     output = model.predict(input, verbose=0)
     output = output*50
     output = output.reshape(50, 2)
 
+    print(output)
+
     harmony_measures = df_import.measures_from_ml_output(
             pitches=output[0],
             durations=durations,
-            time_signature=melody_staff[0].time_signature
+            time_signature=str(melody_staff[0].time_signature)
     )
 
     harmony_staff = Staff(harmony_measures)
