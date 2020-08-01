@@ -1,4 +1,3 @@
-
 from pitchr.music import Score, Part, Measure, Note, time, Time, Rest
 
 def measures_from_ml_output(pitches, durations, time_signature):
