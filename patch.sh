@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 
 patch "env/lib/python3.8/site-packages/timidity/player.py" < patches/player.patch

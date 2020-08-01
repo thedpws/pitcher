@@ -1,24 +1,19 @@
 import setuptools
-import sys
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-authors_string = ', '.join(
-    sorted(["Caleb Wong", "Aeyzechiah Vasquez", "Vinicius Martinson", "Jacob Menke", "Brian McDowell"],
-           key=lambda n: n.split()[1]))
+
+
+authors_string = ', '.join(sorted(["Caleb Wong", "Aeyzechiah Vasquez", "Vinicius Martinson", "Jacob Menke", "Brian McDowell"], key= lambda n: n.split()[1]))
+
+
 
 with open("requirements.txt", "r") as fh:
     requirements = fh.read().split('\n')
 
 print(requirements)
-response = input('Do these requirements look okay?')
-
-response = response.lower()
-
-if response != 'y' and response != 'yes':
-    sys.exit(1)
-
+input('Do these requirements look okay?')
 
 setuptools.setup(
     name="pitchr",

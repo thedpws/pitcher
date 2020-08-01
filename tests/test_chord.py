@@ -1,12 +1,12 @@
-import unittest
-from tempfile import TemporaryDirectory
-from unittest.mock import patch
 
+
+import unittest
+from unittest.mock import patch
+from tempfile import TemporaryDirectory
 from pitchr import *
 
-
 class TestChord(unittest.TestCase):
-
+    
     def test_init_notes_passed_are_added(self):
         c = Chord(notes=[Note('A', 1.0)])
 
@@ -44,10 +44,11 @@ class TestChord(unittest.TestCase):
         c = Chord([Note('A', 1.0)])
         c.clear()
         self.assertEqual(c.notes, [])
-
+ 
     def test_determine(self):
         c = Chord([Note('A', 1.0), Note('C5', 1.0)])
         self.assertEqual(c.determine(), ['minor third'])
+
 
     def test_major_triad(self):
         c = Chord.major_triad(Note('A', 1.5))
