@@ -14,6 +14,17 @@ def prepare_np(melody_np):
         :param melody_np: (50x2) numpy array of melody notes
         :returns melody_tf: tensorflow object of melody notes
     """
+    difference = melody_np.shape[0] - 50
+    # melody is too small
+    if difference < 0:
+        while difference != 0:
+            melody_np = np.append(melody_np, [[-50, 0]], axis=0)
+            difference += 1
+    # melody is too large
+    elif difference > 0:
+        while difference != 0:
+            melody_np = melody_np[:-1]
+            difference -= 1
     melody_np = melody_np.reshape(1, 50, 2)
     melody_tf = tf.convert_to_tensor(melody_np, dtype=tf.float32)
     melody_tf = melody_tf/50
@@ -57,9 +68,9 @@ def prepare_staff(staff):
     return notes_np
 
 
-
 def _get_durations(melody_staff):
     # Replace rest durations with its negative
+    _get_durations()
     durations = [n.duration * bool(n.pitch) for measure in melody_staff for n in measure]
     return durations
 
@@ -105,7 +116,7 @@ def build_harmony(melody_staff):
     melody_np = np.array(melody_df['Pitch Number'], melody_df['Pitch Interval'])
 
 
-    model = keras.models.load_model('saved_model/my_model')
+    model = keras.models.load_model('pitchr/saved_model/my_model')
     input = prepare_np(melody_np)
     output = model.predict(input, verbose=0)
     output = output*50
@@ -122,7 +133,7 @@ def build_harmony(melody_staff):
 
 
 
-"""
+
 measure1 = Measure()
 measure1.append(Note("G7", 1))
 measure1.append(Note("G#7", 1))
@@ -141,8 +152,11 @@ measure3.append(Note("B6", .5))
 measure3.append(Note("B7", .5))
 measure3.append(Note("B4", .5))
 staff = Staff(measures=[measure1, measure2, measure3])
-print("TESTING")
-prepare_staff(staff)
 
+print("TESTING")
+#prepared_staff = prepare_staff(staff)
+
+test = _get_durations(staff)
+print(test)
 #staff.play()
-"""
+
