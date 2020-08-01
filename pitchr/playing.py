@@ -5,6 +5,8 @@ from tempfile import TemporaryDirectory
 from threading import get_ident
 import numpy as np
 
+from pitchr.utils import _suppress_stdout_stderr
+
 
 from enum import Enum
 class EventType(Enum):
@@ -97,8 +99,9 @@ def play_score(score):
     with TemporaryDirectory() as tmpdirname:
         midi_filepath = tmpdirname + '/' + str(get_ident()) + '.mid'
         mid.save(midi_filepath)
-        ps = Parser(midi_filepath)
-        play_notes(*ps.parse(), np.sin)
+        with _suppress_stdout_stderr():
+            ps = Parser(midi_filepath)
+            play_notes(*ps.parse(), np.sin)
 
     return True
 
