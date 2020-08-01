@@ -1,5 +1,5 @@
 from unittest import TestCase, skip, mock
-import music as ptr
+import pitchr.music as ptr
 
 
 class TestGlobals(TestCase):
