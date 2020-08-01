@@ -1,5 +1,6 @@
 from unittest import TestCase, skip, mock
 import pitchr.music as ptr
+from pitchr import *
 
 from unittest import TestCase
 
