@@ -14,10 +14,8 @@ def measures_from_ml_output(pitches, durations, time_signature):
 
     pitches = map(int, pitches)
 
-
     notes = [Note(pitch_number, duration) if duration > 0 else  Rest(-1*duration) for (pitch_number,duration) in zip(pitches, durations)]
 
-    count = 0
     time(Time(time_signature))
 
     measures = [Measure()]
@@ -28,8 +26,6 @@ def measures_from_ml_output(pitches, durations, time_signature):
             notes.pop(0)
         except Exception:
             measures.append(Measure())
-            count += 1
 
-    print("made", count, "measures")
     return measures
 

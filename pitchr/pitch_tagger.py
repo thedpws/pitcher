@@ -1,8 +1,11 @@
-import pandas as pd
-import numpy as np
 from pitchr.music import *
 
+
 def tag_accidentals(notes_df):
+    """Tag accidentals to a dataframe of notes
+
+    :param notes_df: dataframe of notes
+    """
     # get the corresponding key object
     key = getattr(Key, notes_df.iloc[0]['Key'] + '_MAJOR')
 
@@ -18,6 +21,10 @@ def tag_accidentals(notes_df):
 
 
 def tag_pitch_interval(notes_df):
+    """Tag pitch intervals to a dataframe of notes
+
+    :param notes_df: dataframe of notes
+    """
     curr_pitch = 0
 
     def pitch_interval_fn(row):
@@ -31,9 +38,9 @@ def tag_pitch_interval(notes_df):
 
 
 def tag_pitch(notes_df):
-    """Tags pitch information to a dataframe of notes
+    """Tags pitch information to a dataframe of notes from XML file
 
-        :param notes_df: dataframe of notes
+    :param notes_df: dataframe of notes
     """
     tag_accidentals(notes_df)
 

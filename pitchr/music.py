@@ -3,7 +3,6 @@ from mingus.containers import Note as _MingusNote
 import mingus.core.chords as _MingusChord
 from mingus.containers import NoteContainer as _MingusNoteContainer
 from mingus.containers import Composition as _MingusComposition
-from mingus.containers.instrument import Instrument as _MingusInstrument, Piano as _MingusPiano, Guitar as _MingusGuitar
 from enum import Enum as _Enum
 import re as _re
 import pitchr.playing as _playing
@@ -94,12 +93,10 @@ for halfsteps, attr in enumerate(['m2', 'M2', 'm3', 'M3', 'M4', 'm5', 'M5', 'm6'
     setattr(Interval, attr, halfsteps+1)
 
 class Key:
-    """
-        Class representing the Key the Score is played in
+    """Class representing the Key the Score is played in
 
-        if (flats and sharps) or sharps < 0 or flats < 0 or flats > 7 or sharps > 7:
-        :param flats: number of flats in the Key
-        :param sharps: number of sharps in the Key
+    :param flats: number of flats in the Key
+    :param sharps: number of sharps in the Key
     """
 
     def __init__(self, flats=0, sharps=0):
@@ -208,11 +205,11 @@ class _Music:
 class Score(_Music):
     """Class representing a collection of parts
 
-       :param parts: [Part]
-       :param title: str
-       :param subtitle: str
-       :param author: str
-       :param author_email: str
+    :param parts: [Part]
+    :param title: str
+    :param subtitle: str
+    :param author: str
+    :param author_email: str
     """
 
     def __init__(self, parts=None, title=None, subtitle=None, author=None, author_email=None):
@@ -269,10 +266,10 @@ class Score(_Music):
 class Part(_Music):
     """Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.
 
-       :param staffs: from Staff()
-       :param tempo: int
-       :param time_signature: instance of Time
-       :param key_signature: instance of Key
+    :param staffs: from Staff()
+    :param tempo: int
+    :param time_signature: instance of Time
+    :param key_signature: instance of Key
     """
 
     @property
@@ -286,6 +283,7 @@ class Part(_Music):
     @key_signature.setter
     def key_signature(self, key_signature):
         """Set the key signature of the current Part
+
         :param key_signature: Key
         """
         self._key_signature = key_signature
@@ -300,6 +298,7 @@ class Part(_Music):
     @time_signature.setter
     def time_signature(self, time_signature):
         """Set the time signature of the current Part
+
         :param time_signature: Time
         """
         self._time_signature = time_signature
@@ -358,9 +357,9 @@ class Part(_Music):
 class Staff(_Music):
     """Class representing a collection of measures.
 
-       :param clef: from Clef()
-       :param voice: from Voice()
-       :param measures: Measure()
+    :param clef: from Clef()
+    :param voice: from Voice()
+    :param measures: Measure()
     """
 
 
@@ -451,7 +450,7 @@ class Staff(_Music):
 class Measure(_Music):
     """Class representing a collection of notes.
 
-       :param notes: []
+    :param notes: []
     """
 
     def __init__(self, notes=None, time_signature=None):
@@ -527,11 +526,11 @@ class Measure(_Music):
 
     @property
     def duration(self):
-        '''Returns the total duration of notes in this measure'''
+        """Returns the total duration of notes in this measure"""
         return self._next_count
 
     def __contains__(self, note):
-        '''Returns True if note is in this measure'''
+        """Returns True if note is in this measure"""
         for item in self._notes.values():
             if item == note:
                 return True
@@ -555,7 +554,7 @@ class Measure(_Music):
 class Chord(_Music):
     """Class representing an organized group of notes.
 
-       :param notes: [Note]
+    :param notes: [Note]
     """
 
     def __init__(self, notes=None):
@@ -671,37 +670,21 @@ class Chord(_Music):
 
     def clear(self):
         """Clears all notes from a Chord"""
-        #self.__mingus_notes.empty()
         self._notes.clear()
 
     def determine(self):
+        """Used to determine the type of chord"""
         mingus_chord = _MingusNoteContainer([n.letter for n in sorted(self.notes)])
         return mingus_chord.determine()
-      
-    # note is a string. This function returns the corresponding chord of notes
-    # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
-    """ These are recognized abbreviations:
-        Triads: ‘m’, ‘M’ or ‘’, ‘dim’.
-        Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’
-        Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’
-        Suspended chords: ‘sus4’, ‘sus2’, ‘sus47’, ‘sus’, ‘11’, ‘sus4b9’ or ‘susb9’
-        Sixths: ‘6’, ‘m6’, ‘M6’, ‘6/7’ or ‘67’, 6/9 or 69
-        Ninths: ‘9’, ‘M9’, ‘m9’, ‘7b9’, ‘7#9’
-        Elevenths: ‘11’, ‘7#11’, ‘m11’
-        Thirteenths: ‘13’, ‘M13’, ‘m13’
-        Altered chords: ‘7b5’, ‘7b9’, ‘7#9’, ‘67’ or ‘6/7’
-        Special: ‘5’, ‘NC’, ‘hendrix’
-    """
-    """
-    @staticmethod
-    def get_chord(note):
-        return Chord.from_shorthand(note)
 
-    # Returns all triads in a given key. Key is a string
     @staticmethod
     def get_triads(key):
+        """Returns all triads in a given key
+
+        :param key: String
+        """
         return Chord.triads(key)
-    """
+
 
     def play(self):
         return Measure(notes=[self]).play()
@@ -715,10 +698,10 @@ class Chord(_Music):
 class Note(_Music):
     """Class representing the smallest unit for the Pitcher.
 
-       :param pitch: string with letter name, accidentals, and octave, such as 'A#4'
-       :param duration: note duration
-       :param dynamic: dynamic, such as piano, forte, crescendo, etc
-       :param articulation: articulation, such as staccato, accent, fermata, etc
+    :param pitch: string with letter name, accidentals, and octave, such as 'A#4'
+    :param duration: note duration
+    :param dynamic: dynamic, such as piano, forte, crescendo, etc
+    :param articulation: articulation, such as staccato, accent, fermata, etc
     """
 
     def __str__(self):
@@ -1103,42 +1086,3 @@ class _Pitch:
     def int_to_pitch(cls, pitch_number):
         if pitch_number == None: return None
         raise NotImplementedError('TODO')
-
-
-# class Song(Note, Score, _Music, Chord, Part):
-#     def __init__(self, title, subtitle, author, author_email):
-#         self._chord = []
-#         self._part = []
-#         self._measure = []
-#         self._notes = []
-#         self._score = Score(title, subtitle, author, author_email)
-
-#     @score.setter
-#     def add_score(self, score): self._score = score
-
-#     @chord.setter
-#     def add_chord(self, chord): self._chord.append(chord)
-
-#     @part.setter
-#     def add_part(self, part): self._part.append(part)
-
-#     @measure.setter
-#     def add_measure(self, measure): self._measure.append(measure)
-
-#     @note.setter
-#     def add_note(self, note): self._notes.append(note)
-
-#     @property
-#     def score(self): return self._score
-
-#     @property
-#     def measure(self): return self._measure
-
-#     @property
-#     def part(self): return self._part
-
-#     @property
-#     def chord(self): return self._chord
-
-#     @property
-#     def notes(self): return self._notes

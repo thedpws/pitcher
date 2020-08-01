@@ -1,4 +1,3 @@
-from tensorflow import keras
 from pitchr import df_import
 from pitchr import pitch_tagger
 import tensorflow as tf
@@ -11,8 +10,8 @@ from pitchr import xml_parser
 def prepare_np(melody_np):
     """Converts and normalizes numpy array for prediction in model
 
-        :param melody_np: (50x2) numpy array of melody notes
-        :returns melody_tf: tensorflow object of melody notes
+    :param melody_np: (50x2) numpy array of melody notes
+    :returns melody_tf: tensorflow object of melody notes
     """
     difference = melody_np.shape[0] - 50
     # melody is too small
@@ -35,8 +34,8 @@ def prepare_np(melody_np):
 def prepare_staff(staff):
     """Takes a staff and converts it into a numpy array of notes
 
-        :param staff: Pitchr staff
-        :returns notes_np: 50x2 numpy array (pads it with rests)
+    :param staff: Pitchr staff
+    :returns notes_np: 50x2 numpy array (pads it with rests)
     """
     notes_np = []
     for measure in staff:
@@ -54,7 +53,6 @@ def prepare_staff(staff):
     notes_np = np.asarray(notes_np)
 
     difference = notes_np.shape[0] - 50
-    # harmony is too small
     if difference < 0:
         while difference != 0:
             notes_np = np.append(notes_np, [[-50, 0]], axis=0)
@@ -82,12 +80,11 @@ def _get_durations(melody_staff):
 def build_harmony(melody_staff):
     """Builds Harmony
 
-        :param melody_staff: Pitchr staff
-        :returns harmony_staff: staff of harmony notes
+    :param melody_staff: Pitchr melody staff
+    :returns harmony_staff: Pitchr harmony staff
     """
 
-
-    # Create list of durations. Negative indicates a rest. This will be used in the decoding back to Pitchr
+    # Create list of durations. Negative indicates a rest. This will be used for decoding back to Pitchr
     durations = _get_durations(melody_staff)
 
     # Replace Rests with temp notes. Pitch is from previous note
@@ -105,9 +102,6 @@ def build_harmony(melody_staff):
                 rest = note
                 measure[start_count] = Note(previous_note.pitch, rest.duration)
 
-    # Transform into dataframe
-    #print([[n.letter, n.octave, n.accidentals, n.duration] for measure in melody_staff for n in measure])
-
     melody_df = pd.DataFrame(
             columns=['Key', 'Clef', 'Letter', 'Octave', 'Accidental', 'Duration'],
             data=[['C', 'G', n.letter, str(n.octave), n.accidentals, n.duration] for measure in melody_staff for n in measure],
@@ -115,7 +109,6 @@ def build_harmony(melody_staff):
 
     # Tag with more columns
     xml_parser.tag_df(melody_df)
-
 
     # Turn into NumPy arrays of the predictors
     melody_np = np.array(
@@ -126,15 +119,11 @@ def build_harmony(melody_staff):
     zeros[:len(melody_np)] = melody_np
 
 
-
-
     model = keras.models.load_model('pitchr/saved_model/my_model')
     input = prepare_np(zeros)
     output = model.predict(input, verbose=0)
     output = output*50
     output = output.reshape(50, 2)
-
-    print(output)
 
     harmony_measures = df_import.measures_from_ml_output(
             pitches=output.T[0],
@@ -144,34 +133,3 @@ def build_harmony(melody_staff):
 
     harmony_staff = Staff(harmony_measures)
     return harmony_staff
-
-
-
-
-measure1 = Measure()
-measure1.append(Note("G7", 1))
-measure1.append(Note("G#7", 1))
-measure1.append(Note("C#7", 1))
-measure1.append(Note("C4", 1))
-measure2 = Measure()
-measure2.append(Note("C5", .5))
-measure2.append(Note("C6", .5))
-measure2.append(Note("C7", .5))
-measure2.append(Note("C8", .5))
-measure2.append(Rest(1))
-measure3 = Measure()
-measure3.append(Note("B#8", .75))
-measure3.append(Note("B#6", .5))
-measure3.append(Note("B6", .5))
-measure3.append(Note("B7", .5))
-measure3.append(Note("B4", .5))
-measure3.append(Rest(.2))
-staff = Staff(measures=[measure1, measure2, measure3])
-
-print("TESTING")
-#prepared_staff = prepare_staff(staff)
-
-test = _get_durations(staff)
-print(test)
-#staff.play()
-

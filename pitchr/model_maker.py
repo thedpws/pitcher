@@ -6,10 +6,10 @@ from pitchr import xml_parser
 import matplotlib.pyplot as plt
 
 def load_data():
-    """Loads data and splits it into train, validation, and test sets.
+    """Loads data for training model
 
-        :returns all_melody_np: 3D numpy array of melody notes
-        :returns all_harmony_np: 3D numpy array of harmony notes
+    :returns all_melody_np: 3D numpy array of melody notes
+    :returns all_harmony_np: 3D numpy array of harmony notes
     """
     # Load data
     all_melody_dfs, all_harmony_dfs, all_melody_durations = xml_parser.get_all_data()
@@ -50,7 +50,7 @@ def load_data():
 def build_model():
     """Builds RNN-LSTM model
 
-        :returns model: RNN-LSTM model
+    :returns model: RNN-LSTM model
     """
     model = Sequential()
 
@@ -71,7 +71,7 @@ def build_model():
 def plot_model(trained_model):
     """Plots model training data
 
-        :param trained_model: Trained model
+    :param trained_model: Trained model
     """
     plt.plot(trained_model.history['accuracy'])
     plt.plot(trained_model.history['val_accuracy'])
