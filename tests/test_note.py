@@ -1,23 +1,31 @@
-
-
 import unittest
-from unittest.mock import patch
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
+
 from pitchr import *
+from pitchr.music import _Pitch
+
+FLAT = _Pitch.FLAT
+SHARP = _Pitch.SHARP
+DOUBLE_SHARP = _Pitch.DOUBLE_SHARP
+
 
 class TestNote(unittest.TestCase):
 
     def test_init_sets_pitch(self):
-        n = Note('A4', 1.0)
-        self.assertEqual(n.pitch, 'A4')
+        pitch = 'A4'
+        n = Note(pitch, 1.0)
+        self.assertEqual(n.pitch, pitch)
 
     def test_letter(self):
-        n = Note('A', 1.0)
-        self.assertEqual(n.letter, 'A')
+        a = 'A'
+        n = Note(a, 1.0)
+        self.assertEqual(n.letter, a)
 
     def test_octave(self):
-        n = Note('A6', 1.0)
-        self.assertEqual(n.octave, 6)
+        octave = 6
+        n = Note(f'A{octave}', 1.0)
+        self.assertEqual(n.octave, octave)
 
     def test_octave_is_settable(self):
         n = Note('A', 1.0)
@@ -33,20 +41,29 @@ class TestNote(unittest.TestCase):
         self.assertEqual(n.accidentals, '')
 
     def test_accidentals_sharp(self):
-        n = Note('A#', 1.0)
-        self.assertEqual(n.accidentals, '#')
+        n = Note(f'A{SHARP}', 1.0)
+        self.assertEqual(n.accidentals, SHARP)
 
     def test_accidentals_flats(self):
-        n = Note('Abb', 1.0)
-        self.assertEqual(n.accidentals, 'bb')
+        dblflat = f"{FLAT}{FLAT}"
+        n = Note(f'A{dblflat}', 1.0)
+        self.assertEqual(n.accidentals, dblflat)
 
     def test_accidentals_double_sharps(self):
-        n = Note('Fx', 1.0)
-        self.assertEqual(n.accidentals, 'x')
+        n = Note(f'F{DOUBLE_SHARP}', 1.0)
+        self.assertEqual(n.accidentals, DOUBLE_SHARP)
 
     def test_accidentals_simplify(self):
         n = Note('Fxbbxbbxbb', 1.0)
         self.assertEqual(n.accidentals, '')
+
+    def test_accidentals_wrt_key_native_dont_return(self):
+        n = Note(f'F{SHARP}', 1.0)
+        self.assertEqual(n.get_accidentals_wrt_key(Key.D_MAJOR), '')
+
+    def test_accidentals_wrt_key_foreign_return(self):
+        n = Note(f'F{SHARP}', 1.0)
+        self.assertEqual(n.get_accidentals_wrt_key(Key.C_MAJOR), SHARP)
 
     def test_pitch_is_settable(self):
         n = Note('A4', 1.0)
@@ -73,12 +90,12 @@ class TestNote(unittest.TestCase):
     def test_augment(self):
         n = Note('C4', 1.0)
         n.augment()
-        self.assertEqual(n.pitch, 'C#4')
+        self.assertEqual(n.pitch, f'C{SHARP}4')
 
     def test_diminish(self):
         n = Note('C4', 1.0)
         n.diminish()
-        self.assertEqual(n.pitch, 'Cb4')
+        self.assertEqual(n.pitch, f'C{FLAT}4')
 
     def test_transpose(self):
         n = Note('C4', 1.0)
@@ -94,6 +111,19 @@ class TestNote(unittest.TestCase):
         n = Note('C4', 1.0)
         n.octave_down()
         self.assertEqual(n.pitch, 'C3')
+
+    def test_set_pitch_number_sets(self):
+        n = Note('C4', 1.0)
+
+        self.assertEqual('C4', str(n.pitch))
+        n.pitch_number = 3
+
+        self.assertEqual('D#4', str(n.pitch))
+
+    def test_constructor_pitch_number(self):
+        n = Note(20, 1.0)
+
+        self.assertEqual('G#5', str(n.pitch))
 
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):
@@ -111,3 +141,4 @@ class TestNote(unittest.TestCase):
             filepath = tempdirname + '/export.pdf'
             Note('A', 1.0).save(filepath)
         self.assertTrue(save_score.called)
+
