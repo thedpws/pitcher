@@ -124,7 +124,7 @@ score1.add_part(part1)
 ```python
 from pitchr.harmony_maker import build_harmony
 my_melody = Staff(my_measures)
-my_harmony - build_harmony(my_melody)
+my_harmony = build_harmony(my_melody)
 
 my_harmony.play()
 ```
