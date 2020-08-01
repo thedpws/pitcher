@@ -573,7 +573,6 @@ class Chord(_Music):
 
     def __init__(self, notes=None):
         self._notes = notes or []
-        # self.__mingus_notes = __MingusNoteContainer()
 
     def __str__(self):
         return f'{[str(n) for n in self._notes]}'
@@ -591,9 +590,6 @@ class Chord(_Music):
             while Note(str(n) + str(octave), root.duration) < root:
                 octave += 1
             my_triad.append(Note(str(n) + str(octave), root.duration))
-
-            # temp = Note.mingusNote_to_note(n, note)
-            # my_triad.append(temp)
 
         c = Chord(my_triad)
         return c
@@ -660,6 +656,38 @@ class Chord(_Music):
         return iter(self._notes)
 
     @property
+    def pitch(self):
+        """Get the pitch of a Chord
+
+        :returns: String of letter-note, accidentals, and octave
+        """
+        return str(self._notes[0])
+
+    @property
+    def letter(self):
+        """Get the letter of a Chord
+
+        :returns: letter
+        """
+        return self._notes[0].letter
+
+    @property
+    def octave(self):
+        """Get the octave of a Chord
+
+        :returns: octave
+        """
+        return self._notes[0].octave
+
+    @property
+    def accidentals(self):
+        """Get the accidentals of a Chord
+
+        :returns: accidentals (string)
+        """
+        return self._notes[0].accidentals
+
+    @property
     def notes(self):
         """Get the notes of a Chord
 
@@ -691,21 +719,6 @@ class Chord(_Music):
         mingus_chord = _MingusNoteContainer([n.letter for n in sorted(self.notes)])
         return mingus_chord.determine()
 
-    # note is a string. This function returns the corresponding chord of notes
-    # get_chord("C") returns ['C', 'E', 'G'] and get_chord("Cm") returns ['C', 'Eb', 'G']
-    """ These are recognized abbreviations:
-        Triads: ‘m’, ‘M’ or ‘’, ‘dim’.
-        Sevenths: ‘m7’, ‘M7’, ‘7’, ‘m7b5’, ‘dim7’, ‘m/M7’ or ‘mM7’
-        Augmented chords: ‘aug’ or ‘+’, ‘7#5’ or ‘M7+5’, ‘M7+’, ‘m7+’, ‘7+’
-        Suspended chords: ‘sus4’, ‘sus2’, ‘sus47’, ‘sus’, ‘11’, ‘sus4b9’ or ‘susb9’
-        Sixths: ‘6’, ‘m6’, ‘M6’, ‘6/7’ or ‘67’, 6/9 or 69
-        Ninths: ‘9’, ‘M9’, ‘m9’, ‘7b9’, ‘7#9’
-        Elevenths: ‘11’, ‘7#11’, ‘m11’
-        Thirteenths: ‘13’, ‘M13’, ‘m13’
-        Altered chords: ‘7b5’, ‘7b9’, ‘7#9’, ‘67’ or ‘6/7’
-        Special: ‘5’, ‘NC’, ‘hendrix’
-    """
-
     @staticmethod
     def get_chord(note):
         return Chord.from_shorthand(note)
@@ -717,6 +730,7 @@ class Chord(_Music):
         :param key: String
         """
         return Chord.triads(key)
+
 
     def play(self):
         return Measure(notes=[self]).play()
@@ -731,11 +745,11 @@ class Chord(_Music):
 class Note(_Music):
     """Class representing the smallest unit for the Pitcher.
 
-       :param pitch: string with letter name, accidentals, and octave, such as 'A#4'
-       :param duration: note duration
-       :param dynamic: dynamic, such as piano, forte, crescendo, etc
-       :param articulation: articulation, such as staccato, accent, fermata, etc
-       :param tie: when true will play this note continuously into the next note
+    :param pitch: string with letter name, accidentals, and octave, such as 'A#4'
+    :param duration: note duration
+    :param dynamic: dynamic, such as piano, forte, crescendo, etc
+    :param articulation: articulation, such as staccato, accent, fermata, etc
+    :param tie: when true will play this note continuously into the next note
     """
 
     def __str__(self):
