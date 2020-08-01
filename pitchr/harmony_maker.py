@@ -70,8 +70,13 @@ def prepare_staff(staff):
 
 def _get_durations(melody_staff):
     # Replace rest durations with its negative
-    _get_durations()
-    durations = [n.duration * bool(n.pitch) for measure in melody_staff for n in measure]
+    durations = []
+    for measure in melody_staff:
+        for note in measure:
+            if type(note) == Rest:
+                durations.append(-note.duration)
+            else:
+                durations.append(note.duration)
     return durations
 
 def build_harmony(melody_staff):
@@ -151,6 +156,7 @@ measure3.append(Note("B#6", .5))
 measure3.append(Note("B6", .5))
 measure3.append(Note("B7", .5))
 measure3.append(Note("B4", .5))
+measure3.append(Rest(.2))
 staff = Staff(measures=[measure1, measure2, measure3])
 
 print("TESTING")
