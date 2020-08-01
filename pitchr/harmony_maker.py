@@ -6,6 +6,7 @@ from tensorflow import keras
 import numpy as np
 from pitchr.music import *
 import pandas as pd
+from pitchr import xml_parser
 
 def prepare_np(melody_np):
     """Converts and normalizes numpy array for prediction in model
@@ -56,21 +57,72 @@ def prepare_staff(staff):
     return notes_np
 
 
+
+def _get_durations(melody_staff):
+    # Replace rest durations with its negative
+    durations = [n.duration * bool(n.pitch) for measure in melody_staff for n in measure]
+    return durations
+
 def build_harmony(melody_staff):
     """Builds Harmony
 
         :param melody_staff: Pitchr staff
         :returns harmony_staff: staff of harmony notes
     """
+
+
+    # Create list of durations. Negative indicates a rest. This will be used in the decoding back to Pitchr
+    durations = _get_durations(melody_staff)
+
+    # Replace Rests with temp notes. Pitch is from previous note
+    previous_note = None
+    for note in [n for measure in melody_staff for n in measure]:
+        if note.pitch:
+            previous_note = note
+            break
+    else:
+        raise PitcherException('Cannot generate harmony for an empty staff')
+
+    for measure in melody_staff:
+        for start_count, note in measure._notes.items():
+            if note.pitch is None:
+                rest = note
+                measure[start_count] = Note(previous_note.pitch, rest.duration)
+
+    # Transform into dataframe
+    #print([[n.letter, n.octave, n.accidentals, n.duration] for measure in melody_staff for n in measure])
+
+    melody_df = pd.DataFrame(
+            columns=['Key', 'Clef', 'Letter', 'Octave', 'Accidental', 'Duration'],
+            data=[['C', 'G', n.letter, str(n.octave), n.accidentals, n.duration] for measure in melody_staff for n in measure],
+    )
+
+    # Tag with more columns
+    xml_parser.tag_df(melody_df)
+
+
+    # Turn into NumPy arrays of the predictors
+    melody_np = np.array(melody_df['Pitch Number'], melody_df['Pitch Interval'])
+
+
     model = keras.models.load_model('saved_model/my_model')
     input = prepare_np(melody_np)
     output = model.predict(input, verbose=0)
     output = output*50
     output = output.reshape(50, 2)
-    df_import.measures_from_dataframe()
+
+    harmony_measures = df_import.measures_from_ml_output(
+            pitches=output[0],
+            durations=durations,
+            time_signature=melody_staff[0].time_signature
+    )
+
+    harmony_staff = Staff(harmony_measures)
+    return harmony_staff
 
 
 
+"""
 measure1 = Measure()
 measure1.append(Note("G7", 1))
 measure1.append(Note("G#7", 1))
@@ -93,3 +145,4 @@ print("TESTING")
 prepare_staff(staff)
 
 #staff.play()
+"""

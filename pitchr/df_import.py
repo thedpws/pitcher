@@ -1,8 +1,8 @@
 
 from pitchr.music import Score, Part, Measure, Note, time, Time
 
-def measures_from_dataframe(pitches, durations, time_signature):
-    """Transform a dataframe of Pitch Numbers into a list of measures
+def measures_from_ml_output(pitches, durations, time_signature):
+    """Transform an array of Pitch Numbers into a list of measures
 
     :param pitches: Numpy.array of int32
     :param durations: a list of float detailing corresponding durations of each row in harmony_df
