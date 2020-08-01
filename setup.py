@@ -11,18 +11,10 @@ authors_string = ', '.join(
 with open("requirements.txt", "r") as fh:
     requirements = fh.read().split('\n')
 
-print(requirements)
-response = input('Do these requirements look okay?')
-
-response = response.lower()
-
-if response != 'y' and response != 'yes':
-    sys.exit(1)
-
 
 setuptools.setup(
     name="pitchr",
-    version="0.1.5",
+    version="1.0.0",
     author=authors_string,
     author_email="azvasquez99@gmail.com",
     description="A Python library and framework for composing and playing music.",
