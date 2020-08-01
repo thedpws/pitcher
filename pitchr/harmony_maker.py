@@ -152,6 +152,7 @@ def verify_model():
     MODEL_PATH = PITCHR_PATH + '/saved_model/my_model'
 
     if True or not os.path.exists(MODEL_PATH):
+        print('Downloading required models...')
         os.makedirs(MODEL_PATH, exist_ok=True)
         os.makedirs(MODEL_PATH + '/variables/', exist_ok=True)
 
