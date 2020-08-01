@@ -14,6 +14,17 @@ def prepare_np(melody_np):
         :param melody_np: (50x2) numpy array of melody notes
         :returns melody_tf: tensorflow object of melody notes
     """
+    difference = melody_np.shape[0] - 50
+    # melody is too small
+    if difference < 0:
+        while difference != 0:
+            melody_np = np.append(melody_np, [[-50, 0]], axis=0)
+            difference += 1
+    # melody is too large
+    elif difference > 0:
+        while difference != 0:
+            melody_np = melody_np[:-1]
+            difference -= 1
     melody_np = melody_np.reshape(1, 50, 2)
     melody_tf = tf.convert_to_tensor(melody_np, dtype=tf.float32)
     melody_tf = melody_tf/50
@@ -57,10 +68,15 @@ def prepare_staff(staff):
     return notes_np
 
 
-
 def _get_durations(melody_staff):
     # Replace rest durations with its negative
-    durations = [n.duration if bool(n.pitch) else -n.duration for measure in melody_staff for n in measure]
+    durations = []
+    for measure in melody_staff:
+        for note in measure:
+            if type(note) == Rest:
+                durations.append(-note.duration)
+            else:
+                durations.append(note.duration)
     return durations
 
 def build_harmony(melody_staff):
@@ -112,11 +128,6 @@ def build_harmony(melody_staff):
 
 
 
-
-    print(zeros)
-    print(zeros.shape)
-
-
     model = keras.models.load_model('pitchr/saved_model/my_model')
     input = prepare_np(zeros)
     output = model.predict(input, verbose=0)
@@ -136,7 +147,7 @@ def build_harmony(melody_staff):
 
 
 
-"""
+
 measure1 = Measure()
 measure1.append(Note("G7", 1))
 measure1.append(Note("G#7", 1))
@@ -154,9 +165,13 @@ measure3.append(Note("B#6", .5))
 measure3.append(Note("B6", .5))
 measure3.append(Note("B7", .5))
 measure3.append(Note("B4", .5))
+measure3.append(Rest(.2))
 staff = Staff(measures=[measure1, measure2, measure3])
-print("TESTING")
-prepare_staff(staff)
 
+print("TESTING")
+#prepared_staff = prepare_staff(staff)
+
+test = _get_durations(staff)
+print(test)
 #staff.play()
-"""
+
