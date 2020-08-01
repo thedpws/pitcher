@@ -1,22 +1,22 @@
+
+
 import unittest
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
-
 from pitchr import *
-
 
 class TestMeasure(unittest.TestCase):
 
     def test_measure_init_notes_passed_are_added(self):
-        m = Measure(notes=[n := Note('A', 1.0)])
+        m = Measure(notes=[n:=Note('A', 1.0)])
         self.assertEqual(m[0], n)
 
     def test_measure_notes_are_indexed_by_start_beat(self):
-        m = Measure(notes=[n1 := Note('A', 1.5), n2 := Note('A5', 1.5)])
+        m = Measure(notes=[n1:=Note('A', 1.5), n2:=Note('A5', 1.5)])
         self.assertEqual(m[1.5], n2)
 
     def test_measure_empty_index_raises_KeyError(self):
-        m = Measure(notes=[n1 := Note('A', 1.5), n2 := Note('A5', 1.5)])
+        m = Measure(notes=[n1:=Note('A', 1.5), n2:=Note('A5', 1.5)])
 
         self.assertRaises(KeyError, lambda: m[2.0])
 
@@ -54,6 +54,7 @@ class TestMeasure(unittest.TestCase):
         self.assertEqual(m[1], Note('B', 1.0))
 
     def test_measure_overfill_throws_exception(self):
+
         time(Time.COMMON_TIME)
 
         m = Measure()

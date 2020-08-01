@@ -1,10 +1,10 @@
-import unittest
 
+
+import unittest
 from pitchr import *
 
-
 class TestClef(unittest.TestCase):
-
+    
     def test_treble_clef_value_is_0(self):
         v = Clef.TREBLE.value
 

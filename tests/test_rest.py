@@ -1,9 +1,9 @@
+
+
 import unittest
-from tempfile import TemporaryDirectory
 from unittest.mock import patch
-
+from tempfile import TemporaryDirectory
 from pitchr import *
-
 
 class TestRest(unittest.TestCase):
 
@@ -17,10 +17,8 @@ class TestRest(unittest.TestCase):
 
     def test_set_letter_raises_exception(self):
         r = Rest(1.0)
-
         def act():
             r.letter = 'A'
-
         self.assertRaises(PitcherException, act)
 
     def test_octave_is_none(self):
@@ -29,10 +27,8 @@ class TestRest(unittest.TestCase):
 
     def test_set_octave_raises_exception(self):
         r = Rest(1.0)
-
         def act():
             r.octave = 4
-
         self.assertRaises(PitcherException, act)
 
     def test_accidentals_is_none(self):
@@ -41,10 +37,8 @@ class TestRest(unittest.TestCase):
 
     def test_set_accidentals_raises_exception(self):
         r = Rest(1.0)
-
         def act():
             r.accidentals = '#'
-
         self.assertRaises(PitcherException, act)
 
     def test_pitch_number_is_none(self):
@@ -81,8 +75,8 @@ class TestRest(unittest.TestCase):
 
     def test_duration_is_settable(self):
         r = Rest(1.5)
-        r.duration = 1.0
-        self.assertEqual(r.duration, 1.0)
+        r.duratior = 1.0
+        self.assertEqual(r.duration, 1.5)
 
     @patch('pitchr.playing.play_score')
     def test_play_calls_play_score(self, play_score):

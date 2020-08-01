@@ -1,5 +1,6 @@
 from pitchr.music import *
 
+
 # Simple piano score
 """
 In a GUI, I would...
@@ -73,15 +74,20 @@ s = Staff(clef=Clef.TREBLE)
 pt.add_staff(s)
 """
 
+
+
+
 """
 rh[0].append(Note('D4', .5))
 rh[0].append(Note('D4', 0.5))
 rh[0].append(Rest(0.5))
 """
 
-# pc.show()
-# pc.play()
-# pc.save('myfile.pdf')
+
+
+#pc.show()
+#pc.play()
+#pc.save('myfile.pdf')
 
 
 """
@@ -106,11 +112,11 @@ test_part = Part()
 test_staff = Staff()
 test_measure1 = Measure(time_signature=Time('3/4'))
 test_measure1.append(Note('C', 1))
-# test_measure1.append(Rest(1))
+#test_measure1.append(Rest(1))
 test_measure1.append(Note('D', .5))
 test_measure1.append(Note('C', 1))
-# test_measure1.append(Note('C', 1))
-# test_measure1.append(Note('C', 1))
+#test_measure1.append(Note('C', 1))
+#test_measure1.append(Note('C', 1))
 print(type(test_staff[0]))
 test_staff[0][0] = Chord([Note('C4', 1), Note('E4', 1), Note('G4', 1)])
 test_staff[0][1] = Chord([Note('C4', 1), Note('E4', 1), Note('G4', 1)])
@@ -120,7 +126,8 @@ test_staff[0][4] = Note('E4', 0.5)
 test_staff[0][4.5] = Note('D4', 1)
 test_staff[0][5.5] = Chord([Note('C4', 1), Note('E4', 1), Note('G4', 1)])
 
-# test_staff.play()
+#test_staff.play()
 test_part.add_staff(test_staff)
 test_part.play()
-# Key.C_MAJOR.scale() # should return list of notes
+#Key.C_MAJOR.scale() # should return list of notes
+
