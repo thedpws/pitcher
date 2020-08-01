@@ -6,6 +6,10 @@ from pitchr.music import *
 from mido import Message, MidiFile, MidiTrack, bpm2tempo, tempo2bpm, tick2second, second2tick
 import sys
 
+"""
+Starter UI for learning Pitchr
+"""
+
 def window_border():
     window = curses.newwin(24, 80)
     window.border()
