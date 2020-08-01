@@ -14,7 +14,7 @@ circle_of_fifths = [
 def tag_df(df):
     """Adds column information about Pitch and Pitch predictability to a dataframe
 
-        :param df: dataframe of notes
+    :param df: dataframe of notes
     """
     tag_pitch(df)
     tag_predictability(df)
@@ -23,8 +23,8 @@ def tag_df(df):
 def prepare_harmony(all_harmony_np):
     """Normalize harmony sizes to 50 notes
 
-        :param all_harmony_np: list of harmony numpy arrays
-        :returns all_harmony_np: list of harmony numpy array at size 50
+    :param all_harmony_np: list of harmony numpy arrays
+    :returns all_harmony_np: list of harmony numpy array at size 50
     """
     for i in range(0, 210):
         difference = all_harmony_np[i].shape[0] - 50
@@ -45,9 +45,9 @@ def prepare_harmony(all_harmony_np):
 def parse_xml(xml_contents):
     """Parses the contents of a musical XML file
 
-        :param xml_contents: XML contents of file
-        :returns melody_dfs: list of dataframes of bins of 50 melody notes
-        :returns harmony_dfs: list of dataframes of bins of corresponding harmony notes
+    :param xml_contents: XML contents of file
+    :returns melody_dfs: list of dataframes of bins of 50 melody notes
+    :returns harmony_dfs: list of dataframes of bins of corresponding harmony notes
     """
     melody_notes = []
     harmony_notes = []
@@ -164,9 +164,9 @@ def parse_xml(xml_contents):
 def get_all_data():
     """Retrieves all data of songs to train from
 
-        :returns all_melody_dfs: list of all melody dataframes
-        :returns all_harmony_dfs: list of all harmony dataframes
-        :returns all_melody_durations: list of all melody durations
+    :returns all_melody_dfs: list of all melody dataframes
+    :returns all_harmony_dfs: list of all harmony dataframes
+    :returns all_melody_durations: list of all melody durations
     """
     all_melody_dfs = []
     all_harmony_dfs = []
