@@ -14,6 +14,7 @@ Targets most Linux environments.
 5. Flexible manipulation of music
   * easily access notes by indexing a measure by beat: `note0 = measure[0]`
   * edit note attributes' pitch via methods `transpose`, `octave_up`, `augment`
+6. Intelligently generates harmonies from your melodies
 6. Finalizes your composition as beautiful standard sheet music
 7. Enables interactive development in Jupyter Notebook
 
@@ -73,23 +74,28 @@ To access the helper UI, run from the command line: `python3 helper.py`
 - `articulation` (staccato, accent, fermata)
 
 ### Note()
-    from pitchr import *
-    note1 = Note("C4", 1, "forte")
-    note1.mingus_note # 'C-4'
-    note1.duration # 1
-    note1.dynamic # "forte"
-    note1.augment() or note1.diminish()
+```python
+from pitchr import *
+note1 = Note("C4", 1, "forte")
+note1.mingus_note # 'C-4'
+note1.duration # 1
+note1.dynamic # "forte"
+note1.augment() or note1.diminish()
+```
 
 ### Chords
-    note2. = Note("E4", 1)
-    chord1 = Chord([note1, note2])
-    chord1.determine() # "Major third"
+```python
+note2. = Note("E4", 1)
+chord1 = Chord([note1, note2])
+chord1.determine() # "Major third"
+```
 
 ### Measure is a collection of Notes
-    measure1 = Measure([note1, note2])
-    measure1.contains(note1) # True
-    measure1.append(note3)
-
+```python
+measure1 = Measure([note1, note2])
+measure1.contains(note1) # True
+measure1.append(note3)
+```
 ### Staff is a collection of Measures
 
 **Init**:
@@ -97,21 +103,31 @@ To access the helper UI, run from the command line: `python3 helper.py`
 - `clef`
 - `voice`https://thedpws.github.io/pitcher/
 
-`staff1 = music.Staff(measure1, Clef.TREBLE, Voice.PIANO)`
-
+```python
+staff1 = music.Staff(measure1, Clef.TREBLE, Voice.PIANO)
+```
 
 ### Part is a collection of Staffs
-
-    part1 = Part(staff1, tempo, time_signature, key_signature)
-    part1.add_staff(staff2)
-    part1.time_signature = 3/4
-
+```python
+part1 = Part(staff1, tempo, time_signature, key_signature)
+part1.add_staff(staff2)
+part1.time_signature = 3/4
+```
 ### Score is a collection of Parts
+```python
+score1 = Score("My Song", "Wonderful Subtitle", "Author Me", "me@email.com")
+score1.get_author() # "Author Me"
+score1.get_title() # "My Song"
+score1.add_part(part1)
+```
+### Harmony generation
+```python
+from pitchr.harmony_maker import build_harmony
+my_melody = Staff(my_measures)
+my_harmony - build_harmony(my_melody)
 
-    score1 = Score("My Song", "Wonderful Subtitle", "Author Me", "me@email.com")
-    score1.get_author() # "Author Me"
-    score1.get_title() # "My Song"
-    score1.add_part(part1)
+my_harmony.play()
+```
 
 ## Running all Pitchr tests
 ```bash
