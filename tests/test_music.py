@@ -1,33 +1,36 @@
 from unittest import TestCase, skip, mock
 import pitchr.music as ptr
 
+from unittest import TestCase
+
 
 class TestGlobals(TestCase):
     def test_key_signature_sets_globally(self):
         # Arrange
-        ptr.key(ptr.Key.C_MAJOR)
+        ptr.key(Key.C_MAJOR)
 
         # Act
         key = ptr._key_signature
 
         # Assert
-        self.assertEqual(key, ptr.Key.C_MAJOR)
+        self.assertEqual(key, Key.C_MAJOR)
 
     def test_time_signature_sets_globally(self):
         # Arrange
-        ptr.time(ptr.Time.COMMON_TIME)
+        ptr.time(Time.COMMON_TIME)
 
         # Act
         time = ptr._time_signature
 
         # Assert
-        self.assertEqual(time, ptr.Time.COMMON_TIME)
+        self.assertEqual(time, Time.COMMON_TIME)
+
 
 class TestNotes(TestCase):
 
     def test_C4_maps_to_0(self):
         # Arrange
-        n = ptr.Note('C4', 1.0)
+        n = Note('C4', 1.0)
 
         # Act
         pitch_number = n.pitch_number
@@ -37,7 +40,7 @@ class TestNotes(TestCase):
 
     def test_C4_maps_to_0(self):
         # Arrange
-        n = ptr.Note('C4', 1.0)
+        n = Note('C4', 1.0)
 
         # Act
         pitch_number = n.pitch_number
@@ -47,7 +50,7 @@ class TestNotes(TestCase):
 
     def test_init_sets_pitch_and_duration(self):
         # Arrange
-        n = ptr.Note('C', 1.0)
+        n = Note('C', 1.0)
 
         # Act
         pitch = n.pitch
@@ -59,8 +62,8 @@ class TestNotes(TestCase):
 
     def test_eq(self):
         # Arrange
-        n1 = ptr.Note('C#', 1.0)
-        n2 = ptr.Note('C#', 1.0)
+        n1 = Note('C#', 1.0)
+        n2 = Note('C#', 1.0)
 
         # Act
         equal = n1 == n2
@@ -68,11 +71,12 @@ class TestNotes(TestCase):
         # Assert
         self.assertTrue(equal)
 
+
 class TestRests(TestCase):
-    
+
     def test_rest_init_sets_pitch_and_duration(self):
         # Arrange
-        n = ptr.Rest(1.0)
+        n = Rest(1.0)
 
         # Act
         pitch = n.pitch
