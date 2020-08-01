@@ -12,6 +12,7 @@ def window_border():
     window.refresh()
     return window
 
+
 def show_menu(stdscr):
     menu = curses.newwin(11, 40, 2, 20)
     menu.refresh()
@@ -28,18 +29,21 @@ def show_menu(stdscr):
     stdscr.addstr(11, 22, "[Q] Quit this helper.")
     return menu
 
+
 def center_txt(msg, row, window):
     num_rows, num_cols = window.getmaxyx()
-    middle_column = int(num_cols/2)
-    half_msg = int(len(msg)/2)
+    middle_column = int(num_cols / 2)
+    half_msg = int(len(msg) / 2)
     x_pos = middle_column - half_msg
     window.addstr(row, x_pos, msg)
+
 
 def dialog1_box(prompt):
     dialog1 = curses.newwin(6, 78, 17, 1)
     dialog1.border()
     center_txt(prompt, 1, dialog1)
     return dialog1
+
 
 def explanation(title, text1, text2, stdscr):
     curses.flash()
@@ -49,6 +53,7 @@ def explanation(title, text1, text2, stdscr):
     stdscr.addstr(14, 4, title)
     stdscr.addstr(16, 4, text1)
     stdscr.addstr(18, 4, text2)
+
 
 def export_sample_song(stdscr):
     f = open("example.py", "w+")
@@ -91,8 +96,10 @@ def export_sample_song(stdscr):
     f.write("\n")
 
     f.write("s.play()")
-    explanation("This song have been exported to Python code to the current folder.", "It contains the exact data structures from this song.", 
-    "To play, run from the terminal: python3 example.py", stdscr)
+    explanation("This song have been exported to Python code to the current folder.",
+                "It contains the exact data structures from this song.",
+                "To play, run from the terminal: python3 example.py", stdscr)
+
 
 def run_gui(stdscr):
     stdscr = curses.initscr()
@@ -111,23 +118,23 @@ def run_gui(stdscr):
     while True:
         ch = stdscr.getch()
         if (chr(ch) == 'n' or chr(ch) == 'N'):
-            explanation("To create a note:", "note = Note(pitch='C4', duration=1.0).", 
-            "You can also add dynamics, such as Note('C4', 1.0, 'forte')", stdscr)
+            explanation("To create a note:", "note = Note(pitch='C4', duration=1.0).",
+                        "You can also add dynamics, such as Note('C4', 1.0, 'forte')", stdscr)
         elif (chr(ch) == 'm' or chr(ch) == 'M'):
-            explanation("To create a measure:", "m1 = Measure(Note('C4', 1/2))", 
-            "To add a second note, you cal also do: m1[0.5] = Note('E5', 3/2)", stdscr)
+            explanation("To create a measure:", "m1 = Measure(Note('C4', 1/2))",
+                        "To add a second note, you cal also do: m1[0.5] = Note('E5', 3/2)", stdscr)
         elif (chr(ch) == 's' or chr(ch) == 'S'):
-            explanation("To create a staff:", "m1 = Measure(Note('C4', 1/2))", 
-            "Staff(m1, Clef.TREBLE, Voice.PIANO)", stdscr)
+            explanation("To create a staff:", "m1 = Measure(Note('C4', 1/2))",
+                        "Staff(m1, Clef.TREBLE, Voice.PIANO)", stdscr)
         elif (chr(ch) == 'p' or chr(ch) == 'P'):
-            explanation("To create a part:", "A part is a collection of Staff()", 
-            "part = Part(Staff(), tempo, time_signature, key_signature)", stdscr)
+            explanation("To create a part:", "A part is a collection of Staff()",
+                        "part = Part(Staff(), tempo, time_signature, key_signature)", stdscr)
         elif (chr(ch) == 'c' or chr(ch) == 'C'):
-            explanation("To create a score:", "A score has only informational value.", 
-            "s = Score('My Song', 'Wonderful Subtitle', 'Author Me', 'me@email.com')", stdscr)
+            explanation("To create a score:", "A score has only informational value.",
+                        "s = Score('My Song', 'Wonderful Subtitle', 'Author Me', 'me@email.com')", stdscr)
         elif (chr(ch) == 'y' or chr(ch) == 'Y'):
-            explanation("First initialize: time(Time.COMMON_TIME)", "Play an entire staff: Staff([measures]).play()", 
-            "To play a single note: Note('C4', 1.0).play()", stdscr)
+            explanation("First initialize: time(Time.COMMON_TIME)", "Play an entire staff: Staff([measures]).play()",
+                        "To play a single note: Note('C4', 1.0).play()", stdscr)
         elif (chr(ch) == 'e' or chr(ch) == 'E'):
             export_sample_song(stdscr)
         elif (chr(ch) == 'w' or chr(ch) == 'W'):
@@ -136,10 +143,10 @@ def run_gui(stdscr):
             key(Key.C_MAJOR)
             time(Time.COMMON_TIME)
             m = Measure()
-            m[0] = Note('C5', 3/2)
-            m[1.5] = Note('D5', 1/2)
-            m[2] = Note('E5', 3/2)
-            m[3.5] = Note('C5', 1/2)
+            m[0] = Note('C5', 3 / 2)
+            m[1.5] = Note('D5', 1 / 2)
+            m[2] = Note('E5', 3 / 2)
+            m[3.5] = Note('C5', 1 / 2)
 
             n = Measure()
 
@@ -161,7 +168,7 @@ def run_gui(stdscr):
             s = Staff(measures=[m, n])
             save_stdout = sys.stdout
             sys.stdout = open('.trash', 'w')
-            
+
             s.play()
             sys.stdout = save_stdout
 
@@ -169,9 +176,10 @@ def run_gui(stdscr):
             curses.beep()
             break
 
+
 def main():
     wrapper(run_gui)
 
+
 if __name__ == "__main__":
-    main() 
-    
+    main()
