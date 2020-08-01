@@ -25,6 +25,8 @@ Other dependencies that must be installed (available via your package manager):
   * libasound2
   * lilypond
 
+Pitchr downloads models to `~/.pitchr/`. Set the `PITCHR_PATH` environment variable to change this behavior.
+
 ## Documentation
 Documentation is hosted on Github Pages [here](https://thedpws.github.io/pitcher/)
 

@@ -7,6 +7,16 @@ from pitchr import df_import
 from pitchr import pitch_tagger
 from pitchr import xml_parser
 from pitchr.music import *
+import os
+import requests
+import shutil
+
+
+try:
+    PITCHR_PATH = os.environ["PITCHR_PATH"]
+except KeyError:
+    print('Environment variable "PITCHR_PATH" is unset. Using default path "~/.pitchr"')
+    PITCHR_PATH = '~/.pitchr'
 
 
 def prepare_np(melody_np):
@@ -122,7 +132,8 @@ def build_harmony(melody_staff):
     zeros = np.zeros((50, 2))
     zeros[:len(melody_np)] = melody_np
 
-    model = keras.models.load_model('pitchr/saved_model/my_model')
+    verify_model()
+    model = keras.models.load_model(PITCHR_PATH + '/saved_model/my_model')
     input = prepare_np(zeros)
     output = model.predict(input, verbose=0)
     output = output * 50
@@ -136,3 +147,31 @@ def build_harmony(melody_staff):
 
     harmony_staff = Staff(harmony_measures)
     return harmony_staff
+
+def verify_model():
+    MODEL_PATH = PITCHR_PATH + '/saved_model/my_model'
+
+    if True or not os.path.exists(MODEL_PATH):
+        os.makedirs(MODEL_PATH, exist_ok=True)
+        os.makedirs(MODEL_PATH + '/variables/', exist_ok=True)
+
+        try:
+            variables_data = requests.get('https://github.com/thedpws/pitcher/blob/master/pitchr/saved_model/my_model/variables/variables.data-00000-of-00001?raw=true').content
+            variables_index = requests.get('https://github.com/thedpws/pitcher/blob/master/pitchr/saved_model/my_model/variables/variables.index?raw=true').content
+            saved_model = requests.get('https://github.com/thedpws/pitcher/blob/master/pitchr/saved_model/my_model/saved_model.pb?raw=true').content
+
+            with open(MODEL_PATH + '/variables/variables.data-00000-of-00001', 'wb') as f:
+                f.write(variables_data)
+
+            with open(MODEL_PATH + '/variables/variables.index', 'wb') as f:
+                f.write(variables_index)
+
+            with open(MODEL_PATH + '/saved_model.pb', 'wb') as f:
+                f.write(saved_model)
+
+        except Exception as e:
+            shutil.rmtree(MODEL_PATH)
+            raise PitcherException('Could not download saved model. Harmony generation will be unavailable.' + str(e))
+
+
+
