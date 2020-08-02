@@ -57,7 +57,7 @@ m.save('MySong.pdf')
 ```
 ## Helper UI
 
-To access the helper UI, run from the command line: `python3 helper.py`
+To access the helper UI, run from the command line: `python3 -m pitcher.helper`
 
 ![helper_ui](https://raw.githubusercontent.com/thedpws/pitcher/master/demo/helper_ui.png)
 
