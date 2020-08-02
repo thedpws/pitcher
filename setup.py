@@ -14,7 +14,7 @@ with open("requirements.txt", "r") as fh:
 
 setuptools.setup(
     name="pitchr",
-    version="1.0.0",
+    version="1.1.0",
     author=authors_string,
     author_email="azvasquez99@gmail.com",
     description="A Python library and framework for composing and playing music.",
