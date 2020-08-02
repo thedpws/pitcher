@@ -15,8 +15,8 @@ import shutil
 try:
     PITCHR_PATH = os.environ["PITCHR_PATH"]
 except KeyError:
-    print('Environment variable "PITCHR_PATH" is unset. Using default path "~/.pitchr"')
-    PITCHR_PATH = '~/.pitchr'
+    print(f'Environment variable "PITCHR_PATH" is unset. Using default path "{os.environ["HOME"]}/.pitchr"')
+    PITCHR_PATH = os.environ["HOME"] + '/.pitchr'
 
 
 def prepare_np(melody_np):
