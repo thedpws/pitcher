@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.playing &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.playing</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">get_ident</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mido</span> <span class="kn">import</span> <span class="n">Message</span><span class="p">,</span> <span class="n">MidiFile</span><span class="p">,</span> <span class="n">MidiTrack</span><span class="p">,</span> <span class="n">bpm2tempo</span><span class="p">,</span> <span class="n">tempo2bpm</span><span class="p">,</span> <span class="n">tick2second</span><span class="p">,</span> <span class="n">second2tick</span>
+<span class="kn">from</span> <span class="nn">timidity</span> <span class="kn">import</span> <span class="n">Parser</span><span class="p">,</span> <span class="n">play_notes</span>
+
+<span class="kn">from</span> <span class="nn">pitchr.utils</span> <span class="kn">import</span> <span class="n">_suppress_stdout_stderr</span>
+
+<div class="viewcode-block" id="EventType"><a class="viewcode-back" href="../../pitchr.html#pitchr.playing.EventType">[docs]</a><span class="k">class</span> <span class="nc">EventType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Enumeration of Event types&quot;&quot;&quot;</span>
+    <span class="n">KEY_ON</span> <span class="o">=</span> <span class="s1">&#39;note_on&#39;</span>
+    <span class="n">KEY_OFF</span> <span class="o">=</span> <span class="s1">&#39;note_off&#39;</span></div>
+
+
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../pitchr.html#pitchr.playing.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Represents a MIDI keyon/keyoff event.</span>
+
+<span class="sd">    :param event_type: a MIDI message type of &quot;note_on&quot; or &quot;note_off&quot;</span>
+<span class="sd">    :param pitch_number: int representing the pitch of the key&quot;</span>
+<span class="sd">    :param velocity: int representing the velocity of keypress</span>
+<span class="sd">    :param time: number of ticks after the previous event</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="n">pitch_number</span><span class="p">,</span> <span class="n">velocity</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">event_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_number</span> <span class="o">=</span> <span class="n">pitch_number</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span> <span class="o">=</span> <span class="n">velocity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">=</span> <span class="n">time</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">event_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_number</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">_time</span></div>
+
+
+<div class="viewcode-block" id="play_score"><a class="viewcode-back" href="../../pitchr.html#pitchr.playing.play_score">[docs]</a><span class="k">def</span> <span class="nf">play_score</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Plays a score.</span>
+<span class="sd">    :param score: instance of Pitchr.Score</span>
+<span class="sd">    :returns: True&quot;&quot;&quot;</span>
+    <span class="n">mid</span> <span class="o">=</span> <span class="n">MidiFile</span><span class="p">()</span>
+
+    <span class="n">track</span> <span class="o">=</span> <span class="n">MidiTrack</span><span class="p">()</span>
+    <span class="n">mid</span><span class="o">.</span><span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+
+    <span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="s1">&#39;program_change&#39;</span><span class="p">,</span> <span class="n">program</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">score</span><span class="p">:</span>
+        <span class="n">bpm</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">tempo</span>
+        <span class="n">ticks</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">beats</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">beats</span> <span class="o">*</span> <span class="n">bpm2tempo</span><span class="p">(</span><span class="n">bpm</span><span class="p">))</span> <span class="o">/</span> <span class="mi">1000</span>
+
+        <span class="k">for</span> <span class="n">i_staff</span><span class="p">,</span> <span class="n">staff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i_measure</span><span class="p">,</span> <span class="n">measure</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">staff</span><span class="p">):</span>
+                <span class="n">measure_beat_offset</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">time_signature</span><span class="o">.</span><span class="n">beats_per_measure</span> <span class="o">*</span> <span class="n">i_measure</span>
+                <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">measure</span><span class="o">.</span><span class="n">_notes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="nb">iter</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                        <span class="n">notes</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">notes</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="n">notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+                    <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">note</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">midi_pitch</span> <span class="o">=</span> <span class="n">note</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">+</span> <span class="mi">60</span>
+
+                        <span class="c1"># test for note tie, create space between notes if not tied.</span>
+                        <span class="n">duration</span> <span class="o">=</span> <span class="n">note</span><span class="o">.</span><span class="n">duration</span>
+                        <span class="k">if</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">note</span><span class="o">.</span><span class="n">tie</span><span class="p">:</span>
+                                <span class="n">duration</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">-</span> <span class="mf">0.05</span>
+
+                        <span class="n">beat_keyon</span> <span class="o">=</span> <span class="n">measure_beat_offset</span> <span class="o">+</span> <span class="n">start</span>
+                        <span class="n">beat_keyoff</span> <span class="o">=</span> <span class="n">beat_keyon</span> <span class="o">+</span> <span class="n">duration</span>
+
+                        <span class="n">time_keyon</span> <span class="o">=</span> <span class="n">ticks</span><span class="p">(</span><span class="n">beat_keyon</span><span class="p">)</span>
+                        <span class="n">time_keyoff</span> <span class="o">=</span> <span class="n">ticks</span><span class="p">(</span><span class="n">beat_keyoff</span><span class="p">)</span>
+
+                        <span class="n">time_delay</span> <span class="o">=</span> <span class="n">ticks</span><span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">time_signature</span><span class="o">.</span><span class="n">beat_definition</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span>
+
+                        <span class="n">time_keyoff</span> <span class="o">=</span> <span class="n">time_keyoff</span> <span class="o">-</span> <span class="n">time_delay</span>
+
+                        <span class="n">events</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                            <span class="n">Event</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_ON</span><span class="p">,</span> <span class="n">midi_pitch</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="n">time_keyon</span><span class="p">),</span>
+                            <span class="n">Event</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">KEY_OFF</span><span class="p">,</span> <span class="n">midi_pitch</span><span class="p">,</span> <span class="mi">127</span><span class="p">,</span> <span class="n">time_keyoff</span><span class="p">),</span>
+                        <span class="p">])</span>
+
+    <span class="n">curr_time</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+        <span class="n">delta_time</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">curr_time</span>
+        <span class="n">track</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Message</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">event_type</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">note</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="n">e</span><span class="o">.</span><span class="n">velocity</span><span class="p">,</span>
+                             <span class="n">time</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">delta_time</span><span class="p">))))</span>
+        <span class="n">curr_time</span> <span class="o">+=</span> <span class="n">delta_time</span>
+
+    <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdirname</span><span class="p">:</span>
+        <span class="n">midi_filepath</span> <span class="o">=</span> <span class="n">tmpdirname</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">get_ident</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;.mid&#39;</span>
+        <span class="n">mid</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">midi_filepath</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">_suppress_stdout_stderr</span><span class="p">():</span>
+            <span class="n">ps</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">midi_filepath</span><span class="p">)</span>
+            <span class="n">play_notes</span><span class="p">(</span><span class="o">*</span><span class="n">ps</span><span class="o">.</span><span class="n">parse</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

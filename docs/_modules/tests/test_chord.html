@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tests.test_chord &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_chord</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">tempfile</span> <span class="kn">import</span> <span class="n">TemporaryDirectory</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span> <span class="nn">pitchr</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="TestChord"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord">[docs]</a><span class="k">class</span> <span class="nc">TestChord</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestChord.test_init_notes_passed_are_added"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_init_notes_passed_are_added">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_notes_passed_are_added</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">notes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestChord.test_notes_returns_notes"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_notes_returns_notes">[docs]</a>    <span class="k">def</span> <span class="nf">test_notes_returns_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span> <span class="p">[</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="TestChord.test_duration_is_duration_of_longest_note"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_duration_is_duration_of_longest_note">[docs]</a>    <span class="k">def</span> <span class="nf">test_duration_is_duration_of_longest_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+            <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span>
+        <span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestChord.test_append_appends_note"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_append_appends_note">[docs]</a>    <span class="k">def</span> <span class="nf">test_append_appends_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">()</span>
+
+        <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span> <span class="o">:=</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">notes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestChord.test_remove_removes_note"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_remove_removes_note">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_removes_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+
+        <span class="n">c</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span> <span class="p">[</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="TestChord.test_clear_removes_all_notes"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_clear_removes_all_notes">[docs]</a>    <span class="k">def</span> <span class="nf">test_clear_removes_all_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">notes</span><span class="p">,</span> <span class="p">[])</span></div>
+
+<div class="viewcode-block" id="TestChord.test_determine"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_determine">[docs]</a>    <span class="k">def</span> <span class="nf">test_determine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">determine</span><span class="p">(),</span> <span class="p">[</span><span class="s1">&#39;minor third&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="TestChord.test_major_triad"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_major_triad">[docs]</a>    <span class="k">def</span> <span class="nf">test_major_triad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="o">.</span><span class="n">major_triad</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestChord.test_minor_triad"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_minor_triad">[docs]</a>    <span class="k">def</span> <span class="nf">test_minor_triad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="o">.</span><span class="n">minor_triad</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestChord.test_diminished_triad"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_diminished_triad">[docs]</a>    <span class="k">def</span> <span class="nf">test_diminished_triad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="o">.</span><span class="n">diminished_triad</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;Eb5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestChord.test_augmented_triad"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_augmented_triad">[docs]</a>    <span class="k">def</span> <span class="nf">test_augmented_triad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="o">.</span><span class="n">augmented_triad</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;C#5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E#5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestChord.test_suspended_triad"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_suspended_triad">[docs]</a>    <span class="k">def</span> <span class="nf">test_suspended_triad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="o">.</span><span class="n">suspended_triad</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">Chord</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;D5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">),</span> <span class="n">Note</span><span class="p">(</span><span class="s1">&#39;E5&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)]))</span></div>
+
+<div class="viewcode-block" id="TestChord.test_play_calls_play_score"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_play_calls_play_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.playing.play_score&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_play_calls_play_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play_score</span><span class="p">):</span>
+        <span class="n">Chord</span><span class="p">()</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">play_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestChord.test_show_calls_show_score"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_show_calls_show_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.lyexport.show_score_png&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_show_calls_show_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_score</span><span class="p">):</span>
+        <span class="n">Chord</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">show_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestChord.test_save_calls_save_score"><a class="viewcode-back" href="../../tests.html#tests.test_chord.TestChord.test_save_calls_save_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.lyexport.write_to_pdf&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_save_calls_save_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_score</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tempdirname</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">tempdirname</span> <span class="o">+</span> <span class="s1">&#39;/export.pdf&#39;</span>
+            <span class="n">Chord</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">save_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

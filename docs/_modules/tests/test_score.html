@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tests.test_score &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tests.test_score</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">patch</span>
+
+<span class="kn">from</span> <span class="nn">pitchr</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="TestScore"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore">[docs]</a><span class="k">class</span> <span class="nc">TestScore</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestScore.test_composer_is_property"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_composer_is_property">[docs]</a>    <span class="k">def</span> <span class="nf">test_composer_is_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="n">composer</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">composer</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">composer</span><span class="p">,</span> <span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">act</span><span class="p">():</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">composer</span> <span class="o">=</span> <span class="s1">&#39;AZ Velasquez&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_author_is_property"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_author_is_property">[docs]</a>    <span class="k">def</span> <span class="nf">test_author_is_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="n">author</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">author</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">act</span><span class="p">():</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="s1">&#39;AZ Velasquez&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_title_is_property"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_title_is_property">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_is_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="n">title</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">title</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="s1">&#39;AZ Vasquez&#39;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">act</span><span class="p">():</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;AZ Velasquez&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">act</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_add_parts_adds_part"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_add_parts_adds_part">[docs]</a>    <span class="k">def</span> <span class="nf">test_add_parts_adds_part</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">p</span> <span class="o">:=</span> <span class="n">Part</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_init_parts_passed_adds_part"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_init_parts_passed_adds_part">[docs]</a>    <span class="k">def</span> <span class="nf">test_init_parts_passed_adds_part</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="n">p</span> <span class="o">:=</span> <span class="n">Part</span><span class="p">()])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_play_calls_play_score"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_play_calls_play_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.playing.play_score&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_play_calls_play_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play_score</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">play_score</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_show_calls_show_score"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_show_calls_show_score">[docs]</a>    <span class="nd">@patch</span><span class="p">(</span><span class="s1">&#39;pitchr.lyexport.show_score_png&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_show_calls_show_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_score_png</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">show_score_png</span><span class="o">.</span><span class="n">called</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestScore.test_save_creates_pdf"><a class="viewcode-back" href="../../tests.html#tests.test_score.TestScore.test_save_creates_pdf">[docs]</a>    <span class="k">def</span> <span class="nf">test_save_creates_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">Score</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">add_part</span><span class="p">(</span><span class="n">Part</span><span class="p">([</span><span class="n">Staff</span><span class="p">([</span><span class="n">Measure</span><span class="p">([</span><span class="n">Note</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)])])]))</span>
+        <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tempdirname</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">tempdirname</span> <span class="o">+</span> <span class="s1">&#39;/export.pdf&#39;</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

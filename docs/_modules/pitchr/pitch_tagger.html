@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.pitch_tagger &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.pitch_tagger</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pitchr.music</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="tag_accidentals"><a class="viewcode-back" href="../../pitchr.html#pitchr.pitch_tagger.tag_accidentals">[docs]</a><span class="k">def</span> <span class="nf">tag_accidentals</span><span class="p">(</span><span class="n">notes_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tag accidentals to a dataframe of notes</span>
+
+<span class="sd">    :param notes_df: dataframe of notes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the corresponding key object</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">Key</span><span class="p">,</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;Key&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_MAJOR&#39;</span><span class="p">)</span>
+
+    <span class="n">key_accidentals</span> <span class="o">=</span> <span class="p">{</span><span class="n">pitch</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">pitch</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="ow">or</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">pitch</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">major_scale</span><span class="p">}</span>
+    <span class="n">key_accidentals</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;REST&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+
+    <span class="c1"># The accidentals gotten from the music xml are relative to the key signature</span>
+
+    <span class="c1"># Calculate accidentals wrt key</span>
+    <span class="n">notes_df</span><span class="p">[</span><span class="s1">&#39;Accidental&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Accidental&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">key_accidentals</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Letter&#39;</span><span class="p">]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="tag_pitch_interval"><a class="viewcode-back" href="../../pitchr.html#pitchr.pitch_tagger.tag_pitch_interval">[docs]</a><span class="k">def</span> <span class="nf">tag_pitch_interval</span><span class="p">(</span><span class="n">notes_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tag pitch intervals to a dataframe of notes</span>
+
+<span class="sd">    :param notes_df: dataframe of notes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curr_pitch</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">pitch_interval_fn</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">curr_pitch</span>
+
+        <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Pitch Number&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">curr_pitch</span>
+        <span class="n">curr_pitch</span> <span class="o">+=</span> <span class="n">interval</span>
+        <span class="k">return</span> <span class="n">interval</span>
+
+    <span class="n">notes_df</span><span class="p">[</span><span class="s1">&#39;Pitch Interval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pitch_interval_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tag_pitch"><a class="viewcode-back" href="../../pitchr.html#pitchr.pitch_tagger.tag_pitch">[docs]</a><span class="k">def</span> <span class="nf">tag_pitch</span><span class="p">(</span><span class="n">notes_df</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Tags pitch information to a dataframe of notes from XML file</span>
+
+<span class="sd">    :param notes_df: dataframe of notes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tag_accidentals</span><span class="p">(</span><span class="n">notes_df</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pitch_fn</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Letter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;REST&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Letter&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Accidental&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Octave&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">notes_df</span><span class="p">[</span><span class="s1">&#39;Pitch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pitch_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pitch_number</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Pitch&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">Note</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Pitch&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">())</span><span class="o">.</span><span class="n">pitch_number</span>
+
+    <span class="n">notes_df</span><span class="p">[</span><span class="s1">&#39;Pitch Number&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pitch_number</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">curr_pitch</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">pitch_interval_fn</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">curr_pitch</span>
+
+        <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Pitch Number&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">curr_pitch</span>
+        <span class="n">curr_pitch</span> <span class="o">+=</span> <span class="n">interval</span>
+        <span class="k">return</span> <span class="n">interval</span>
+
+    <span class="n">notes_df</span><span class="p">[</span><span class="s1">&#39;Pitch Interval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">notes_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pitch_interval_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

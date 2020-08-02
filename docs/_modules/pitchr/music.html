@@ -1,0 +1,1343 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pitchr.music &#8212; Pitchr  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pitchr.music</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">re</span> <span class="k">as</span> <span class="nn">_re</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+
+<span class="kn">import</span> <span class="nn">mingus.core.chords</span> <span class="k">as</span> <span class="nn">_MingusChord</span>
+<span class="kn">import</span> <span class="nn">mingus.core.notes</span> <span class="k">as</span> <span class="nn">_mingus_notes</span>
+<span class="kn">from</span> <span class="nn">mingus.containers</span> <span class="kn">import</span> <span class="n">Composition</span> <span class="k">as</span> <span class="n">_MingusComposition</span>
+<span class="kn">from</span> <span class="nn">mingus.containers</span> <span class="kn">import</span> <span class="n">Note</span> <span class="k">as</span> <span class="n">_MingusNote</span>
+<span class="kn">from</span> <span class="nn">mingus.containers</span> <span class="kn">import</span> <span class="n">NoteContainer</span> <span class="k">as</span> <span class="n">_MingusNoteContainer</span>
+
+<span class="kn">from</span> <span class="nn">mingus.containers</span> <span class="kn">import</span> <span class="n">Composition</span> <span class="k">as</span> <span class="n">_MingusComposition</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span> <span class="k">as</span> <span class="n">_Enum</span>
+<span class="kn">import</span> <span class="nn">re</span> <span class="k">as</span> <span class="nn">_re</span>
+<span class="kn">import</span> <span class="nn">pitchr.playing</span> <span class="k">as</span> <span class="nn">_playing</span>
+
+<span class="kn">import</span> <span class="nn">pitchr.lyexport</span> <span class="k">as</span> <span class="nn">_showing</span>
+<span class="kn">import</span> <span class="nn">pitchr.playing</span> <span class="k">as</span> <span class="nn">_playing</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. module:: Pitcher</span>
+<span class="sd">  :synopsis: A python library and framework for composing music.</span>
+<span class="sd">.. moduleauthor:: Quarantine Quintet</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="PitcherException"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.PitcherException">[docs]</a><span class="k">class</span> <span class="nc">PitcherException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exceptions related to Pitcher issues</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Time"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Time">[docs]</a><span class="k">class</span> <span class="nc">Time</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class representing the Time signature the Score is played in</span>
+
+<span class="sd">    :param time: String representing the time signature</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d/\d&#39;</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">PitcherException</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">time</span><span class="si">}</span><span class="s1"> is an invalid time signature&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">=</span> <span class="n">time</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">beats_per_measure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the beats per measure of the Score</span>
+
+<span class="sd">        :returns: beats per measure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">beat_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the beat definition of the Score</span>
+
+<span class="sd">        :returns: beat definition</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_time</span></div>
+
+
+<span class="n">Time</span><span class="o">.</span><span class="n">COMMON_TIME</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s1">&#39;4/4&#39;</span><span class="p">)</span>
+<span class="n">Time</span><span class="o">.</span><span class="n">CUT_TIME</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s1">&#39;2/4&#39;</span><span class="p">)</span>
+
+<span class="k">global</span> <span class="n">_time_signature</span><span class="p">,</span> <span class="n">_key_signature</span>
+<span class="n">_time_signature</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s1">&#39;4/4&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="key"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.key">[docs]</a><span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="n">key_signature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the global key signature</span>
+
+<span class="sd">    :param key_signature: Key Signature object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_key_signature</span>
+    <span class="n">_key_signature</span> <span class="o">=</span> <span class="n">key_signature</span></div>
+
+
+<div class="viewcode-block" id="time"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.time">[docs]</a><span class="k">def</span> <span class="nf">time</span><span class="p">(</span><span class="n">time_signature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the global time signature</span>
+
+<span class="sd">    :param key_signature: Time Signature object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_time_signature</span>
+    <span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span></div>
+
+
+<div class="viewcode-block" id="Keyboard"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Keyboard">[docs]</a><span class="k">class</span> <span class="nc">Keyboard</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Simulates a piano keyboard. Useful for calculating scales.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Keyboard.key"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Keyboard.key">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">sharps</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given a number, returns the letter of an associated key on the keyboard.</span>
+<span class="sd">        Middle C is defined to be 0.</span>
+
+<span class="sd">        :param i: index of key on keyboard</span>
+<span class="sd">        :param sharps: if True, gives accidentals in sharp form rather than flat form.</span>
+
+<span class="sd">        :returns: letter note of associated key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">,</span> <span class="s1">&#39;C&#39;</span><span class="p">],</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Db&#39;</span><span class="p">,</span> <span class="s1">&#39;C#&#39;</span><span class="p">],</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">],</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Eb&#39;</span><span class="p">,</span> <span class="s1">&#39;D#&#39;</span><span class="p">],</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">],</span>
+            <span class="mi">5</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">],</span>
+            <span class="mi">6</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Gb&#39;</span><span class="p">,</span> <span class="s1">&#39;F#&#39;</span><span class="p">],</span>
+            <span class="mi">7</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">],</span>
+            <span class="mi">8</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Ab&#39;</span><span class="p">,</span> <span class="s1">&#39;G#&#39;</span><span class="p">],</span>
+            <span class="mi">9</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">],</span>
+            <span class="mi">10</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Bb&#39;</span><span class="p">,</span> <span class="s1">&#39;A#&#39;</span><span class="p">],</span>
+            <span class="mi">11</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">],</span>
+        <span class="p">}[</span><span class="n">i</span> <span class="o">%</span> <span class="mi">12</span><span class="p">][</span><span class="n">sharps</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Interval"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Interval">[docs]</a><span class="k">class</span> <span class="nc">Interval</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Stores Pitch Intervals.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="k">for</span> <span class="n">halfsteps</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;m2&#39;</span><span class="p">,</span> <span class="s1">&#39;M2&#39;</span><span class="p">,</span> <span class="s1">&#39;m3&#39;</span><span class="p">,</span> <span class="s1">&#39;M3&#39;</span><span class="p">,</span> <span class="s1">&#39;M4&#39;</span><span class="p">,</span> <span class="s1">&#39;m5&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;m6&#39;</span><span class="p">,</span> <span class="s1">&#39;M6&#39;</span><span class="p">,</span> <span class="s1">&#39;m7&#39;</span><span class="p">,</span> <span class="s1">&#39;M7&#39;</span><span class="p">,</span> <span class="s1">&#39;M8&#39;</span><span class="p">]):</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="n">Interval</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">halfsteps</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Key"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Key">[docs]</a><span class="k">class</span> <span class="nc">Key</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class representing the Key the Score is played in</span>
+
+<span class="sd">    :param flats: number of flats in the Key</span>
+<span class="sd">    :param sharps: number of sharps in the Key</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flats</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sharps</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">flats</span> <span class="ow">and</span> <span class="n">sharps</span><span class="p">)</span> <span class="ow">or</span> <span class="n">sharps</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">flats</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">flats</span> <span class="o">&gt;</span> <span class="mi">7</span> <span class="ow">or</span> <span class="n">sharps</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PitcherException</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Key signature with </span><span class="si">{</span><span class="n">flats</span><span class="si">}</span><span class="s1"> flats and </span><span class="si">{</span><span class="n">sharps</span><span class="si">}</span><span class="s1"> sharps is invalid&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flats</span> <span class="o">=</span> <span class="n">flats</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sharps</span> <span class="o">=</span> <span class="n">sharps</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">major_tonic</span> <span class="o">+</span> <span class="s1">&#39; major&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fifths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns number of fifths that defines this key signature.</span>
+
+<span class="sd">        :returns: number of fifths that defines this key signature.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sharps</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flats</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">major_tonic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the tonic/root of this key signature, assuming a major key.</span>
+
+<span class="sd">        :returns: returns the letter of the key signature&#39;s tonic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Keyboard</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">major_tonic_offset</span><span class="p">,</span> <span class="n">sharps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sharp</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">major_tonic_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the index of the tonic of this key signature.</span>
+
+<span class="sd">        :returns: the related offset (in half steps) of this tonic from middle C&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">Interval</span><span class="o">.</span><span class="n">M5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fifths</span><span class="p">)</span> <span class="o">%</span> <span class="mi">12</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">major_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the index of the tonic of this key signature.</span>
+
+<span class="sd">        :returns: list of strings of the 8 letters representing the major scale associated with this major key&quot;&quot;&quot;</span>
+        <span class="n">intvs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Keyboard</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">intv</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">intvs</span><span class="p">[:</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">major_tonic_offset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sharp</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">intv</span> <span class="ow">in</span>
+                <span class="nb">enumerate</span><span class="p">(</span><span class="n">intvs</span><span class="p">)]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a lilypond string representation of this key signature.</span>
+<span class="sd">        Consists of the tonic in lowercase with &quot;-is&quot; or &quot;-es&quot; if sharp or flat respectively, and then &quot;\\major&quot;.</span>
+<span class="sd">        :returns: lilypond string representation of this key signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tonic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">major_tonic</span>
+
+        <span class="n">tonic</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="s1">&#39;is&#39;</span><span class="p">,</span> <span class="n">tonic</span><span class="p">)</span>
+        <span class="n">tonic</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;es&#39;</span><span class="p">,</span> <span class="n">tonic</span><span class="p">)</span>
+        <span class="n">tonic</span> <span class="o">=</span> <span class="n">tonic</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">tonic</span> <span class="o">+</span> <span class="s1">&#39; </span><span class="se">\\</span><span class="s1">major&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sharp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if this key signature contains sharps</span>
+<span class="sd">        :returns: this key signature contains sharps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sharps</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if this key signature contains flats</span>
+<span class="sd">        :returns: this key signature contains flats</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flats</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if key signatures share the same definition&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sharps</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_sharps</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flats</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_flats</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if this key signature has this pitch or Note in its notes</span>
+
+<span class="sd">        :param pitch: Note or pitch</span>
+<span class="sd">        :returns: returns True if this key signature contains this note or pitch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pitch</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
+            <span class="n">pitch</span> <span class="o">=</span> <span class="n">pitch</span><span class="o">.</span><span class="n">pitch</span>
+
+        <span class="n">pitch</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">d&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">pitch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">pitch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">major_scale</span></div>
+
+
+<span class="n">Key</span><span class="o">.</span><span class="n">Cb_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">Gb_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">Eb_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">Db_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">Bb_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">Ab_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">F_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">Eb_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">Bb_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">G_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">F_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">D_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">flats</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">A_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">()</span>
+
+<span class="n">Key</span><span class="o">.</span><span class="n">G_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">E_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">D_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">B_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">A_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">F_SHARP_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">E_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_SHARP_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">B_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">G_SHARP_MINOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">F_SHARP_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">Key</span><span class="o">.</span><span class="n">C_SHARP_MAJOR</span> <span class="o">=</span> <span class="n">Key</span><span class="p">(</span><span class="n">sharps</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+
+<span class="n">_key_signature</span> <span class="o">=</span> <span class="n">Key</span><span class="o">.</span><span class="n">C_MAJOR</span>
+
+
+<div class="viewcode-block" id="Clef"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Clef">[docs]</a><span class="k">class</span> <span class="nc">Clef</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
+    <span class="n">TREBLE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">BASS</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="Voice"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Voice">[docs]</a><span class="k">class</span> <span class="nc">Voice</span><span class="p">(</span><span class="n">_Enum</span><span class="p">):</span>
+    <span class="n">PIANO</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<span class="k">class</span> <span class="nc">_Music</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plays music&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shows a graphic of music&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves music to a PDF&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<div class="viewcode-block" id="Score"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Score">[docs]</a><span class="k">class</span> <span class="nc">Score</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of parts</span>
+
+<span class="sd">    :param parts: [Part]</span>
+<span class="sd">    :param title: str</span>
+<span class="sd">    :param subtitle: str</span>
+<span class="sd">    :param author: str</span>
+<span class="sd">    :param author_email: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parts</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subtitle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_email</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span> <span class="o">=</span> <span class="n">_MingusComposition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">set_author</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">author_email</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="n">parts</span> <span class="ow">or</span> <span class="p">[]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">composer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for author of the score&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">author</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">author</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the author of the current Score.</span>
+
+<span class="sd">        :returns: Author</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">author</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the title of the current Score.</span>
+
+<span class="sd">        :returns: title</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_composition</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="c1"># A little more explicit than &quot;append&quot; or &quot;extend&quot;. This is for readability since these are not conventional terms.</span>
+<div class="viewcode-block" id="Score.add_part"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Score.add_part">[docs]</a>    <span class="k">def</span> <span class="nf">add_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a new Part to the current Score</span>
+
+<span class="sd">        :param part: Part</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Score.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Score.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_playing</span><span class="o">.</span><span class="n">play_score</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Score.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Score.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_showing</span><span class="o">.</span><span class="n">show_score_png</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Score.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Score.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">_showing</span><span class="o">.</span><span class="n">write_to_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Part"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Part">[docs]</a><span class="k">class</span> <span class="nc">Part</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of staffs. Add effects / stanza-chorus / key/time changes to parts. Should affect its children.</span>
+
+<span class="sd">    :param staffs: from Staff()</span>
+<span class="sd">    :param tempo: int</span>
+<span class="sd">    :param time_signature: instance of Time</span>
+<span class="sd">    :param key_signature: instance of Key</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">key_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the key signature of the current Part</span>
+
+<span class="sd">        :returns: key signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_signature</span>
+
+    <span class="nd">@key_signature</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">key_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_signature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the key signature of the current Part</span>
+
+<span class="sd">        :param key_signature: Key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key_signature</span> <span class="o">=</span> <span class="n">key_signature</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the time signature of the current Part</span>
+
+<span class="sd">        :returns: time signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span>
+
+    <span class="nd">@time_signature</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_signature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the time signature of the current Part</span>
+
+<span class="sd">        :param time_signature: Time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tempo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tempo</span>
+
+    <span class="nd">@tempo</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">tempo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tempo</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tempo</span> <span class="o">=</span> <span class="n">tempo</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">staffs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">tempo</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+            <span class="n">time_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">key_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_staffs</span> <span class="o">=</span> <span class="n">staffs</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">time_signature</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">_time_signature</span>
+            <span class="n">time_signature</span> <span class="o">=</span> <span class="n">_time_signature</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">key_signature</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">_key_signature</span>
+            <span class="n">key_signature</span> <span class="o">=</span> <span class="n">_key_signature</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key_signature</span> <span class="o">=</span> <span class="n">key_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tempo</span> <span class="o">=</span> <span class="n">tempo</span>
+
+<div class="viewcode-block" id="Part.add_staff"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Part.add_staff">[docs]</a>    <span class="k">def</span> <span class="nf">add_staff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">staff</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a staff to the current Part</span>
+
+<span class="sd">        :param staff: Staff</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_staffs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">staff</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Part.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Part.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Score</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">play</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Part.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Part.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Score</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Part.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Part.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Score</span><span class="p">(</span><span class="n">parts</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_staffs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_staffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Staff"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Staff">[docs]</a><span class="k">class</span> <span class="nc">Staff</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of measures.</span>
+
+<span class="sd">    :param clef: from Clef()</span>
+<span class="sd">    :param voice: from Voice()</span>
+<span class="sd">    :param measures: Measure()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="sd">&quot;&quot;&quot;_Collection of measures&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measures</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clef</span><span class="o">=</span><span class="n">Clef</span><span class="o">.</span><span class="n">TREBLE</span><span class="p">,</span> <span class="n">voice</span><span class="o">=</span><span class="n">Voice</span><span class="o">.</span><span class="n">PIANO</span><span class="p">,</span> <span class="n">time_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">time_signature</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">_time_signature</span>
+            <span class="n">time_signature</span> <span class="o">=</span> <span class="n">_time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span> <span class="o">=</span> <span class="n">clef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span> <span class="o">=</span> <span class="n">voice</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_measures</span> <span class="o">=</span> <span class="n">measures</span> <span class="k">if</span> <span class="n">measures</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">measure</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="p">:</span>
+            <span class="n">measure</span><span class="o">.</span><span class="n">time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">clef</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get clef of the Staff</span>
+
+<span class="sd">        :returns: clef</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span>
+
+    <span class="nd">@clef</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">clef</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clef</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set clef of the Staff</span>
+
+<span class="sd">        :param clef: Clef</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clef</span> <span class="o">=</span> <span class="n">clef</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">voice</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get voice of the Staff</span>
+
+<span class="sd">        :returns: voice</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span>
+
+    <span class="nd">@voice</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voice</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set voice of the Staff</span>
+
+<span class="sd">        :param voice: Voice</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_voice</span> <span class="o">=</span> <span class="n">voice</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get time signature of the Staff</span>
+
+<span class="sd">        :returns: time signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span>
+
+    <span class="nd">@time_signature</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_signature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set time signature of the Staff</span>
+
+<span class="sd">        :param time_signature: Time signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+        <span class="n">enough_measures</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">enough_measures</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Measure</span><span class="p">())</span>
+            <span class="n">enough_measures</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">i</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Staff.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Staff.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">staffs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">play</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Staff.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Staff.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">staffs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Staff.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Staff.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Part</span><span class="p">(</span><span class="n">staffs</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_measures</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: Bind measure length by global time signature</span>
+<div class="viewcode-block" id="Measure"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure">[docs]</a><span class="k">class</span> <span class="nc">Measure</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a collection of notes.</span>
+
+<span class="sd">    :param notes: []</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_signature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">time_signature</span><span class="p">:</span>
+            <span class="k">global</span> <span class="n">_time_signature</span>
+            <span class="n">time_signature</span> <span class="o">=</span> <span class="n">_time_signature</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+
+        <span class="k">if</span> <span class="n">notes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">notes</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span><span class="p">,</span> <span class="n">start</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get time signature of the Measure</span>
+
+<span class="sd">        :returns: time signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span>
+
+    <span class="nd">@time_signature</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">time_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_signature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set time signature of the Measure</span>
+
+<span class="sd">        :param time_signature: Time signature</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span> <span class="o">=</span> <span class="n">time_signature</span>
+
+<div class="viewcode-block" id="Measure.append"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds new note to current measure</span>
+
+<span class="sd">        :param item: Note</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">beats_per_measure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span><span class="o">.</span><span class="n">beats_per_measure</span>  <span class="c1"># numerator</span>
+        <span class="n">beat_definition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span><span class="o">.</span><span class="n">beat_definition</span>  <span class="c1"># denominator</span>
+        <span class="n">max_length</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">beats_per_measure</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">beat_definition</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span> <span class="o">&gt;</span> <span class="n">max_length</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PitcherException</span><span class="p">(</span><span class="s2">&quot;Item exceeds measure&#39;s time signature&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">+=</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span></div>
+
+    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds multiple items (chord/notes) to current measure</span>
+
+<span class="sd">        :param items: [Note] or [Chord]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">beats_per_measure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span><span class="o">.</span><span class="n">beats_per_measure</span>  <span class="c1"># numerator</span>
+        <span class="n">beat_definition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_signature</span><span class="o">.</span><span class="n">beat_definition</span>  <span class="c1"># denominator</span>
+        <span class="n">max_length</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">beats_per_measure</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">beat_definition</span><span class="p">))</span>
+        <span class="n">items_duration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">items_duration</span> <span class="o">+=</span> <span class="n">item</span><span class="o">.</span><span class="n">duration</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span> <span class="o">+</span> <span class="n">items_duration</span> <span class="o">&gt;</span> <span class="n">max_length</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Items exceed measure&#39;s time signature&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="n">start</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="n">start</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the total duration of notes in this measure&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_count</span>
+
+    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if note is in this measure&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">note</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Measure.extend"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure.extend">[docs]</a>    <span class="k">def</span> <span class="nf">extend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">notes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Measure.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Staff</span><span class="p">(</span><span class="n">measures</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">play</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Measure.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Staff</span><span class="p">(</span><span class="n">measures</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Measure.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Measure.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Staff</span><span class="p">(</span><span class="n">measures</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Chord"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord">[docs]</a><span class="k">class</span> <span class="nc">Chord</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing an organized group of notes.</span>
+
+<span class="sd">    :param notes: [Note]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="o">=</span> <span class="n">notes</span> <span class="ow">or</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="p">))</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">notes</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+<div class="viewcode-block" id="Chord.mingusChord_to_chord"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.mingusChord_to_chord">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="n">my_triad</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">mingus_chord</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+
+            <span class="n">octave</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">Note</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">octave</span><span class="p">),</span> <span class="n">root</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">root</span><span class="p">:</span>
+                <span class="n">octave</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">my_triad</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Note</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">octave</span><span class="p">),</span> <span class="n">root</span><span class="o">.</span><span class="n">duration</span><span class="p">))</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">Chord</span><span class="p">(</span><span class="n">my_triad</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">c</span></div>
+
+<div class="viewcode-block" id="Chord.major_triad"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.major_triad">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">major_triad</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the major triad of a Note</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        :returns: Chord</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusChord</span><span class="o">.</span><span class="n">major_triad</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.minor_triad"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.minor_triad">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">minor_triad</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the minor triad of a Note</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        :returns: Chord</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusChord</span><span class="o">.</span><span class="n">minor_triad</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.diminished_triad"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.diminished_triad">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">diminished_triad</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the diminished triad of a Note</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        :returns: Chord</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusChord</span><span class="o">.</span><span class="n">diminished_triad</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.augmented_triad"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.augmented_triad">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">augmented_triad</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the augmented triad of a Note</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        :returns: Chord</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusChord</span><span class="o">.</span><span class="n">augmented_triad</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.suspended_triad"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.suspended_triad">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">suspended_triad</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the suspended triad of a Note</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        :returns: Chord</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusChord</span><span class="o">.</span><span class="n">suspended_triad</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">mingusChord_to_chord</span><span class="p">(</span><span class="n">mingus_chord</span><span class="p">,</span> <span class="n">note</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the duration of a Chord</span>
+
+<span class="sd">        :returns: duration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">))</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the pitch of a Chord</span>
+
+<span class="sd">        :returns: String of letter-note, accidentals, and octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the letter of a Chord</span>
+
+<span class="sd">        :returns: letter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">letter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the octave of a Chord</span>
+
+<span class="sd">        :returns: octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">octave</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the accidentals of a Chord</span>
+
+<span class="sd">        :returns: accidentals (string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">accidentals</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">notes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the notes of a Chord</span>
+
+<span class="sd">        :returns: [Note]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span>
+
+<div class="viewcode-block" id="Chord.append"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Append a note to a Chord</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.remove"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove a note from a Chord</span>
+
+<span class="sd">        :param note: Note</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span> <span class="k">if</span> <span class="n">n</span> <span class="o">!=</span> <span class="n">note</span><span class="p">]</span></div>
+        <span class="c1"># self.__mingus_notes.remove_note(note.mingus())</span>
+
+<div class="viewcode-block" id="Chord.clear"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clears all notes from a Chord&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_notes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Chord.determine"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.determine">[docs]</a>    <span class="k">def</span> <span class="nf">determine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Used to determine the type of chord&quot;&quot;&quot;</span>
+        <span class="n">mingus_chord</span> <span class="o">=</span> <span class="n">_MingusNoteContainer</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">letter</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">notes</span><span class="p">)])</span>
+        <span class="k">return</span> <span class="n">mingus_chord</span><span class="o">.</span><span class="n">determine</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Chord.get_chord"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.get_chord">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_chord</span><span class="p">(</span><span class="n">note</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">from_shorthand</span><span class="p">(</span><span class="n">note</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Chord.get_triads"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.get_triads">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_triads</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns all triads in a given key</span>
+
+<span class="sd">        :param key: String</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Chord</span><span class="o">.</span><span class="n">triads</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Chord.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">play</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Chord.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Chord.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Chord.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Note"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note">[docs]</a><span class="k">class</span> <span class="nc">Note</span><span class="p">(</span><span class="n">_Music</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing the smallest unit for the Pitcher.</span>
+
+<span class="sd">    :param pitch: string with letter name, accidentals, and octave, such as &#39;A#4&#39;</span>
+<span class="sd">    :param duration: note duration</span>
+<span class="sd">    :param dynamic: dynamic, such as piano, forte, crescendo, etc</span>
+<span class="sd">    :param articulation: articulation, such as staccato, accent, fermata, etc</span>
+<span class="sd">    :param tie: when true will play this note continuously into the next note</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Note(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Note(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pitch</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pitch_number</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">duration</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">pitch_number</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">duration</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Note.mingusNote_to_note"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.mingusNote_to_note">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">mingusNote_to_note</span><span class="p">(</span><span class="n">mingus_note</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Note</span><span class="p">(</span><span class="n">mingus_note</span> <span class="o">+</span> <span class="n">note</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">octave</span><span class="p">),</span> <span class="n">note</span><span class="o">.</span><span class="n">duration</span><span class="p">,</span> <span class="n">note</span><span class="o">.</span><span class="n">dynamic</span><span class="p">,</span> <span class="n">note</span><span class="o">.</span><span class="n">articulation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">dynamic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">articulation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tie</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">pitch</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">pitch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PitcherException</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Bad pitch type: </span><span class="si">{</span><span class="n">pitch</span><span class="si">}</span><span class="s1"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span> <span class="o">=</span> <span class="n">dynamic</span>  <span class="c1"># piano, forte, crescendo, etc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_articulation</span> <span class="o">=</span> <span class="n">articulation</span>  <span class="c1"># staccato, accent, fermata, etc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tie</span> <span class="o">=</span> <span class="n">tie</span>  <span class="c1"># if True, no audible break between this note into next note</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span> <span class="o">=</span> <span class="n">_MingusNote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">letter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">octave</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the letter of a Note</span>
+
+<span class="sd">        :returns: letter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">letter</span>
+
+<div class="viewcode-block" id="Note.get_accidentals_wrt_key"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.get_accidentals_wrt_key">[docs]</a>    <span class="k">def</span> <span class="nf">get_accidentals_wrt_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the accidentals of a Note</span>
+
+<span class="sd">        :returns: accidentals (string)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the pitch of a Note</span>
+
+<span class="sd">        :returns: String of letter-note, accidentals, and octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="p">)</span>
+
+    <span class="nd">@pitch</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the pitch of a Note</span>
+
+<span class="sd">        :param pitch: String of letter-note, accidentals, and octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the octave of a Note</span>
+
+<span class="sd">        :returns: octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span>
+
+    <span class="nd">@octave</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">octave</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the octave of a Note</span>
+
+<span class="sd">        :param octave: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span> <span class="o">=</span> <span class="n">octave</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="p">)</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_pitch&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@pitch_number</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pitch_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span> <span class="o">=</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the duration of a Note</span>
+
+<span class="sd">        :returns: duration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span>
+
+    <span class="nd">@duration</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the duration of a Note</span>
+
+<span class="sd">        :param duration: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_duration</span> <span class="o">=</span> <span class="n">duration</span>
+
+    <span class="nd">@accidentals</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the accidentals of a Note</span>
+
+<span class="sd">         :param accidentals: accidentals</span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">=</span> <span class="n">accidentals</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the dynamic of a Note</span>
+
+<span class="sd">        :returns: dynamic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span>
+
+    <span class="nd">@dynamic</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dynamic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dynamic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the dynamic of a Note</span>
+
+<span class="sd">        :param dynamic: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dynamic</span> <span class="o">=</span> <span class="n">dynamic</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">articulation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the articulation of a Note</span>
+
+<span class="sd">        :returns: duration</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_articulation</span>
+
+    <span class="nd">@articulation</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">articulation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">articulation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the articulation of a Note</span>
+
+<span class="sd">        :param articulation: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_articulation</span> <span class="o">=</span> <span class="n">articulation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the tie status of a Note</span>
+
+<span class="sd">        :returns: tie</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tie</span>
+
+    <span class="nd">@tie</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">tie</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tie</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the tie status of a Note</span>
+
+<span class="sd">        :param tie: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tie</span> <span class="o">=</span> <span class="n">tie</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">duration</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pitch</span>
+
+    <span class="c1"># _Mingus interface</span>
+
+<div class="viewcode-block" id="Note.augment"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.augment">[docs]</a>    <span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Raises the note by a half step&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span> <span class="o">=</span> <span class="n">_mingus_notes</span><span class="o">.</span><span class="n">augment</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Note.diminish"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.diminish">[docs]</a>    <span class="k">def</span> <span class="nf">diminish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lowers the note by a half step&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span> <span class="o">=</span> <span class="n">_mingus_notes</span><span class="o">.</span><span class="n">diminish</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+=</span> <span class="s1">&#39;b&#39;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Note.transpose"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">half_steps</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transpose the Note by half_steps</span>
+
+<span class="sd">        :param half_steps: string of +/- and number of half-steps, ex: &#39;+11&#39; or &#39;-4&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_half_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">half_steps</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">half_steps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_half_steps</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+=</span> <span class="s1">&#39;b&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_half_steps</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">accidentals</span> <span class="o">+=</span> <span class="s1">&#39;#&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mingus_note</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns mingus note&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span>
+
+<div class="viewcode-block" id="Note.octave_up"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.octave_up">[docs]</a>    <span class="k">def</span> <span class="nf">octave_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Raises the Note an octave&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span><span class="o">.</span><span class="n">octave_up</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Note.octave_down"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.octave_down">[docs]</a>    <span class="k">def</span> <span class="nf">octave_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lowers the Note an octave&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mingus_note</span><span class="o">.</span><span class="n">octave_down</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch</span><span class="o">.</span><span class="n">octave</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Note.play"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.play">[docs]</a>    <span class="k">def</span> <span class="nf">play</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">play</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Note.show"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Note.save"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Note.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Measure</span><span class="p">(</span><span class="n">notes</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="p">])</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="Rest"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest">[docs]</a><span class="k">class</span> <span class="nc">Rest</span><span class="p">(</span><span class="n">Note</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class representing a Rest Note. Has no pitch. Only duration.</span>
+
+<span class="sd">    :param duration: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Rest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">pitch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;Rest </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="si">}</span><span class="s1">&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_throw_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">PitcherException</span><span class="p">(</span><span class="s1">&#39;Rests cannot be assigned a pitch&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@letter</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">letter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@pitch</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pitch_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@octave</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">octave</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@accidentals</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Rest.augment"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest.augment">[docs]</a>    <span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Rest.diminish"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest.diminish">[docs]</a>    <span class="k">def</span> <span class="nf">diminish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Rest.transpose"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">half_steps</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Rest.octave_up"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest.octave_up">[docs]</a>    <span class="k">def</span> <span class="nf">octave_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Rest.octave_down"><a class="viewcode-back" href="../../pitchr.html#pitchr.music.Rest.octave_down">[docs]</a>    <span class="k">def</span> <span class="nf">octave_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_throw_exception</span><span class="p">()</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_Pitch</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Represents a pitch. Contains utilities for transforming pitch.</span>
+
+<span class="sd">    :param letter: letter of pitch</span>
+<span class="sd">    :param accidentals: default None, string representation of accidentals</span>
+<span class="sd">    :param octave: default 4, octave number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FLAT</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+    <span class="n">SHARP</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
+    <span class="n">DOUBLE_SHARP</span> <span class="o">=</span> <span class="s1">&#39;x&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">letter</span><span class="p">,</span> <span class="n">accidentals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">octave</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_letter</span> <span class="o">=</span> <span class="n">letter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">offset</span> <span class="o">*</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span> <span class="o">==</span> <span class="n">accidental</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">)))</span> <span class="k">for</span> <span class="n">accidental</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span>
+             <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="o">+</span><span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_octave</span> <span class="o">=</span> <span class="n">octave</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_int</span><span class="p">(</span><span class="n">pitch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a _Pitch calculated from an integer representation.</span>
+<span class="sd">        :returns: instance of _Pitch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">octave</span> <span class="o">=</span> <span class="n">pitch</span> <span class="o">//</span> <span class="mi">12</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="k">return</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">Keyboard</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">pitch</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">octave</span><span class="p">)]))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">pitch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a _Pitch calculated from a string representation</span>
+<span class="sd">        :returns: instance of _Pitch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pitch</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">def</span> <span class="nf">get_accidentals</span><span class="p">(</span><span class="n">pitch_string</span><span class="p">):</span>
+            <span class="n">accidentals</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pitch_string</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">accidentals</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">pitch_string</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">temp</span> <span class="o">==</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">SHARP</span> <span class="ow">or</span> <span class="n">temp</span> <span class="o">==</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">FLAT</span> <span class="ow">or</span> <span class="n">temp</span> <span class="o">==</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">DOUBLE_SHARP</span><span class="p">:</span>
+                        <span class="n">accidentals</span> <span class="o">+=</span> <span class="n">temp</span>
+                <span class="k">return</span> <span class="n">accidentals</span>
+
+        <span class="k">def</span> <span class="nf">get_octave</span><span class="p">(</span><span class="n">pitch_string</span><span class="p">):</span>
+            <span class="n">octave</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">pitch_string</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">4</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">octave</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pitch_string</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">octave</span>
+
+        <span class="n">letter</span> <span class="o">=</span> <span class="n">pitch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">octave</span> <span class="o">=</span> <span class="n">get_octave</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+        <span class="n">accidentals</span> <span class="o">=</span> <span class="n">get_accidentals</span><span class="p">(</span><span class="n">pitch</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_Pitch</span><span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">,</span> <span class="n">octave</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">letter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;?Returns the letter of this pitch.</span>
+<span class="sd">        :returns: letter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_letter</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the accidentals of this pitch</span>
+
+<span class="sd">        :returns: string of &quot;x&quot;, &quot;#&quot;, and &quot;b&quot; characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">FLAT</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">DOUBLE_SHARP</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">SHARP</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@accidentals</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">accidentals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the accidentals of this pitch</span>
+
+<span class="sd">        :param accidentals: string of &quot;x&quot;, &quot;#&quot;, and &quot;b&quot; characters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">offset</span> <span class="o">*</span> <span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span> <span class="o">==</span> <span class="n">accidental</span><span class="p">,</span> <span class="n">accidentals</span><span class="p">)))</span> <span class="k">for</span> <span class="n">accidental</span><span class="p">,</span> <span class="n">offset</span> <span class="ow">in</span>
+             <span class="p">{</span><span class="n">_Pitch</span><span class="o">.</span><span class="n">FLAT</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">SHARP</span><span class="p">:</span> <span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">DOUBLE_SHARP</span><span class="p">:</span> <span class="o">+</span><span class="mi">2</span><span class="p">}</span><span class="o">.</span><span class="n">items</span><span class="p">()])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">FLAT</span> <span class="o">*</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">DOUBLE_SHARP</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">_Pitch</span><span class="o">.</span><span class="n">SHARP</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the octave of this pitch</span>
+<span class="sd">        :returns: pitch octave</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_octave</span>
+
+    <span class="nd">@octave</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">octave</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">octave</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the octave of this pitch</span>
+<span class="sd">        :param octave: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_octave</span> <span class="o">=</span> <span class="n">octave</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">letter_offset</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;E&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s1">&#39;G&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+            <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">_letter</span><span class="p">]</span>
+
+        <span class="n">accidental_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accidental_offset</span>
+
+        <span class="n">octave_offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">octave</span> <span class="o">*</span> <span class="mi">12</span>
+
+        <span class="n">middle_c_offset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">12</span> <span class="o">*</span> <span class="mi">4</span>
+
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="n">middle_c_offset</span><span class="p">,</span> <span class="n">letter_offset</span><span class="p">,</span> <span class="n">accidental_offset</span><span class="p">,</span> <span class="n">octave_offset</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">letter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accidentals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">octave</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch_number</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pitch_number</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">int_to_pitch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pitch_number</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pitch_number</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;TODO&#39;</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Pitchr</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Quarantine Quintet.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

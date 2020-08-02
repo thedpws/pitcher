@@ -18,6 +18,11 @@ except KeyError:
     print(f'Environment variable "PITCHR_PATH" is unset. Using default path "{os.environ["HOME"]}/.pitchr"')
     PITCHR_PATH = os.environ["HOME"] + '/.pitchr'
 
+"""
+.. module:: Harmony Maker
+.. moduleauthor:: Quarantine Quintet
+"""
+
 
 def prepare_np(melody_np):
     """Converts and normalizes numpy array for prediction in model
