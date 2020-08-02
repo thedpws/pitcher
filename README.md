@@ -21,7 +21,6 @@ Targets most Linux environments.
 ## Installation
 To install: `pip3 install pitchr`.
 Other dependencies that must be installed (available via your package manager):
-  * python3-dev
   * libasound2
   * lilypond
 
