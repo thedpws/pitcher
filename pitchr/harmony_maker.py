@@ -90,6 +90,11 @@ def build_harmony(melody_staff):
     # Create list of durations. Negative indicates a rest. This will be used for decoding back to Pitchr
     durations = _get_durations(melody_staff)
 
+    # Create copy of melody to avoid altering original object
+    melody_staff = Staff([
+        Measure(list(m)) for m in melody_staff
+    ])
+
     # Replace Rests with temp notes. Pitch is from previous note
     previous_note = None
     for note in [n for measure in melody_staff for n in measure]:
