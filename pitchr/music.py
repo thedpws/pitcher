@@ -382,7 +382,7 @@ class Part(_Music):
     def __init__(
             self,
             staffs=None,
-            tempo=60,
+            tempo=96,
             time_signature=None,
             key_signature=None,
     ):
