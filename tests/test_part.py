@@ -42,9 +42,9 @@ class TestPart(unittest.TestCase):
         p.time_signature = Time('5/4')
         self.assertEqual(p.time_signature, Time('5/4'))
 
-    def test_part_init_defaults_tempo_to_60(self):
+    def test_part_init_defaults_tempo_to_96(self):
         p = Part()
-        self.assertEqual(p.tempo, 60)
+        self.assertEqual(p.tempo, 96)
 
     def test_part_init_sets_tempo(self):
         p = Part(tempo=96)
