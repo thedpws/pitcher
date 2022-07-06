@@ -15,7 +15,7 @@ h5py==2.10.0
 idna==2.10
 Keras-Preprocessing==1.1.2
 kiwisolver==1.2.0
-lxml==4.5.2
+lxml==4.9.1
 Markdown==3.2.2
 matplotlib==3.2.2
 mido==1.2.9
